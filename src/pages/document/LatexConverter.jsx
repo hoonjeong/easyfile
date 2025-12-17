@@ -1,31 +1,30 @@
 import { useState, useEffect, useRef } from 'react';
+import html2canvas from 'html2canvas';
 import SEOHead from '../../components/SEOHead';
 import ProgressBar from '../../components/ProgressBar';
 import { downloadFile } from '../../utils/download';
 
 const LatexConverter = () => {
   const [latexInput, setLatexInput] = useState('\\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}');
-  const [outputFormat, setOutputFormat] = useState('svg');
-  const [fontSize, setFontSize] = useState(20);
+  const [outputFormat, setOutputFormat] = useState('png');
+  const [fontSize, setFontSize] = useState(24);
   const [converting, setConverting] = useState(false);
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState(null);
-  const [preview, setPreview] = useState('');
   const [error, setError] = useState(null);
   const [mathJaxReady, setMathJaxReady] = useState(false);
   const [loadingMathJax, setLoadingMathJax] = useState(true);
   const previewRef = useRef(null);
+  const renderRef = useRef(null);
 
   // Load MathJax
   useEffect(() => {
-    // Check if MathJax is already fully loaded
-    if (window.MathJax && window.MathJax.tex2svgPromise) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
       setMathJaxReady(true);
       setLoadingMathJax(false);
       return;
     }
 
-    // Remove any existing partial MathJax config
     delete window.MathJax;
 
     window.MathJax = {
@@ -53,31 +52,20 @@ const LatexConverter = () => {
       setLoadingMathJax(false);
     };
     document.head.appendChild(script);
-
-    return () => {
-      // Cleanup
-    };
   }, []);
 
   // Update preview when input changes
   useEffect(() => {
-    if (!mathJaxReady || !latexInput) {
-      setPreview('');
-      return;
-    }
+    if (!mathJaxReady || !latexInput || !previewRef.current) return;
 
     const updatePreview = async () => {
       try {
-        const html = await window.MathJax.tex2svgPromise(latexInput, { display: true });
-        const svg = html.querySelector('svg');
-        if (svg) {
-          svg.style.fontSize = `${fontSize}px`;
-          setPreview(svg.outerHTML);
-          setError(null);
-        }
+        previewRef.current.innerHTML = `$$${latexInput}$$`;
+        await window.MathJax.typesetPromise([previewRef.current]);
+        setError(null);
       } catch (err) {
         console.error('Preview error:', err);
-        setPreview('<p style="color: #EF4444;">LaTeX 문법 오류</p>');
+        previewRef.current.innerHTML = '<span style="color: #EF4444;">LaTeX 문법 오류</span>';
       }
     };
 
@@ -86,7 +74,7 @@ const LatexConverter = () => {
   }, [latexInput, fontSize, mathJaxReady]);
 
   const handleConvert = async () => {
-    if (!latexInput || !mathJaxReady) return;
+    if (!latexInput || !mathJaxReady || !renderRef.current) return;
 
     setConverting(true);
     setError(null);
@@ -94,114 +82,82 @@ const LatexConverter = () => {
     setProgress(10);
 
     try {
-      setProgress(30);
+      // Render to hidden element for capture
+      renderRef.current.innerHTML = `$$${latexInput}$$`;
+      renderRef.current.style.fontSize = `${fontSize}px`;
+      await window.MathJax.typesetPromise([renderRef.current]);
 
-      const html = await window.MathJax.tex2svgPromise(latexInput, { display: true });
-      const svg = html.querySelector('svg');
+      setProgress(50);
 
-      if (!svg) {
-        throw new Error('SVG 생성에 실패했습니다.');
-      }
+      // Use html2canvas to capture
+      const canvas = await html2canvas(renderRef.current, {
+        backgroundColor: '#ffffff',
+        scale: 3,
+        logging: false,
+        useCORS: true
+      });
 
-      setProgress(60);
+      setProgress(80);
 
-      // Clone SVG and set attributes
-      const svgClone = svg.cloneNode(true);
-      svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-
-      // Set proper dimensions
-      const bbox = svg.getBBox ? svg.getBBox() : { width: 200, height: 50 };
-      const width = Math.max(bbox.width + 20, 100);
-      const height = Math.max(bbox.height + 20, 50);
-
-      if (outputFormat === 'svg') {
-        // Get dimensions from the original SVG
-        const width = svg.getAttribute('width') || '200px';
-        const height = svg.getAttribute('height') || '50px';
-        const viewBox = svg.getAttribute('viewBox') || '0 0 200 50';
-
-        // Set proper attributes for standalone SVG
-        svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-        svgClone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
-        svgClone.setAttribute('width', width);
-        svgClone.setAttribute('height', height);
-        svgClone.setAttribute('viewBox', viewBox);
-
-        // Add white background
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect.setAttribute('width', '100%');
-        rect.setAttribute('height', '100%');
-        rect.setAttribute('fill', 'white');
-        svgClone.insertBefore(rect, svgClone.firstChild);
-
-        // Include MathJax styles inline
-        const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
-        style.textContent = `
-          svg { font-family: MathJax_Main, serif; }
-          .MJX-TEX { font-family: MathJax_Main, serif; }
-        `;
-        svgClone.insertBefore(style, svgClone.firstChild);
-
-        const svgData = new XMLSerializer().serializeToString(svgClone);
-        const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-        setResult(blob);
-        setProgress(100);
-        setConverting(false);
-      } else if (outputFormat === 'png') {
-        // Convert SVG to PNG using canvas
-        const svgData = new XMLSerializer().serializeToString(svgClone);
-        const svgBase64 = btoa(unescape(encodeURIComponent(svgData)));
-        const imgSrc = `data:image/svg+xml;base64,${svgBase64}`;
-
-        const img = new Image();
-
-        img.onload = () => {
-          try {
-            const scale = 3; // Higher resolution
-            const canvas = document.createElement('canvas');
-            canvas.width = img.width * scale;
-            canvas.height = img.height * scale;
-
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.scale(scale, scale);
-            ctx.drawImage(img, 0, 0);
-
-            canvas.toBlob((blob) => {
-              if (blob) {
-                setResult(blob);
-                setProgress(100);
-              } else {
-                setError('PNG 생성에 실패했습니다.');
-              }
-              setConverting(false);
-            }, 'image/png');
-          } catch (err) {
-            console.error('Canvas error:', err);
-            setError('PNG 변환에 실패했습니다.');
-            setConverting(false);
+      if (outputFormat === 'png') {
+        canvas.toBlob((blob) => {
+          if (blob) {
+            setResult(blob);
+            setProgress(100);
+          } else {
+            setError('PNG 생성에 실패했습니다.');
           }
-        };
-
-        img.onerror = () => {
-          console.error('Image load error');
-          setError('이미지 로딩에 실패했습니다.');
           setConverting(false);
-        };
+        }, 'image/png');
+      } else {
+        // SVG: Get from MathJax directly
+        const svgElement = renderRef.current.querySelector('svg');
+        if (svgElement) {
+          const svgClone = svgElement.cloneNode(true);
+          svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
-        img.src = imgSrc;
+          // Create wrapper with background
+          const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          const width = parseFloat(svgElement.style.width) || svgElement.getBoundingClientRect().width || 200;
+          const height = parseFloat(svgElement.style.height) || svgElement.getBoundingClientRect().height || 100;
+
+          wrapper.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+          wrapper.setAttribute('width', width + 40);
+          wrapper.setAttribute('height', height + 40);
+          wrapper.setAttribute('viewBox', `0 0 ${width + 40} ${height + 40}`);
+
+          // Background
+          const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          rect.setAttribute('width', '100%');
+          rect.setAttribute('height', '100%');
+          rect.setAttribute('fill', 'white');
+          wrapper.appendChild(rect);
+
+          // Position the math SVG
+          const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          g.setAttribute('transform', 'translate(20, 20)');
+          g.innerHTML = svgClone.innerHTML;
+          wrapper.appendChild(g);
+
+          const svgData = new XMLSerializer().serializeToString(wrapper);
+          const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+          setResult(blob);
+          setProgress(100);
+        } else {
+          setError('SVG 생성에 실패했습니다.');
+        }
+        setConverting(false);
       }
     } catch (err) {
       console.error('Convert error:', err);
-      setError('LaTeX 변환 중 오류가 발생했습니다. 문법을 확인해주세요.');
+      setError('변환 중 오류가 발생했습니다: ' + err.message);
       setConverting(false);
     }
   };
 
   const handleDownload = () => {
     if (!result) return;
-    const extension = outputFormat === 'svg' ? 'svg' : 'png';
+    const extension = outputFormat;
     downloadFile(result, `latex-formula.${extension}`);
   };
 
@@ -281,7 +237,7 @@ const LatexConverter = () => {
           </div>
         )}
 
-        {preview && !loadingMathJax && (
+        {!loadingMathJax && (
           <div style={{
             marginTop: '16px',
             marginBottom: '16px',
@@ -294,14 +250,25 @@ const LatexConverter = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            overflow: 'auto'
+            overflow: 'auto',
+            fontSize: `${fontSize}px`
           }}>
-            <div
-              ref={previewRef}
-              dangerouslySetInnerHTML={{ __html: preview }}
-            />
+            <div ref={previewRef} />
           </div>
         )}
+
+        {/* Hidden render area for capture */}
+        <div
+          ref={renderRef}
+          style={{
+            position: 'absolute',
+            left: '-9999px',
+            top: '-9999px',
+            padding: '20px',
+            background: 'white',
+            fontSize: `${fontSize}px`
+          }}
+        />
 
         <div className="options">
           <h4 className="options-title">
@@ -319,8 +286,8 @@ const LatexConverter = () => {
               value={outputFormat}
               onChange={(e) => setOutputFormat(e.target.value)}
             >
+              <option value="png">PNG (권장 - 범용 호환)</option>
               <option value="svg">SVG (벡터 - 확대해도 선명)</option>
-              <option value="png">PNG (래스터 - 범용 호환)</option>
             </select>
           </div>
 
@@ -329,8 +296,8 @@ const LatexConverter = () => {
             <input
               type="range"
               className="option-slider"
-              min="12"
-              max="48"
+              min="16"
+              max="72"
               value={fontSize}
               onChange={(e) => setFontSize(Number(e.target.value))}
             />
