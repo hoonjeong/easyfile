@@ -13,14 +13,20 @@ const LatexConverter = () => {
   const [preview, setPreview] = useState('');
   const [error, setError] = useState(null);
   const [mathJaxReady, setMathJaxReady] = useState(false);
+  const [loadingMathJax, setLoadingMathJax] = useState(true);
   const previewRef = useRef(null);
 
   // Load MathJax
   useEffect(() => {
-    if (window.MathJax) {
+    // Check if MathJax is already fully loaded
+    if (window.MathJax && window.MathJax.tex2svgPromise) {
       setMathJaxReady(true);
+      setLoadingMathJax(false);
       return;
     }
+
+    // Remove any existing partial MathJax config
+    delete window.MathJax;
 
     window.MathJax = {
       tex: {
@@ -34,6 +40,7 @@ const LatexConverter = () => {
         ready: () => {
           window.MathJax.startup.defaultReady();
           setMathJaxReady(true);
+          setLoadingMathJax(false);
         }
       }
     };
@@ -41,16 +48,23 @@ const LatexConverter = () => {
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js';
     script.async = true;
+    script.onerror = () => {
+      setError('MathJax 로딩에 실패했습니다. 페이지를 새로고침해주세요.');
+      setLoadingMathJax(false);
+    };
     document.head.appendChild(script);
 
     return () => {
-      // Cleanup if needed
+      // Cleanup
     };
   }, []);
 
   // Update preview when input changes
   useEffect(() => {
-    if (!mathJaxReady || !latexInput) return;
+    if (!mathJaxReady || !latexInput) {
+      setPreview('');
+      return;
+    }
 
     const updatePreview = async () => {
       try {
@@ -59,9 +73,11 @@ const LatexConverter = () => {
         if (svg) {
           svg.style.fontSize = `${fontSize}px`;
           setPreview(svg.outerHTML);
+          setError(null);
         }
       } catch (err) {
-        setPreview('<p style="color: red;">LaTeX 문법 오류</p>');
+        console.error('Preview error:', err);
+        setPreview('<p style="color: #EF4444;">LaTeX 문법 오류</p>');
       }
     };
 
@@ -74,6 +90,7 @@ const LatexConverter = () => {
 
     setConverting(true);
     setError(null);
+    setResult(null);
     setProgress(10);
 
     try {
@@ -88,57 +105,72 @@ const LatexConverter = () => {
 
       setProgress(60);
 
-      svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-      svg.style.fontSize = `${fontSize}px`;
+      // Clone SVG and set attributes
+      const svgClone = svg.cloneNode(true);
+      svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+      // Set proper dimensions
+      const bbox = svg.getBBox ? svg.getBBox() : { width: 200, height: 50 };
+      const width = Math.max(bbox.width + 20, 100);
+      const height = Math.max(bbox.height + 20, 50);
 
       if (outputFormat === 'svg') {
-        const svgData = svg.outerHTML;
-        const blob = new Blob([svgData], { type: 'image/svg+xml' });
+        const svgData = new XMLSerializer().serializeToString(svgClone);
+        const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
         setResult(blob);
         setProgress(100);
+        setConverting(false);
       } else if (outputFormat === 'png') {
         // Convert SVG to PNG using canvas
-        const svgData = svg.outerHTML;
-        const svgBlob = new Blob([svgData], { type: 'image/svg+xml' });
-        const url = URL.createObjectURL(svgBlob);
+        const svgData = new XMLSerializer().serializeToString(svgClone);
+        const svgBase64 = btoa(unescape(encodeURIComponent(svgData)));
+        const imgSrc = `data:image/svg+xml;base64,${svgBase64}`;
 
         const img = new Image();
+
         img.onload = () => {
-          const scale = 2; // For high resolution
-          const canvas = document.createElement('canvas');
-          canvas.width = img.width * scale;
-          canvas.height = img.height * scale;
+          try {
+            const scale = 3; // Higher resolution
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
 
-          const ctx = canvas.getContext('2d');
-          ctx.scale(scale, scale);
-          ctx.drawImage(img, 0, 0);
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.scale(scale, scale);
+            ctx.drawImage(img, 0, 0);
 
-          canvas.toBlob((blob) => {
-            URL.revokeObjectURL(url);
-            setResult(blob);
-            setProgress(100);
-          }, 'image/png');
+            canvas.toBlob((blob) => {
+              if (blob) {
+                setResult(blob);
+                setProgress(100);
+              } else {
+                setError('PNG 생성에 실패했습니다.');
+              }
+              setConverting(false);
+            }, 'image/png');
+          } catch (err) {
+            console.error('Canvas error:', err);
+            setError('PNG 변환에 실패했습니다.');
+            setConverting(false);
+          }
         };
 
         img.onerror = () => {
-          URL.revokeObjectURL(url);
-          throw new Error('PNG 변환에 실패했습니다.');
+          console.error('Image load error');
+          setError('이미지 로딩에 실패했습니다.');
+          setConverting(false);
         };
 
-        img.src = url;
+        img.src = imgSrc;
       }
     } catch (err) {
-      console.error(err);
+      console.error('Convert error:', err);
       setError('LaTeX 변환 중 오류가 발생했습니다. 문법을 확인해주세요.');
       setConverting(false);
     }
   };
-
-  useEffect(() => {
-    if (result) {
-      setConverting(false);
-    }
-  }, [result]);
 
   const handleDownload = () => {
     if (!result) return;
@@ -208,7 +240,21 @@ const LatexConverter = () => {
           </div>
         </div>
 
-        {preview && (
+        {loadingMathJax && (
+          <div style={{
+            textAlign: 'center',
+            padding: '30px',
+            color: 'var(--text-secondary)',
+            background: 'var(--background-color)',
+            borderRadius: '8px',
+            marginBottom: '16px'
+          }}>
+            <div style={{ marginBottom: '8px' }}>MathJax 로딩 중...</div>
+            <div style={{ fontSize: '12px' }}>수식 렌더링 엔진을 불러오고 있습니다</div>
+          </div>
+        )}
+
+        {preview && !loadingMathJax && (
           <div style={{
             marginTop: '16px',
             marginBottom: '16px',
@@ -220,7 +266,8 @@ const LatexConverter = () => {
             minHeight: '80px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            overflow: 'auto'
           }}>
             <div
               ref={previewRef}
@@ -292,16 +339,10 @@ const LatexConverter = () => {
           <button
             className="convert-button"
             onClick={handleConvert}
-            disabled={!latexInput}
+            disabled={!latexInput || !mathJaxReady}
           >
             {outputFormat.toUpperCase()}로 변환하기
           </button>
-        )}
-
-        {!mathJaxReady && (
-          <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-secondary)' }}>
-            MathJax 로딩 중...
-          </div>
         )}
       </div>
 
@@ -322,11 +363,11 @@ const LatexConverter = () => {
 
         <h2>기본 LaTeX 문법</h2>
         <ul>
-          <li>분수: \frac{'{분자}'}{'{분모}'}</li>
+          <li>분수: \frac&#123;분자&#125;&#123;분모&#125;</li>
           <li>제곱: x^2, 아래첨자: x_i</li>
-          <li>루트: \sqrt{'{x}'}</li>
-          <li>적분: \int_{'{a}'}^{'{b}'}</li>
-          <li>시그마: \sum_{'{i=1}'}^{'{n}'}</li>
+          <li>루트: \sqrt&#123;x&#125;</li>
+          <li>적분: \int_&#123;a&#125;^&#123;b&#125;</li>
+          <li>시그마: \sum_&#123;i=1&#125;^&#123;n&#125;</li>
         </ul>
       </div>
     </>
