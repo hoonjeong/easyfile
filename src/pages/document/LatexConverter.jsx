@@ -115,6 +115,33 @@ const LatexConverter = () => {
       const height = Math.max(bbox.height + 20, 50);
 
       if (outputFormat === 'svg') {
+        // Get dimensions from the original SVG
+        const width = svg.getAttribute('width') || '200px';
+        const height = svg.getAttribute('height') || '50px';
+        const viewBox = svg.getAttribute('viewBox') || '0 0 200 50';
+
+        // Set proper attributes for standalone SVG
+        svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        svgClone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+        svgClone.setAttribute('width', width);
+        svgClone.setAttribute('height', height);
+        svgClone.setAttribute('viewBox', viewBox);
+
+        // Add white background
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('width', '100%');
+        rect.setAttribute('height', '100%');
+        rect.setAttribute('fill', 'white');
+        svgClone.insertBefore(rect, svgClone.firstChild);
+
+        // Include MathJax styles inline
+        const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+        style.textContent = `
+          svg { font-family: MathJax_Main, serif; }
+          .MJX-TEX { font-family: MathJax_Main, serif; }
+        `;
+        svgClone.insertBefore(style, svgClone.firstChild);
+
         const svgData = new XMLSerializer().serializeToString(svgClone);
         const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
         setResult(blob);
