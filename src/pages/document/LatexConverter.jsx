@@ -99,6 +99,11 @@ const LatexConverter = () => {
 
       setProgress(80);
 
+      // Convert canvas to blob
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
+      const dataUrl = canvas.toDataURL('image/png');
+
       if (outputFormat === 'png') {
         canvas.toBlob((blob) => {
           if (blob) {
@@ -110,42 +115,17 @@ const LatexConverter = () => {
           setConverting(false);
         }, 'image/png');
       } else {
-        // SVG: Get from MathJax directly
-        const svgElement = renderRef.current.querySelector('svg');
-        if (svgElement) {
-          const svgClone = svgElement.cloneNode(true);
-          svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        // SVG: Embed the PNG image in an SVG wrapper
+        const svgContent = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="${canvasWidth}" height="${canvasHeight}" viewBox="0 0 ${canvasWidth} ${canvasHeight}">
+  <rect width="100%" height="100%" fill="white"/>
+  <image width="${canvasWidth}" height="${canvasHeight}" xlink:href="${dataUrl}"/>
+</svg>`;
 
-          // Create wrapper with background
-          const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-          const width = parseFloat(svgElement.style.width) || svgElement.getBoundingClientRect().width || 200;
-          const height = parseFloat(svgElement.style.height) || svgElement.getBoundingClientRect().height || 100;
-
-          wrapper.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-          wrapper.setAttribute('width', width + 40);
-          wrapper.setAttribute('height', height + 40);
-          wrapper.setAttribute('viewBox', `0 0 ${width + 40} ${height + 40}`);
-
-          // Background
-          const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-          rect.setAttribute('width', '100%');
-          rect.setAttribute('height', '100%');
-          rect.setAttribute('fill', 'white');
-          wrapper.appendChild(rect);
-
-          // Position the math SVG
-          const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-          g.setAttribute('transform', 'translate(20, 20)');
-          g.innerHTML = svgClone.innerHTML;
-          wrapper.appendChild(g);
-
-          const svgData = new XMLSerializer().serializeToString(wrapper);
-          const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-          setResult(blob);
-          setProgress(100);
-        } else {
-          setError('SVG 생성에 실패했습니다.');
-        }
+        const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+        setResult(blob);
+        setProgress(100);
         setConverting(false);
       }
     } catch (err) {
