@@ -84,6 +84,7 @@ const LatexConverter = () => {
         // Sanitize input to prevent XSS
         const safeLatex = sanitizeLatexInput(latexInput);
         previewRef.current.textContent = `$$${safeLatex}$$`;
+        previewRef.current.style.color = '';  // Reset error color
         await window.MathJax.typesetPromise([previewRef.current]);
         setError(null);
       } catch (err) {

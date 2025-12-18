@@ -132,11 +132,36 @@ const ExcelConverter = () => {
       setProgress(30);
 
       const workbook = new ExcelJS.Workbook();
+      const fileName = file.name.toLowerCase();
 
       // Determine file type and load accordingly
-      const fileName = file.name.toLowerCase();
       if (fileName.endsWith('.csv')) {
-        await workbook.csv.load(arrayBuffer);
+        // For CSV files, read as text and parse manually
+        const text = new TextDecoder().decode(arrayBuffer);
+        const lines = text.split(/\r?\n/).filter(line => line.trim());
+        const worksheet = workbook.addWorksheet('Sheet1');
+
+        lines.forEach((line, rowIndex) => {
+          // Simple CSV parsing (handles basic cases)
+          const cells = [];
+          let current = '';
+          let inQuotes = false;
+
+          for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            if (char === '"') {
+              inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+              cells.push(current.trim());
+              current = '';
+            } else {
+              current += char;
+            }
+          }
+          cells.push(current.trim());
+
+          worksheet.addRow(cells);
+        });
       } else {
         await workbook.xlsx.load(arrayBuffer);
       }
