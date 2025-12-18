@@ -32,7 +32,8 @@
     "image": "이미지",
     "document": "문서",
     "media": "미디어",
-    "pdf": "PDF"
+    "pdf": "PDF",
+    "games": "미니게임"
   },
   "home": {
     "heroBadge": "서버 업로드 없음 - 100% 브라우저 기반",
@@ -80,6 +81,10 @@
     "pdf": {
       "title": "PDF 도구",
       "description": "PDF 변환, 병합, 분할, 페이지 편집 등 다양한 PDF 기능"
+    },
+    "games": {
+      "title": "미니게임",
+      "description": "간단하고 재미있는 브라우저 기반 미니게임"
     }
   },
   "image": {

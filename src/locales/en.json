@@ -32,7 +32,8 @@
     "image": "Image",
     "document": "Document",
     "media": "Media",
-    "pdf": "PDF"
+    "pdf": "PDF",
+    "games": "Mini Games"
   },
   "home": {
     "heroBadge": "No Server Upload - 100% Browser-Based",
@@ -80,6 +81,10 @@
     "pdf": {
       "title": "PDF Tools",
       "description": "PDF conversion, merge, split, and page editing tools"
+    },
+    "games": {
+      "title": "Mini Games",
+      "description": "Simple and fun browser-based mini games"
     }
   },
   "image": {

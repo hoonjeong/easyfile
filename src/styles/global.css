@@ -534,6 +534,10 @@ button {
   background: rgba(239, 68, 68, 0.1);
 }
 
+.category-icon.games {
+  background: rgba(139, 92, 246, 0.1);
+}
+
 .category-title {
   font-size: 1.25rem;
   font-weight: 700;

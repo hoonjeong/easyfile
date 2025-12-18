@@ -11,6 +11,7 @@ const Layout = ({ children }) => {
     { path: '/image', labelKey: 'nav.image' },
     { path: '/document', labelKey: 'nav.document' },
     { path: '/media', labelKey: 'nav.media' },
+    { path: 'https://shortgames.kr/', labelKey: 'nav.games', external: true },
   ];
 
   const changeLanguage = (lng) => {
@@ -30,13 +31,25 @@ const Layout = ({ children }) => {
           </Link>
           <nav className="nav">
             {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`nav-link ${location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path)) ? 'active' : ''}`}
-              >
-                {t(item.labelKey)}
-              </Link>
+              item.external ? (
+                <a
+                  key={item.path}
+                  href={item.path}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="nav-link"
+                >
+                  {t(item.labelKey)}
+                </a>
+              ) : (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`nav-link ${location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path)) ? 'active' : ''}`}
+                >
+                  {t(item.labelKey)}
+                </Link>
+              )
             ))}
             <div className="language-selector">
               <button

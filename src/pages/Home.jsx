@@ -65,6 +65,16 @@ const Home = () => {
         { name: 'WebM → MP4', path: '/media/webm-to-mp4' },
         { name: 'GIF → MP4', path: '/media/gif-to-mp4' },
       ]
+    },
+    {
+      id: 'games',
+      titleKey: 'categories.games.title',
+      descriptionKey: 'categories.games.description',
+      icon: '🎮',
+      iconClass: 'games',
+      path: 'https://shortgames.kr/',
+      external: true,
+      converters: []
     }
   ];
 
@@ -135,33 +145,50 @@ const Home = () => {
 
       <section className="categories">
         {categories.map((category) => (
-          <Link
-            key={category.id}
-            to={category.path}
-            className="category-card"
-            style={{ textDecoration: 'none', cursor: 'pointer' }}
-          >
-            <div className={`category-icon ${category.iconClass}`}>
-              {category.icon}
-            </div>
-            <h2 className="category-title">{t(category.titleKey)}</h2>
-            <p className="category-description">{t(category.descriptionKey)}</p>
-            <div className="converter-list">
-              {category.converters.map((converter) => (
-                <span
-                  key={converter.path + converter.name}
-                  className="converter-tag"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    navigate(converter.path);
-                  }}
-                >
-                  {converter.name}
-                </span>
-              ))}
-            </div>
-          </Link>
+          category.external ? (
+            <a
+              key={category.id}
+              href={category.path}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="category-card"
+              style={{ textDecoration: 'none', cursor: 'pointer' }}
+            >
+              <div className={`category-icon ${category.iconClass}`}>
+                {category.icon}
+              </div>
+              <h2 className="category-title">{t(category.titleKey)}</h2>
+              <p className="category-description">{t(category.descriptionKey)}</p>
+            </a>
+          ) : (
+            <Link
+              key={category.id}
+              to={category.path}
+              className="category-card"
+              style={{ textDecoration: 'none', cursor: 'pointer' }}
+            >
+              <div className={`category-icon ${category.iconClass}`}>
+                {category.icon}
+              </div>
+              <h2 className="category-title">{t(category.titleKey)}</h2>
+              <p className="category-description">{t(category.descriptionKey)}</p>
+              <div className="converter-list">
+                {category.converters.map((converter) => (
+                  <span
+                    key={converter.path + converter.name}
+                    className="converter-tag"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      navigate(converter.path);
+                    }}
+                  >
+                    {converter.name}
+                  </span>
+                ))}
+              </div>
+            </Link>
+          )
         ))}
       </section>
 
