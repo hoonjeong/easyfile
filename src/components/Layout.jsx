@@ -1,15 +1,21 @@
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Layout = ({ children }) => {
   const location = useLocation();
+  const { t, i18n } = useTranslation();
 
   const navItems = [
-    { path: '/', label: '홈' },
-    { path: '/image', label: '이미지' },
-    { path: '/document', label: '문서' },
-    { path: '/media', label: '미디어' },
-    { path: '/pdf', label: 'PDF' },
+    { path: '/', labelKey: 'nav.home' },
+    { path: '/pdf', labelKey: 'nav.pdf' },
+    { path: '/image', labelKey: 'nav.image' },
+    { path: '/document', labelKey: 'nav.document' },
+    { path: '/media', labelKey: 'nav.media' },
   ];
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
 
   return (
     <>
@@ -29,9 +35,23 @@ const Layout = ({ children }) => {
                 to={item.path}
                 className={`nav-link ${location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path)) ? 'active' : ''}`}
               >
-                {item.label}
+                {t(item.labelKey)}
               </Link>
             ))}
+            <div className="language-selector">
+              <button
+                onClick={() => changeLanguage('ko')}
+                className={`lang-btn ${i18n.language === 'ko' ? 'active' : ''}`}
+              >
+                KR
+              </button>
+              <button
+                onClick={() => changeLanguage('en')}
+                className={`lang-btn ${i18n.language === 'en' ? 'active' : ''}`}
+              >
+                EN
+              </button>
+            </div>
           </nav>
         </div>
       </header>
@@ -45,7 +65,7 @@ const Layout = ({ children }) => {
       <footer className="footer">
         <div className="container">
           <p className="footer-text">
-            <span className="footer-highlight">100% 브라우저 기반</span> - 파일이 서버로 전송되지 않습니다. 모든 변환은 로컬에서 처리됩니다.
+            <span className="footer-highlight">{t('common.tagline')}</span> - {t('common.footerText')}
           </p>
         </div>
       </footer>

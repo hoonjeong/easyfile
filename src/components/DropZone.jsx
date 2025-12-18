@@ -1,8 +1,10 @@
 import { useState, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
-const DropZone = ({ onFileSelect, acceptedTypes, maxSize = 100 * 1024 * 1024 }) => {
+const DropZone = ({ onFileSelect, acceptedTypes, maxSize = 100 * 1024 * 1024, multiple = false }) => {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
+  const { t } = useTranslation();
 
   const handleDragOver = useCallback((e) => {
     e.preventDefault();
@@ -20,20 +22,28 @@ const DropZone = ({ onFileSelect, acceptedTypes, maxSize = 100 * 1024 * 1024 }) 
 
     const files = Array.from(e.dataTransfer.files);
     if (files.length > 0) {
-      validateAndSelect(files[0]);
+      if (multiple) {
+        files.forEach(file => validateAndSelect(file));
+      } else {
+        validateAndSelect(files[0]);
+      }
     }
-  }, [onFileSelect, acceptedTypes, maxSize]);
+  }, [onFileSelect, acceptedTypes, maxSize, multiple]);
 
   const handleFileInput = useCallback((e) => {
     const files = Array.from(e.target.files);
     if (files.length > 0) {
-      validateAndSelect(files[0]);
+      if (multiple) {
+        files.forEach(file => validateAndSelect(file));
+      } else {
+        validateAndSelect(files[0]);
+      }
     }
-  }, [onFileSelect, acceptedTypes, maxSize]);
+  }, [onFileSelect, acceptedTypes, maxSize, multiple]);
 
   const validateAndSelect = (file) => {
     if (file.size > maxSize) {
-      alert(`파일 크기가 너무 큽니다. 최대 ${Math.round(maxSize / 1024 / 1024)}MB까지 지원됩니다.`);
+      alert(`File size too large. Maximum ${Math.round(maxSize / 1024 / 1024)}MB allowed.`);
       return;
     }
     onFileSelect(file);
@@ -61,14 +71,15 @@ const DropZone = ({ onFileSelect, acceptedTypes, maxSize = 100 * 1024 * 1024 }) 
         type="file"
         accept={formatAcceptedTypes()}
         onChange={handleFileInput}
+        multiple={multiple}
         style={{ display: 'none' }}
       />
       <svg className="drop-zone-icon" fill="none" viewBox="0 0 64 64" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M32 12v28m0 0l-10-10m10 10l10-10M12 44v4a4 4 0 004 4h32a4 4 0 004-4v-4" />
       </svg>
-      <h3 className="drop-zone-title">파일을 드래그하거나 클릭하세요</h3>
-      <p className="drop-zone-subtitle">또는 클릭하여 파일을 선택하세요</p>
-      <span className="drop-zone-button">파일 선택</span>
+      <h3 className="drop-zone-title">{t('common.dragOrClick')}</h3>
+      <p className="drop-zone-subtitle">{t('common.clickToSelect')}</p>
+      <span className="drop-zone-button">{t('common.selectFile')}</span>
     </div>
   );
 };

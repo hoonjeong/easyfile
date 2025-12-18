@@ -1,0 +1,400 @@
+{
+  "common": {
+    "appName": "EasyFile",
+    "tagline": "100% Browser-Based",
+    "footerText": "Files are never uploaded to servers. All conversions are processed locally.",
+    "convert": "Convert",
+    "download": "Download",
+    "downloadAll": "Download All (ZIP)",
+    "reset": "Start Over",
+    "selectFile": "Select File",
+    "dragOrClick": "Drag and drop files here",
+    "clickToSelect": "or click to select files",
+    "conversionComplete": "Conversion Complete!",
+    "processing": "Processing...",
+    "error": "An error occurred",
+    "page": "Page",
+    "pages": "pages",
+    "selected": "selected",
+    "total": "Total",
+    "quality": "Quality",
+    "outputFormat": "Output Format",
+    "options": "Conversion Options",
+    "apply": "Apply",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "copyToClipboard": "Copy to Clipboard",
+    "copiedToClipboard": "Copied to clipboard!"
+  },
+  "nav": {
+    "home": "Home",
+    "image": "Image",
+    "document": "Document",
+    "media": "Media",
+    "pdf": "PDF"
+  },
+  "home": {
+    "heroBadge": "No Server Upload - 100% Browser-Based",
+    "heroTitle": "Free Online",
+    "heroTitleHighlight": "File Converter",
+    "heroSubtitle": "Convert images, documents, audio, and video files safely in your browser. Your files never leave your device, ensuring complete privacy.",
+    "seoTitle": "Free Online File Converter",
+    "seoDescription": "Convert HEIC, WebP, PSD, Excel, M4A and more for free. 100% browser-based, your files are never uploaded to servers.",
+    "whatIsEasyFile": "What is EasyFile?",
+    "whatIsEasyFileDesc": "EasyFile is a 100% browser-based free online file conversion service. Convert iPhone HEIC photos, WebP images, Photoshop PSD files and various other formats to universally compatible JPG and PNG.",
+    "whyUseEasyFile": "Why use EasyFile?",
+    "privacyTitle": "Complete Privacy Protection",
+    "privacyDesc": "All conversions happen in your browser - files are never sent to any server. Convert sensitive documents and personal photos with complete peace of mind.",
+    "freeTitle": "Unlimited & Free",
+    "freeDesc": "No sign-up, no email verification, no file size limits, no daily conversion limits. Use as much as you want, completely free.",
+    "noInstallTitle": "No Installation Required",
+    "noInstallDesc": "Just need a web browser. No software installation or registration required - start using immediately.",
+    "fastTitle": "Fast Processing",
+    "fastDesc": "Powered by modern WebAssembly technology for instant conversions without server round-trips.",
+    "supportedFormats": "Supported Conversion Formats"
+  },
+  "features": {
+    "privacy": "100% Privacy Protection",
+    "privacyDesc": "Files are never sent to servers. All conversions are processed in your browser.",
+    "fast": "Fast Conversion",
+    "fastDesc": "Instant conversions powered by WebAssembly technology without server round-trips.",
+    "free": "Completely Free",
+    "freeDesc": "No sign-up, no file limits, no watermarks. Use unlimited for free.",
+    "noInstall": "No Installation",
+    "noInstallDesc": "Use directly in your web browser without installing any software."
+  },
+  "categories": {
+    "image": {
+      "title": "Image Converter",
+      "description": "Convert HEIC, WebP, PSD, TIFF and more to JPG, PNG"
+    },
+    "document": {
+      "title": "Document Converter",
+      "description": "Convert Excel, Markdown, LaTeX to JSON, HTML"
+    },
+    "media": {
+      "title": "Media Converter",
+      "description": "Convert M4A, WebM, GIF to MP3, MP4"
+    },
+    "pdf": {
+      "title": "PDF Tools",
+      "description": "PDF conversion, merge, split, and page editing tools"
+    }
+  },
+  "image": {
+    "pageTitle": "Image Converter",
+    "pageDescription": "Easily convert various image formats to JPG, PNG. All conversions are processed in your browser for complete privacy.",
+    "seoTitle": "Image Converter - HEIC, WebP, PSD, TIFF, SVG Conversion",
+    "seoDescription": "Convert various image formats for free. Convert HEIC, WebP, PSD, TIFF, SVG, ICO to JPG, PNG. 100% browser-based for complete privacy.",
+    "features": {
+      "title": "EasyFile Image Converter Features",
+      "free": "100% Free - Unlimited use without registration",
+      "secure": "Complete Security - Files never leave your device",
+      "fast": "Fast Conversion - Instant processing in browser",
+      "quality": "High Quality - Original quality preserved",
+      "formats": "Various Formats - All major image formats supported"
+    },
+    "heic": {
+      "title": "HEIC to JPG/PNG",
+      "description": "Convert iPhone HEIC photos to JPG, PNG",
+      "pageTitle": "HEIC to JPG/PNG Converter",
+      "pageDescription": "Easily convert HEIC/HEIF photos from iPhone to JPG or PNG. All conversions are processed in your browser for complete privacy.",
+      "whatIs": "What is a HEIC file?",
+      "whatIsDesc": "HEIC (High Efficiency Image Container) is an image format introduced by Apple starting from iOS 11. It provides more efficient compression than JPEG, resulting in about 50% smaller file sizes at the same quality. However, Windows and some older software cannot open HEIC files, requiring conversion to JPG or PNG.",
+      "error": "Error converting HEIC file. Please make sure it's a valid HEIC/HEIF file."
+    },
+    "webp": {
+      "title": "WebP to JPG/PNG",
+      "description": "Convert WebP images to JPG, PNG",
+      "pageTitle": "WebP to JPG/PNG Converter",
+      "pageDescription": "Convert WebP images to JPG or PNG. Use them in Photoshop or other editing programs.",
+      "whatIs": "What is a WebP file?",
+      "whatIsDesc": "WebP is a next-generation image format developed by Google to improve website loading speed. It provides about 25-34% smaller file sizes than JPEG while maintaining similar quality.",
+      "error": "Error converting WebP file. Please make sure it's a valid WebP file."
+    },
+    "psd": {
+      "title": "PSD to JPG/PNG",
+      "description": "Convert Photoshop PSD files to images",
+      "pageTitle": "PSD to JPG/PNG Converter",
+      "pageDescription": "Convert Photoshop PSD files to JPG or PNG. Convert PSD files to images without Photoshop.",
+      "whatIs": "What is a PSD file?",
+      "whatIsDesc": "PSD is Adobe Photoshop's native file format. It contains layers, masks, and effects, but cannot be opened with regular image viewers.",
+      "error": "Error converting PSD file. Please make sure it's a valid PSD file."
+    },
+    "tiff": {
+      "title": "TIFF to JPG/PNG",
+      "description": "Convert high-resolution TIFF files to JPG, PNG",
+      "pageTitle": "TIFF to JPG/PNG Converter",
+      "pageDescription": "Convert high-resolution TIFF files to JPG or PNG. Even large TIFF files convert quickly.",
+      "whatIs": "What is a TIFF file?",
+      "whatIsDesc": "TIFF (Tagged Image File Format) is a format for storing high-quality images, widely used in printing and publishing industries.",
+      "error": "Error converting TIFF file. Please make sure it's a valid TIFF file."
+    },
+    "svg": {
+      "title": "SVG to PNG",
+      "description": "Convert SVG vectors to PNG images",
+      "pageTitle": "SVG to PNG Converter",
+      "pageDescription": "Convert SVG vector images to PNG. Preserves transparent backgrounds with high-resolution output.",
+      "whatIs": "What is an SVG file?",
+      "whatIsDesc": "SVG (Scalable Vector Graphics) is a vector graphics format that doesn't lose quality when scaled. It's mainly used for logos, icons, and illustrations.",
+      "scale": "Output Scale",
+      "scale1x": "1x (Original size)",
+      "scale2x": "2x (Recommended - High resolution)",
+      "scale3x": "3x (Very large image)",
+      "scale4x": "4x (Print quality)",
+      "error": "Error converting SVG file. Please make sure it's a valid SVG file."
+    },
+    "ico": {
+      "title": "ICO to PNG",
+      "description": "Convert icon files to PNG images",
+      "pageTitle": "ICO to PNG Converter",
+      "pageDescription": "Convert icon (ICO) files to PNG images. Extract favicons or app icons as images.",
+      "whatIs": "What is an ICO file?",
+      "whatIsDesc": "ICO is an icon file format used in Windows. It's used for website favicons and app icons.",
+      "error": "Error converting ICO file. Please make sure it's a valid ICO file."
+    },
+    "jpgRecommended": "JPG (Recommended - Smaller file size)",
+    "pngTransparent": "PNG (Supports transparency)",
+    "downloadJpg": "Download JPG File",
+    "downloadPng": "Download PNG File",
+    "convertToJpg": "Convert to JPG",
+    "convertToPng": "Convert to PNG"
+  },
+  "document": {
+    "pageTitle": "Document Converter",
+    "pageDescription": "Convert various document formats. All conversions are processed in your browser for complete privacy.",
+    "excel": {
+      "title": "Excel to JSON/CSV",
+      "description": "Convert Excel files to JSON, CSV, HTML",
+      "pageTitle": "Excel to JSON/CSV/HTML Converter",
+      "pageDescription": "Convert Excel files to JSON, CSV, or HTML. Easily convert to developer data or web tables.",
+      "json": "JSON (Developer data)",
+      "csv": "CSV (Universal spreadsheet)",
+      "html": "HTML (Web table)",
+      "htmlGenerated": "(HTML table generated)",
+      "error": "Error converting Excel file. Please make sure it's a valid Excel file."
+    },
+    "markdown": {
+      "title": "Markdown to HTML",
+      "description": "Convert Markdown documents to HTML",
+      "pageTitle": "Markdown to HTML Converter",
+      "pageDescription": "Convert Markdown documents to HTML. Convert GitHub README to web pages.",
+      "error": "Error converting Markdown."
+    },
+    "latex": {
+      "title": "LaTeX to Image",
+      "description": "Convert LaTeX equations to PNG, SVG images",
+      "pageTitle": "LaTeX to PNG/SVG Converter",
+      "pageDescription": "Convert LaTeX equations to PNG or SVG images. Insert formulas into documents or presentations.",
+      "error": "Error converting LaTeX."
+    }
+  },
+  "media": {
+    "pageTitle": "Media Converter",
+    "pageDescription": "Convert audio and video files to various formats. All conversions are processed in your browser for complete privacy.",
+    "loadingFFmpeg": "Loading FFmpeg...",
+    "preparingFile": "Preparing file...",
+    "converting": "Converting...",
+    "creatingFile": "Creating file...",
+    "bitrate": "Bitrate",
+    "bitrate128": "128 kbps (Small file)",
+    "bitrate192": "192 kbps (Recommended)",
+    "bitrate256": "256 kbps (High quality)",
+    "bitrate320": "320 kbps (Best quality)",
+    "ffmpegLoadError": "Failed to load FFmpeg. Please refresh the page.",
+    "audio": {
+      "title": "M4A to MP3",
+      "description": "Convert M4A, AAC audio to MP3, WAV",
+      "pageTitle": "M4A/AAC to MP3 Converter",
+      "pageDescription": "Convert M4A, AAC, WAV audio files to MP3. Convert iPhone voice memos to MP3 for Android playback.",
+      "mp3Recommended": "MP3 (Recommended - Best compatibility)",
+      "wav": "WAV (Lossless)",
+      "ogg": "OGG (Open source)",
+      "error": "Error converting audio. Please check the file format."
+    },
+    "video": {
+      "title": "WebM to MP4",
+      "description": "Convert WebM video to MP4",
+      "pageTitle": "WebM to MP4 Converter",
+      "pageDescription": "Convert WebM video to MP4. Convert web recordings to editable format.",
+      "error": "Error converting video. Please check the file format."
+    },
+    "gif": {
+      "title": "GIF to MP4",
+      "description": "Convert animated GIF to MP4 video",
+      "pageTitle": "GIF to MP4 Converter",
+      "pageDescription": "Convert large GIFs to MP4 at 1/10 the size. Optimized for social media sharing.",
+      "error": "Error converting GIF. Please check the file format."
+    }
+  },
+  "pdf": {
+    "pageTitle": "PDF Tools",
+    "pageDescription": "Convert, merge, split, and edit PDF files. All operations are processed in your browser for complete privacy.",
+    "seoTitle": "PDF Tools - Convert, Merge, Split, Edit PDF",
+    "seoDescription": "Free online PDF tools. Convert PDF to images, extract text, merge, split, extract pages, delete, reorder, rotate. 100% browser-based for complete privacy.",
+    "features": {
+      "title": "EasyFile PDF Tools Features",
+      "free": "100% Free - Unlimited use without registration",
+      "secure": "Complete Security - Files never leave your device",
+      "fast": "Fast Processing - Instant processing in browser",
+      "various": "Various Features - Convert, merge, split, edit all supported"
+    },
+    "toImage": {
+      "title": "PDF to Image",
+      "description": "Convert PDF files to JPG, PNG images",
+      "pageTitle": "PDF to Image Converter",
+      "pageDescription": "Convert each page of a PDF file to high-quality JPG or PNG images. All conversions are processed in your browser for complete privacy.",
+      "resolution": "Resolution",
+      "dpi": "DPI",
+      "convertToImage": "Convert to Images",
+      "why": "Why convert PDF to images?",
+      "whyDesc": "Converting PDF files to images allows you to share on social media, insert into presentations, or edit in image editing software. Each page is converted to an individual image file.",
+      "error": "Error converting PDF. Please make sure it's a valid PDF file."
+    },
+    "toText": {
+      "title": "PDF to Text",
+      "description": "Extract text from PDF",
+      "pageTitle": "PDF to Text Converter",
+      "pageDescription": "Extract text from PDF files. All conversions are processed in your browser for complete privacy.",
+      "extractText": "Extract Text",
+      "extractComplete": "Text Extraction Complete!",
+      "viewMode": "View Mode",
+      "allText": "All Text",
+      "byPage": "By Page",
+      "noText": "(No text)",
+      "downloadTxt": "Download TXT File",
+      "what": "What is PDF text extraction?",
+      "whatDesc": "Extracting text from PDF files allows you to copy or edit the content. Scanned PDFs (image-based PDFs) may not support text extraction. Works best with text-based PDFs.",
+      "error": "Error extracting text from PDF. Please make sure it's a valid PDF file."
+    },
+    "merge": {
+      "title": "Merge PDF",
+      "description": "Combine multiple PDF files into one",
+      "pageTitle": "Merge PDF",
+      "pageDescription": "Combine multiple PDF files into one. Drag to change the order.",
+      "addFiles": "Add PDF Files",
+      "clickToSelect": "Click to select files",
+      "selectedFiles": "Selected Files",
+      "mergeOrder": "Files will be merged in this order",
+      "mergePdf": "Merge PDFs",
+      "mergeComplete": "Merge Complete!",
+      "downloadMerged": "Download Merged PDF",
+      "minTwoFiles": "At least 2 PDF files are required to merge.",
+      "what": "What is PDF merge?",
+      "whatDesc": "Combining multiple PDF files into a single PDF. Useful for organizing documents or bundling multiple documents together.",
+      "error": "Error merging PDFs. Please make sure the files are valid PDFs."
+    },
+    "split": {
+      "title": "Split PDF",
+      "description": "Divide PDF into multiple files",
+      "pageTitle": "Split PDF",
+      "pageDescription": "Split a PDF file into multiple files. Split by page or custom ranges.",
+      "splitOptions": "Split Options",
+      "splitMode": "Split Mode",
+      "eachPage": "Split by page (each page as individual file)",
+      "half": "Split in half",
+      "custom": "Custom range",
+      "customRange": "Page range (e.g., 1-3, 5, 7-10)",
+      "splitPdf": "Split PDF",
+      "splitComplete": "Split Complete!",
+      "files": "files",
+      "invalidRange": "Please enter a valid page range.",
+      "what": "What is PDF split?",
+      "whatDesc": "Dividing a single PDF file into multiple smaller PDF files. Useful for extracting specific pages or breaking large documents into manageable sizes.",
+      "error": "Error splitting PDF."
+    },
+    "extract": {
+      "title": "Extract Pages",
+      "description": "Extract specific pages from PDF",
+      "pageTitle": "Extract PDF Pages",
+      "pageDescription": "Select and extract specific pages from PDF to create a new PDF.",
+      "selectAll": "Select All",
+      "deselectAll": "Deselect All",
+      "extractPages": "Extract Selected Pages",
+      "extractComplete": "Extraction Complete!",
+      "downloadExtracted": "Download Extracted PDF",
+      "selectPages": "Please select pages to extract.",
+      "what": "What is PDF page extraction?",
+      "whatDesc": "Selecting specific pages from a PDF document and saving them as a new PDF file. Useful for sharing only the necessary parts while excluding unnecessary pages.",
+      "error": "Error extracting pages."
+    },
+    "delete": {
+      "title": "Delete Pages",
+      "description": "Remove specific pages from PDF",
+      "pageTitle": "Delete PDF Pages",
+      "pageDescription": "Select and delete unwanted pages from PDF.",
+      "clickToDelete": "Click pages to delete. Selected pages will be highlighted in red.",
+      "remaining": "After deletion",
+      "pagesRemaining": "pages remaining",
+      "deletePages": "Delete Selected Pages",
+      "deleteComplete": "Deletion Complete!",
+      "downloadEdited": "Download Edited PDF",
+      "selectPages": "Please select pages to delete.",
+      "cannotDeleteAll": "Cannot delete all pages. At least 1 page must remain.",
+      "what": "What is PDF page deletion?",
+      "whatDesc": "Removing unwanted pages from a PDF document. Useful for deleting pages with sensitive information or simplifying documents.",
+      "error": "Error deleting pages."
+    },
+    "reorder": {
+      "title": "Reorder Pages",
+      "description": "Rearrange PDF page order",
+      "pageTitle": "Reorder PDF Pages",
+      "pageDescription": "Freely change PDF page order using drag and drop.",
+      "dragToReorder": "Drag or use buttons to change order",
+      "reverse": "Reverse Order",
+      "resetOrder": "Reset to Original",
+      "original": "Original",
+      "applyReorder": "Apply New Order",
+      "reorderComplete": "Reorder Complete!",
+      "downloadReordered": "Download Reordered PDF",
+      "noChange": "Page order has not been changed.",
+      "what": "What is PDF page reordering?",
+      "whatDesc": "Rearranging the page order of a PDF document as desired. Useful for changing presentation order or reorganizing documents.",
+      "error": "Error reordering pages."
+    },
+    "rotate": {
+      "title": "Rotate Pages",
+      "description": "Rotate PDF pages 90°/180°/270°",
+      "pageTitle": "Rotate PDF Pages",
+      "pageDescription": "Rotate PDF pages by 90°, 180°, or 270°.",
+      "clickToRotate": "Click buttons below each page to rotate",
+      "rotateAll": "Rotate All 90°",
+      "reset": "Reset",
+      "applyRotation": "Apply Rotation",
+      "rotateComplete": "Rotation Complete!",
+      "downloadRotated": "Download Rotated PDF",
+      "selectPages": "Please select pages to rotate.",
+      "what": "What is PDF page rotation?",
+      "whatDesc": "Changing the orientation of pages in a PDF document. Useful for correcting scanned document orientation or changing landscape/portrait orientation.",
+      "error": "Error rotating pages."
+    },
+    "common": {
+      "loadError": "Error loading PDF file."
+    }
+  },
+  "format": {
+    "jpg": "JPG (Recommended - Smaller file size)",
+    "png": "PNG (Supports transparency)",
+    "pngHigh": "PNG (High quality, transparency)",
+    "jpgSmall": "JPG (Smaller file size)"
+  },
+  "whyUse": {
+    "title": "Why use EasyFile?",
+    "free": "100% Free - Unlimited use without sign-up or payment",
+    "privacy": "Complete Privacy - Files never leave your device",
+    "fast": "Fast Conversion - Instant processing in browser",
+    "quality": "High Quality - Original quality preserved",
+    "highRes": "High Resolution - Up to 4x resolution supported",
+    "batch": "Batch Download - Download multiple pages as ZIP",
+    "output": "Various Output - Download TXT or copy to clipboard",
+    "reorder": "Easy Reordering - Easily change file order",
+    "unlimited": "Unlimited Files - No file count limits",
+    "splitOptions": "Various Split Options - Split by page or range",
+    "visual": "Visual Selection - Easy selection with thumbnails",
+    "multi": "Multi-select - Select multiple pages at once",
+    "safe": "Safe Editing - Original files remain unchanged",
+    "dragDrop": "Drag & Drop - Intuitive interface",
+    "preview": "Live Preview - See changes instantly",
+    "individual": "Individual/Batch Rotation - Rotate selected pages only"
+  }
+}
