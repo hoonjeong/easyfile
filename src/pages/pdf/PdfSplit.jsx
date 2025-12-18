@@ -5,7 +5,7 @@ import DropZone from '../../components/DropZone';
 import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import { splitPdf, getPdfPageCount } from '../../utils/pdfUtils';
-import { downloadFile } from '../../utils/download';
+import { downloadFile, sanitizeFilename } from '../../utils/download';
 import JSZip from 'jszip';
 
 const PdfSplit = () => {
@@ -89,7 +89,8 @@ const PdfSplit = () => {
   };
 
   const handleDownloadSingle = (result) => {
-    const baseName = file.name.replace(/\.pdf$/i, '');
+    // Sanitize filename to prevent path traversal attacks
+    const baseName = sanitizeFilename(file.name.replace(/\.pdf$/i, ''));
     downloadFile(result.blob, `${baseName}_${result.range}.pdf`);
   };
 
@@ -99,7 +100,8 @@ const PdfSplit = () => {
       return;
     }
     const zip = new JSZip();
-    const baseName = file.name.replace(/\.pdf$/i, '');
+    // Sanitize filename to prevent Zip Slip and path traversal attacks
+    const baseName = sanitizeFilename(file.name.replace(/\.pdf$/i, ''));
     results.forEach((result) => {
       zip.file(`${baseName}_${result.range}.pdf`, result.blob);
     });
@@ -112,7 +114,7 @@ const PdfSplit = () => {
       <SEOHead
         title={t('pdf.split.pageTitle')}
         description={t('pdf.split.pageDescription')}
-        keywords="PDF split, divide PDF, PDF separator, online PDF split, free PDF split"
+        keywords={t('pdf.split.seoKeywords')}
       />
 
       <div className="page-header">
@@ -122,7 +124,7 @@ const PdfSplit = () => {
 
       <div className="converter-card">
         {!file ? (
-          <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.pdf', 'application/pdf']} />
+          <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.pdf', 'application/pdf']} fileCategory="pdf" />
         ) : (
           <>
             <FilePreview file={file} onRemove={handleRemoveFile} />

@@ -5,7 +5,7 @@ import DropZone from '../../components/DropZone';
 import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import { reorderPages, generateThumbnails } from '../../utils/pdfUtils';
-import { downloadFile } from '../../utils/download';
+import { downloadFile, sanitizeFilename } from '../../utils/download';
 
 const PdfReorder = () => {
   const { t } = useTranslation();
@@ -103,7 +103,8 @@ const PdfReorder = () => {
 
   const handleDownload = () => {
     if (!result) return;
-    const baseName = file.name.replace(/\.pdf$/i, '');
+    // Sanitize filename to prevent path traversal attacks
+    const baseName = sanitizeFilename(file.name.replace(/\.pdf$/i, ''));
     downloadFile(result, `${baseName}_reordered.pdf`);
   };
 
@@ -111,7 +112,7 @@ const PdfReorder = () => {
 
   return (
     <>
-      <SEOHead title={t('pdf.reorder.pageTitle')} description={t('pdf.reorder.pageDescription')} keywords="PDF reorder pages, PDF page order, online PDF tools, free PDF reorder" />
+      <SEOHead title={t('pdf.reorder.pageTitle')} description={t('pdf.reorder.pageDescription')} keywords={t('pdf.reorder.seoKeywords')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('pdf.reorder.pageTitle')}</h1>
@@ -120,7 +121,7 @@ const PdfReorder = () => {
 
       <div className="converter-card">
         {!file ? (
-          <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.pdf', 'application/pdf']} />
+          <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.pdf', 'application/pdf']} fileCategory="pdf" />
         ) : (
           <>
             <FilePreview file={file} onRemove={handleRemoveFile} />

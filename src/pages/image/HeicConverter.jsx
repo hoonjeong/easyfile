@@ -63,7 +63,7 @@ const HeicConverter = () => {
 
   return (
     <>
-      <SEOHead title={t('image.heic.pageTitle')} description={t('image.heic.pageDescription')} keywords="HEIC converter, HEIC to JPG, HEIC to PNG, iPhone photo converter, HEIF converter, online HEIC converter" />
+      <SEOHead title={t('image.heic.pageTitle')} description={t('image.heic.pageDescription')} keywords={t('image.heic.seoKeywords')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('image.heic.pageTitle')}</h1>
@@ -72,7 +72,7 @@ const HeicConverter = () => {
 
       <div className="converter-card">
         {!file ? (
-          <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.heic', '.heif', 'image/heic', 'image/heif']} />
+          <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.heic', '.heif', 'image/heic', 'image/heif']} fileCategory="heic" />
         ) : (
           <>
             <FilePreview file={file} previewUrl={previewUrl} onRemove={handleRemoveFile} />

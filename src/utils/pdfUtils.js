@@ -7,6 +7,11 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   import.meta.url
 ).toString();
 
+// Security limits to prevent DoS attacks
+const MAX_PAGES = 500;  // Maximum pages per PDF
+const MAX_CANVAS_PIXELS = 16777216;  // 4096 x 4096 = 16M pixels max
+const MAX_MERGE_FILES = 50;  // Maximum files to merge at once
+
 /**
  * PDF 파일 로드
  */
@@ -20,12 +25,20 @@ export const loadPdfDocument = async (file) => {
  */
 export const pdfPageToImage = async (pdfDoc, pageNum, scale = 2, format = 'image/png') => {
   const page = await pdfDoc.getPage(pageNum);
-  const viewport = page.getViewport({ scale });
+  let viewport = page.getViewport({ scale });
+
+  // Prevent canvas memory exhaustion by limiting pixel count
+  const totalPixels = viewport.width * viewport.height;
+  if (totalPixels > MAX_CANVAS_PIXELS) {
+    const reductionFactor = Math.sqrt(MAX_CANVAS_PIXELS / totalPixels);
+    const safeScale = scale * reductionFactor;
+    viewport = page.getViewport({ scale: safeScale });
+  }
 
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
-  canvas.width = viewport.width;
-  canvas.height = viewport.height;
+  canvas.width = Math.floor(viewport.width);
+  canvas.height = Math.floor(viewport.height);
 
   await page.render({
     canvasContext: context,
@@ -45,6 +58,12 @@ export const pdfPageToImage = async (pdfDoc, pageNum, scale = 2, format = 'image
 export const pdfToImages = async (file, scale = 2, format = 'image/png', onProgress) => {
   const pdfDoc = await loadPdfDocument(file);
   const numPages = pdfDoc.numPages;
+
+  // Limit pages to prevent DoS
+  if (numPages > MAX_PAGES) {
+    throw new Error(`PDF has too many pages (${numPages}). Maximum allowed: ${MAX_PAGES}`);
+  }
+
   const images = [];
 
   for (let i = 1; i <= numPages; i++) {
@@ -90,13 +109,27 @@ export const extractTextFromPdf = async (file, onProgress) => {
  * PDF 병합
  */
 export const mergePdfs = async (files, onProgress) => {
+  // Limit number of files to prevent DoS
+  if (files.length > MAX_MERGE_FILES) {
+    throw new Error(`Too many files to merge (${files.length}). Maximum allowed: ${MAX_MERGE_FILES}`);
+  }
+
   const mergedPdf = await PDFDocument.create();
+  let totalPages = 0;
 
   for (let i = 0; i < files.length; i++) {
     const fileBytes = await files[i].arrayBuffer();
     const pdf = await PDFDocument.load(fileBytes);
+    const pageCount = pdf.getPageCount();
+
+    // Check total page limit
+    if (totalPages + pageCount > MAX_PAGES) {
+      throw new Error(`Total pages exceed limit. Maximum allowed: ${MAX_PAGES}`);
+    }
+
     const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
     pages.forEach(page => mergedPdf.addPage(page));
+    totalPages += pageCount;
 
     if (onProgress) {
       onProgress(Math.round(((i + 1) / files.length) * 100));
@@ -252,6 +285,12 @@ export const getPdfPageCount = async (file) => {
 export const generateThumbnails = async (file, scale = 0.3, onProgress) => {
   const pdfDoc = await loadPdfDocument(file);
   const numPages = pdfDoc.numPages;
+
+  // Limit pages to prevent DoS
+  if (numPages > MAX_PAGES) {
+    throw new Error(`PDF has too many pages (${numPages}). Maximum allowed: ${MAX_PAGES}`);
+  }
+
   const thumbnails = [];
 
   for (let i = 1; i <= numPages; i++) {
@@ -260,8 +299,8 @@ export const generateThumbnails = async (file, scale = 0.3, onProgress) => {
 
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
+    canvas.width = Math.floor(viewport.width);
+    canvas.height = Math.floor(viewport.height);
 
     await page.render({
       canvasContext: context,

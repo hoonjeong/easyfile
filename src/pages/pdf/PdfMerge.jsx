@@ -4,6 +4,7 @@ import SEOHead from '../../components/SEOHead';
 import ProgressBar from '../../components/ProgressBar';
 import { mergePdfs } from '../../utils/pdfUtils';
 import { downloadFile } from '../../utils/download';
+import { securityCheck, validateFileType } from '../../utils/fileValidation';
 
 const PdfMerge = () => {
   const { t } = useTranslation();
@@ -12,15 +13,38 @@ const PdfMerge = () => {
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [validationError, setValidationError] = useState(null);
 
   const handleFileSelect = useCallback((e) => {
     const selectedFiles = Array.from(e.target.files);
-    const pdfFiles = selectedFiles.filter(f => f.type === 'application/pdf' || f.name.endsWith('.pdf'));
-    setFiles(prev => [...prev, ...pdfFiles]);
-    setResult(null);
-    setError(null);
+    const validFiles = [];
+
+    for (const file of selectedFiles) {
+      // Security check
+      const secResult = securityCheck(file);
+      if (!secResult.valid) {
+        setValidationError(t(secResult.error));
+        continue;
+      }
+
+      // Type validation
+      const typeResult = validateFileType(file, 'pdf');
+      if (!typeResult.valid) {
+        setValidationError(t(typeResult.error, { allowed: typeResult.allowed || '' }));
+        continue;
+      }
+
+      validFiles.push(file);
+    }
+
+    if (validFiles.length > 0) {
+      setFiles(prev => [...prev, ...validFiles]);
+      setResult(null);
+      setError(null);
+      setValidationError(null);
+    }
     e.target.value = '';
-  }, []);
+  }, [t]);
 
   const handleRemoveFile = (index) => {
     setFiles(prev => prev.filter((_, i) => i !== index));
@@ -83,7 +107,7 @@ const PdfMerge = () => {
       <SEOHead
         title={t('pdf.merge.pageTitle')}
         description={t('pdf.merge.pageDescription')}
-        keywords="PDF merge, combine PDF, PDF join, online PDF merge, free PDF merge"
+        keywords={t('pdf.merge.seoKeywords')}
       />
 
       <div className="page-header">
@@ -119,6 +143,15 @@ const PdfMerge = () => {
             />
           </label>
         </div>
+
+        {validationError && (
+          <div className="drop-zone-error" style={{ marginBottom: '16px' }}>
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span>{validationError}</span>
+          </div>
+        )}
 
         {files.length > 0 && (
           <div style={{ marginBottom: '20px' }}>

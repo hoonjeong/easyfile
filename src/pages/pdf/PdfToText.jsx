@@ -74,7 +74,7 @@ const PdfToText = () => {
       <SEOHead
         title={t('pdf.toText.pageTitle')}
         description={t('pdf.toText.pageDescription')}
-        keywords="PDF text extract, PDF to text, PDF converter, text extraction, online PDF converter, free PDF converter"
+        keywords={t('pdf.toText.seoKeywords')}
       />
 
       <div className="page-header">
@@ -87,6 +87,7 @@ const PdfToText = () => {
           <DropZone
             onFileSelect={handleFileSelect}
             acceptedTypes={['.pdf', 'application/pdf']}
+            fileCategory="pdf"
           />
         ) : (
           <>

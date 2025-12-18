@@ -11,7 +11,10 @@
       "Bash(git push:*)",
       "Bash(npm run dev:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: add multilingual support \\(Korean/English\\)\n\n- Add i18next for internationalization\n- Create translation files \\(ko.json, en.json\\)\n- Add language selector \\(KR/EN\\) in header\n- Update all pages with translations\n- Move PDF to first position in menu and home\n- Fix PDF.js worker configuration for v5.x\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(npm audit:*)",
+      "Bash(npm ls:*)",
+      "Bash(npm uninstall:*)"
     ]
   }
 }

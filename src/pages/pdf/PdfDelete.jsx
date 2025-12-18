@@ -5,7 +5,7 @@ import DropZone from '../../components/DropZone';
 import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import { deletePages, generateThumbnails } from '../../utils/pdfUtils';
-import { downloadFile } from '../../utils/download';
+import { downloadFile, sanitizeFilename } from '../../utils/download';
 
 const PdfDelete = () => {
   const { t } = useTranslation();
@@ -82,7 +82,8 @@ const PdfDelete = () => {
 
   const handleDownload = () => {
     if (!result) return;
-    const baseName = file.name.replace(/\.pdf$/i, '');
+    // Sanitize filename to prevent path traversal attacks
+    const baseName = sanitizeFilename(file.name.replace(/\.pdf$/i, ''));
     downloadFile(result, `${baseName}_edited.pdf`);
   };
 
@@ -91,7 +92,7 @@ const PdfDelete = () => {
       <SEOHead
         title={t('pdf.delete.pageTitle')}
         description={t('pdf.delete.pageDescription')}
-        keywords="PDF delete pages, PDF remove pages, online PDF tools, free PDF edit"
+        keywords={t('pdf.delete.seoKeywords')}
       />
 
       <div className="page-header">
@@ -101,7 +102,7 @@ const PdfDelete = () => {
 
       <div className="converter-card">
         {!file ? (
-          <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.pdf', 'application/pdf']} />
+          <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.pdf', 'application/pdf']} fileCategory="pdf" />
         ) : (
           <>
             <FilePreview file={file} onRemove={handleRemoveFile} />

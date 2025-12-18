@@ -72,7 +72,7 @@ const WebpConverter = () => {
 
   return (
     <>
-      <SEOHead title={t('image.webp.pageTitle')} description={t('image.webp.pageDescription')} keywords="WebP converter, WebP to JPG, WebP to PNG, online WebP converter, free WebP converter" />
+      <SEOHead title={t('image.webp.pageTitle')} description={t('image.webp.pageDescription')} keywords={t('image.webp.seoKeywords')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('image.webp.pageTitle')}</h1>
@@ -81,7 +81,7 @@ const WebpConverter = () => {
 
       <div className="converter-card">
         {!file ? (
-          <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.webp', 'image/webp']} />
+          <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.webp', 'image/webp']} fileCategory="webp" />
         ) : (
           <>
             <FilePreview file={file} previewUrl={previewUrl} onRemove={handleRemoveFile} />

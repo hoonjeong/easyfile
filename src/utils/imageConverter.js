@@ -1,4 +1,5 @@
 import heic2any from 'heic2any';
+import { sanitizeSvg } from './svgSanitizer';
 
 // HEIC to JPG/PNG
 export const convertHeic = async (file, outputFormat = 'image/jpeg', quality = 0.92) => {
@@ -54,41 +55,48 @@ export const convertImageWithCanvas = async (file, outputFormat = 'image/jpeg', 
   });
 };
 
-// SVG to PNG
+// SVG to PNG (with sanitization for security)
 export const convertSvgToPng = async (file, scale = 2) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
     reader.onload = (e) => {
-      const svgData = e.target.result;
-      const img = new Image();
+      try {
+        // Sanitize SVG to remove malicious scripts and event handlers
+        const rawSvgData = e.target.result;
+        const sanitizedSvgData = sanitizeSvg(rawSvgData);
 
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width * scale;
-        canvas.height = img.height * scale;
+        const img = new Image();
 
-        const ctx = canvas.getContext('2d');
-        ctx.scale(scale, scale);
-        ctx.drawImage(img, 0, 0);
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
 
-        canvas.toBlob(
-          (blob) => {
-            if (blob) {
-              resolve(blob);
-            } else {
-              reject(new Error('SVG 변환에 실패했습니다.'));
-            }
-          },
-          'image/png'
-        );
-      };
+          const ctx = canvas.getContext('2d');
+          ctx.scale(scale, scale);
+          ctx.drawImage(img, 0, 0);
 
-      img.onerror = () => {
-        reject(new Error('SVG를 불러올 수 없습니다.'));
-      };
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                resolve(blob);
+              } else {
+                reject(new Error('SVG 변환에 실패했습니다.'));
+              }
+            },
+            'image/png'
+          );
+        };
 
-      img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+        img.onerror = () => {
+          reject(new Error('SVG를 불러올 수 없습니다.'));
+        };
+
+        img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(sanitizedSvgData)));
+      } catch (err) {
+        reject(new Error('SVG 파일이 유효하지 않습니다.'));
+      }
     };
 
     reader.onerror = () => reject(new Error('파일을 읽을 수 없습니다.'));

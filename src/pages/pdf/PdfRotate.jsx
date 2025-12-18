@@ -5,7 +5,7 @@ import DropZone from '../../components/DropZone';
 import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import { rotatePages, generateThumbnails } from '../../utils/pdfUtils';
-import { downloadFile } from '../../utils/download';
+import { downloadFile, sanitizeFilename } from '../../utils/download';
 
 const PdfRotate = () => {
   const { t } = useTranslation();
@@ -94,7 +94,8 @@ const PdfRotate = () => {
 
   const handleDownload = () => {
     if (!result) return;
-    const baseName = file.name.replace(/\.pdf$/i, '');
+    // Sanitize filename to prevent path traversal attacks
+    const baseName = sanitizeFilename(file.name.replace(/\.pdf$/i, ''));
     downloadFile(result, `${baseName}_rotated.pdf`);
   };
 
@@ -102,7 +103,7 @@ const PdfRotate = () => {
 
   return (
     <>
-      <SEOHead title={t('pdf.rotate.pageTitle')} description={t('pdf.rotate.pageDescription')} keywords="PDF rotate pages, PDF page rotation, online PDF tools, free PDF rotate" />
+      <SEOHead title={t('pdf.rotate.pageTitle')} description={t('pdf.rotate.pageDescription')} keywords={t('pdf.rotate.seoKeywords')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('pdf.rotate.pageTitle')}</h1>
@@ -111,7 +112,7 @@ const PdfRotate = () => {
 
       <div className="converter-card">
         {!file ? (
-          <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.pdf', 'application/pdf']} />
+          <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.pdf', 'application/pdf']} fileCategory="pdf" />
         ) : (
           <>
             <FilePreview file={file} onRemove={handleRemoveFile} />

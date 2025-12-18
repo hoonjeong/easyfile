@@ -5,7 +5,7 @@ import DropZone from '../../components/DropZone';
 import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import { extractPages, generateThumbnails } from '../../utils/pdfUtils';
-import { downloadFile } from '../../utils/download';
+import { downloadFile, sanitizeFilename } from '../../utils/download';
 
 const PdfExtract = () => {
   const { t } = useTranslation();
@@ -81,7 +81,8 @@ const PdfExtract = () => {
 
   const handleDownload = () => {
     if (!result) return;
-    const baseName = file.name.replace(/\.pdf$/i, '');
+    // Sanitize filename to prevent path traversal attacks
+    const baseName = sanitizeFilename(file.name.replace(/\.pdf$/i, ''));
     downloadFile(result, `${baseName}_extracted.pdf`);
   };
 
@@ -90,7 +91,7 @@ const PdfExtract = () => {
       <SEOHead
         title={t('pdf.extract.pageTitle')}
         description={t('pdf.extract.pageDescription')}
-        keywords="PDF extract pages, PDF page extraction, online PDF tools, free PDF extract"
+        keywords={t('pdf.extract.seoKeywords')}
       />
 
       <div className="page-header">
@@ -100,7 +101,7 @@ const PdfExtract = () => {
 
       <div className="converter-card">
         {!file ? (
-          <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.pdf', 'application/pdf']} />
+          <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.pdf', 'application/pdf']} fileCategory="pdf" />
         ) : (
           <>
             <FilePreview file={file} onRemove={handleRemoveFile} />

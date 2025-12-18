@@ -1,4 +1,6 @@
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import DOMPurify from 'dompurify';
 import SEOHead from '../../components/SEOHead';
 import DropZone from '../../components/DropZone';
 import FilePreview from '../../components/FilePreview';
@@ -7,6 +9,7 @@ import { downloadFile, getFilenameWithNewExtension } from '../../utils/download'
 import { marked } from 'marked';
 
 const MarkdownConverter = () => {
+  const { t, i18n } = useTranslation();
   const [file, setFile] = useState(null);
   const [markdownText, setMarkdownText] = useState('');
   const [outputFormat, setOutputFormat] = useState('html');
@@ -15,7 +18,7 @@ const MarkdownConverter = () => {
   const [result, setResult] = useState(null);
   const [preview, setPreview] = useState(null);
   const [error, setError] = useState(null);
-  const [inputMode, setInputMode] = useState('file'); // 'file' or 'text'
+  const [inputMode, setInputMode] = useState('file');
 
   const handleFileSelect = useCallback((selectedFile) => {
     setFile(selectedFile);
@@ -25,7 +28,6 @@ const MarkdownConverter = () => {
     setError(null);
     setProgress(0);
 
-    // Read file content
     const reader = new FileReader();
     reader.onload = (e) => {
       setMarkdownText(e.target.result);
@@ -52,16 +54,18 @@ const MarkdownConverter = () => {
     try {
       setProgress(30);
 
-      const htmlContent = marked(markdownText);
+      const rawHtml = marked(markdownText);
+      const htmlContent = DOMPurify.sanitize(rawHtml);
       setProgress(60);
 
       let outputData;
       let mimeType;
       let extension;
+      const lang = i18n.language === 'ko' ? 'ko' : 'en';
 
       if (outputFormat === 'html') {
         outputData = `<!DOCTYPE html>
-<html lang="ko">
+<html lang="${lang}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -116,7 +120,7 @@ ${htmlContent}
       setProgress(100);
     } catch (err) {
       console.error(err);
-      setError('Markdown 변환 중 오류가 발생했습니다.');
+      setError(t('document.markdown.error'));
     } finally {
       setConverting(false);
     }
@@ -132,18 +136,11 @@ ${htmlContent}
 
   return (
     <>
-      <SEOHead
-        title="Markdown HTML 변환 - 마크다운 변환기"
-        description="Markdown 파일을 HTML로 무료 변환. MD 파일을 보기 좋은 웹페이지로 변환하세요. GitHub README를 HTML로 변환할 수 있습니다."
-        keywords="Markdown 변환, MD HTML 변환, 마크다운 변환기, GitHub README 변환, 온라인 Markdown 변환기"
-      />
+      <SEOHead title={t('document.markdown.pageTitle')} description={t('document.markdown.pageDescription')} keywords={t('document.markdown.seoKeywords')} />
 
       <div className="page-header">
-        <h1 className="page-title">Markdown to HTML 변환기</h1>
-        <p className="page-description">
-          Markdown 파일을 보기 좋은 HTML로 변환하세요.
-          GitHub 스타일의 문서로 렌더링됩니다.
-        </p>
+        <h1 className="page-title">{t('document.markdown.pageTitle')}</h1>
+        <p className="page-description">{t('document.markdown.pageDescription')}</p>
       </div>
 
       <div className="converter-card">
@@ -159,7 +156,7 @@ ${htmlContent}
               transition: 'all 0.2s'
             }}
           >
-            파일 업로드
+            {t('document.markdown.fileUpload')}
           </button>
           <button
             onClick={() => { setInputMode('text'); handleRemoveFile(); }}
@@ -172,20 +169,17 @@ ${htmlContent}
               transition: 'all 0.2s'
             }}
           >
-            직접 입력
+            {t('document.markdown.directInput')}
           </button>
         </div>
 
         {inputMode === 'file' && !file ? (
-          <DropZone
-            onFileSelect={handleFileSelect}
-            acceptedTypes={['.md', '.markdown', 'text/markdown']}
-          />
+          <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.md', '.markdown', 'text/markdown']} fileCategory="markdown" />
         ) : inputMode === 'text' ? (
           <textarea
             value={markdownText}
             onChange={(e) => setMarkdownText(e.target.value)}
-            placeholder="# 제목&#10;&#10;마크다운 내용을 입력하세요...&#10;&#10;- 목록 1&#10;- 목록 2&#10;&#10;**굵은 글씨** 또는 *기울임*"
+            placeholder={t('document.markdown.placeholder')}
             style={{
               width: '100%',
               minHeight: '200px',
@@ -199,87 +193,44 @@ ${htmlContent}
             }}
           />
         ) : (
-          <FilePreview
-            file={file}
-            onRemove={handleRemoveFile}
-          />
+          <FilePreview file={file} onRemove={handleRemoveFile} />
         )}
 
         {(file || markdownText) && (
           <>
             {converting && <ProgressBar progress={progress} />}
-
-            {error && (
-              <div className="error">
-                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                {error}
-              </div>
-            )}
+            {error && <div className="error"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>{error}</div>}
 
             {preview && (
-              <div style={{
-                marginTop: '16px',
-                padding: '20px',
-                background: 'white',
-                border: '1px solid var(--border-color)',
-                borderRadius: '8px',
-                maxHeight: '300px',
-                overflow: 'auto'
-              }}>
+              <div style={{ marginTop: '16px', padding: '20px', background: 'white', border: '1px solid var(--border-color)', borderRadius: '8px', maxHeight: '300px', overflow: 'auto' }}>
                 <div dangerouslySetInnerHTML={{ __html: preview }} />
               </div>
             )}
 
             {result && (
               <div className="result">
-                <h4 className="result-title">
-                  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  변환 완료!
-                </h4>
-                <button className="download-button" onClick={handleDownload}>
-                  HTML 파일 다운로드
-                </button>
+                <h4 className="result-title"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>{t('common.conversionComplete')}</h4>
+                <button className="download-button" onClick={handleDownload}>{t('document.downloadFormat', { format: 'HTML' })}</button>
               </div>
             )}
 
             {!result && !converting && markdownText && (
-              <button
-                className="convert-button"
-                onClick={handleConvert}
-                disabled={!markdownText}
-              >
-                HTML로 변환하기
-              </button>
+              <button className="convert-button" onClick={handleConvert} disabled={!markdownText}>{t('document.convertToFormat', { format: 'HTML' })}</button>
             )}
           </>
         )}
       </div>
 
       <div className="seo-content">
-        <h2>Markdown이란?</h2>
-        <p>
-          Markdown은 텍스트 기반의 경량 마크업 언어입니다.
-          GitHub, Notion, 개발 문서 등에서 널리 사용됩니다.
-          간단한 문법으로 제목, 목록, 링크, 코드 블록 등을 표현할 수 있습니다.
-        </p>
-
-        <h2>Markdown을 HTML로 변환하는 이유</h2>
+        <h2>{t('document.markdown.whatIs')}</h2>
+        <p>{t('document.markdown.whatIsDesc')}</p>
+        <h2>{t('whyUse.title')}</h2>
         <ul>
-          <li>GitHub README를 웹페이지로 공유할 때</li>
-          <li>마크다운 문서를 이메일로 보낼 때</li>
-          <li>기술 문서를 보기 좋게 렌더링할 때</li>
-          <li>블로그나 웹사이트에 게시할 때</li>
+          <li><strong>{t('whyUse.free')}</strong></li>
+          <li><strong>{t('whyUse.privacy')}</strong></li>
+          <li><strong>{t('whyUse.fast')}</strong></li>
+          <li><strong>{t('whyUse.quality')}</strong></li>
         </ul>
-
-        <h2>지원하는 마크다운 문법</h2>
-        <p>
-          제목(#), 목록(-, *), 링크, 이미지, 코드 블록, 인용문, 표, 굵은 글씨, 기울임 등
-          표준 마크다운 문법을 모두 지원합니다.
-        </p>
       </div>
     </>
   );

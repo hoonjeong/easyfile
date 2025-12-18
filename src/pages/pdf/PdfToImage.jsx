@@ -5,7 +5,7 @@ import DropZone from '../../components/DropZone';
 import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import { pdfToImages } from '../../utils/pdfUtils';
-import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
+import { downloadFile, getFilenameWithNewExtension, sanitizeFilename } from '../../utils/download';
 import JSZip from 'jszip';
 
 const PdfToImage = () => {
@@ -65,9 +65,11 @@ const PdfToImage = () => {
 
     const zip = new JSZip();
     const extension = outputFormat === 'image/jpeg' ? 'jpg' : 'png';
-    const baseName = file.name.replace(/\.pdf$/i, '');
+    // Sanitize filename to prevent Zip Slip and path traversal attacks
+    const baseName = sanitizeFilename(file.name.replace(/\.pdf$/i, ''));
 
     results.forEach((image) => {
+      // Use sanitized filename inside ZIP
       zip.file(`${baseName}_page${image.pageNum}.${extension}`, image.blob);
     });
 
@@ -80,7 +82,7 @@ const PdfToImage = () => {
       <SEOHead
         title={t('pdf.toImage.pageTitle')}
         description={t('pdf.toImage.pageDescription')}
-        keywords="PDF converter, PDF JPG, PDF PNG, PDF to image, online PDF converter, free PDF converter"
+        keywords={t('pdf.toImage.seoKeywords')}
       />
 
       <div className="page-header">
@@ -93,6 +95,7 @@ const PdfToImage = () => {
           <DropZone
             onFileSelect={handleFileSelect}
             acceptedTypes={['.pdf', 'application/pdf']}
+            fileCategory="pdf"
           />
         ) : (
           <>
