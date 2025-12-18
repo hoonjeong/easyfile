@@ -24,6 +24,17 @@ import AudioConverter from './pages/media/AudioConverter';
 import VideoConverter from './pages/media/VideoConverter';
 import GifConverter from './pages/media/GifConverter';
 
+// PDF tools
+import PdfIndex from './pages/pdf/PdfIndex';
+import PdfToImage from './pages/pdf/PdfToImage';
+import PdfToText from './pages/pdf/PdfToText';
+import PdfMerge from './pages/pdf/PdfMerge';
+import PdfSplit from './pages/pdf/PdfSplit';
+import PdfExtract from './pages/pdf/PdfExtract';
+import PdfDelete from './pages/pdf/PdfDelete';
+import PdfReorder from './pages/pdf/PdfReorder';
+import PdfRotate from './pages/pdf/PdfRotate';
+
 import './styles/global.css';
 
 function App() {
@@ -55,6 +66,17 @@ function App() {
             <Route path="/media/m4a-to-mp3" element={<AudioConverter />} />
             <Route path="/media/webm-to-mp4" element={<VideoConverter />} />
             <Route path="/media/gif-to-mp4" element={<GifConverter />} />
+
+            {/* PDF tools */}
+            <Route path="/pdf" element={<PdfIndex />} />
+            <Route path="/pdf/pdf-to-image" element={<PdfToImage />} />
+            <Route path="/pdf/pdf-to-text" element={<PdfToText />} />
+            <Route path="/pdf/merge" element={<PdfMerge />} />
+            <Route path="/pdf/split" element={<PdfSplit />} />
+            <Route path="/pdf/extract" element={<PdfExtract />} />
+            <Route path="/pdf/delete" element={<PdfDelete />} />
+            <Route path="/pdf/reorder" element={<PdfReorder />} />
+            <Route path="/pdf/rotate" element={<PdfRotate />} />
           </Routes>
         </Layout>
       </Router>

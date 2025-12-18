@@ -8,6 +8,7 @@ const Layout = ({ children }) => {
     { path: '/image', label: '이미지' },
     { path: '/document', label: '문서' },
     { path: '/media', label: '미디어' },
+    { path: '/pdf', label: 'PDF' },
   ];
 
   return (

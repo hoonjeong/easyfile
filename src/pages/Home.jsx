@@ -44,6 +44,22 @@ const categories = [
       { name: 'WebM → MP4', path: '/media/webm-to-mp4' },
       { name: 'GIF → MP4', path: '/media/gif-to-mp4' },
     ]
+  },
+  {
+    id: 'pdf',
+    title: 'PDF 도구',
+    description: 'PDF 변환, 병합, 분할, 페이지 편집 등 다양한 PDF 기능',
+    icon: '📑',
+    iconClass: 'pdf',
+    path: '/pdf',
+    converters: [
+      { name: 'PDF → 이미지', path: '/pdf/pdf-to-image' },
+      { name: 'PDF → 텍스트', path: '/pdf/pdf-to-text' },
+      { name: 'PDF 병합', path: '/pdf/merge' },
+      { name: 'PDF 분할', path: '/pdf/split' },
+      { name: '페이지 추출', path: '/pdf/extract' },
+      { name: '페이지 회전', path: '/pdf/rotate' },
+    ]
   }
 ];
 
@@ -194,6 +210,9 @@ const Home = () => {
         </p>
         <p>
           <strong>미디어:</strong> M4A → MP3, WebM → MP4, GIF → MP4
+        </p>
+        <p>
+          <strong>PDF:</strong> PDF → 이미지, PDF → 텍스트, PDF 병합, 분할, 페이지 추출, 삭제, 순서 변경, 회전
         </p>
       </section>
     </>
