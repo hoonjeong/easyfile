@@ -67,6 +67,9 @@ const Layout = ({ children }) => {
           <p className="footer-text">
             <span className="footer-highlight">{t('common.tagline')}</span> - {t('common.footerText')}
           </p>
+          <p className="footer-contact">
+            {t('common.contact')}: <a href="mailto:hoonjeong.eden@gmail.com">hoonjeong.eden@gmail.com</a>
+          </p>
         </div>
       </footer>
     </>

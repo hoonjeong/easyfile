@@ -438,6 +438,21 @@ button {
   font-weight: 600;
 }
 
+.footer-contact {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.footer-contact a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.footer-contact a:hover {
+  text-decoration: underline;
+}
+
 /* Home Page */
 .hero {
   text-align: center;

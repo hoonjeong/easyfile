@@ -24,7 +24,8 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "copyToClipboard": "Copy to Clipboard",
-    "copiedToClipboard": "Copied to clipboard!"
+    "copiedToClipboard": "Copied to clipboard!",
+    "contact": "Contact"
   },
   "nav": {
     "home": "Home",

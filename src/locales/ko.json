@@ -24,7 +24,8 @@
     "cancel": "취소",
     "confirm": "확인",
     "copyToClipboard": "클립보드에 복사",
-    "copiedToClipboard": "클립보드에 복사되었습니다!"
+    "copiedToClipboard": "클립보드에 복사되었습니다!",
+    "contact": "문의"
   },
   "nav": {
     "home": "홈",
