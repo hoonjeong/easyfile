@@ -1,14 +1,9 @@
-const FilePreview = ({ file, previewUrl, onRemove }) => {
-  const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
+import { formatFileSize, getFileExtension } from '../utils/fileValidation';
 
-  const getFileExtension = (filename) => {
-    return filename.split('.').pop()?.toUpperCase() || 'FILE';
+const FilePreview = ({ file, previewUrl, onRemove }) => {
+  const getExtensionDisplay = (filename) => {
+    const ext = getFileExtension(filename);
+    return ext ? ext.toUpperCase().replace('.', '') : 'FILE';
   };
 
   return (
@@ -21,7 +16,7 @@ const FilePreview = ({ file, previewUrl, onRemove }) => {
         </div>
         <div className="file-details">
           <h4>{file.name}</h4>
-          <span>{getFileExtension(file.name)} • {formatFileSize(file.size)}</span>
+          <span>{getExtensionDisplay(file.name)} • {formatFileSize(file.size)}</span>
         </div>
         {onRemove && (
           <button
