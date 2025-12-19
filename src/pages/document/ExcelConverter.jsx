@@ -4,6 +4,8 @@ import SEOHead from '../../components/SEOHead';
 import DropZone from '../../components/DropZone';
 import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
+import ErrorDisplay from '../../components/ErrorDisplay';
+import ResultDisplay from '../../components/ResultDisplay';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import ExcelJS from 'exceljs';
 import DOMPurify from 'dompurify';
@@ -270,7 +272,7 @@ const ExcelConverter = () => {
             </div>
 
             {converting && <ProgressBar progress={progress} />}
-            {error && <div className="error"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>{error}</div>}
+            <ErrorDisplay error={error} />
 
             {preview && (
               <div style={{ marginTop: '16px', padding: '16px', background: '#1E293B', borderRadius: '8px', maxHeight: '200px', overflow: 'auto' }}>
@@ -278,12 +280,11 @@ const ExcelConverter = () => {
               </div>
             )}
 
-            {result && (
-              <div className="result">
-                <h4 className="result-title"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>{t('common.conversionComplete')}</h4>
-                <button className="download-button" onClick={handleDownload}>{t('document.downloadFormat', { format: getFormatLabel() })}</button>
-              </div>
-            )}
+            <ResultDisplay
+              result={result}
+              onDownload={handleDownload}
+              downloadLabel={t('document.downloadFormat', { format: getFormatLabel() })}
+            />
 
             {!result && !converting && (
               <button className="convert-button" onClick={handleConvert} disabled={!file}>{t('document.convertToFormat', { format: getFormatLabel() })}</button>

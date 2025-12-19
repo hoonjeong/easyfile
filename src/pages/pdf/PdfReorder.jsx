@@ -4,6 +4,7 @@ import SEOHead from '../../components/SEOHead';
 import DropZone from '../../components/DropZone';
 import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
+import ErrorDisplay from '../../components/ErrorDisplay';
 import { reorderPages, generateThumbnails } from '../../utils/pdfUtils';
 import { downloadFile, sanitizeFilename } from '../../utils/download';
 
@@ -170,7 +171,7 @@ const PdfReorder = () => {
             )}
 
             {reordering && <ProgressBar progress={progress} />}
-            {error && <div className="error"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>{error}</div>}
+            <ErrorDisplay error={error} />
 
             {result && (
               <div className="result">

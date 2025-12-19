@@ -4,6 +4,8 @@ import SEOHead from '../../components/SEOHead';
 import DropZone from '../../components/DropZone';
 import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
+import ErrorDisplay from '../../components/ErrorDisplay';
+import ResultDisplay from '../../components/ResultDisplay';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import { formatFileSize } from '../../utils/fileValidation';
 import { FFmpeg } from '@ffmpeg/ffmpeg';
@@ -188,22 +190,20 @@ const GifConverter = () => {
             </div>
 
             {converting && <ProgressBar progress={progress} text={progressText} />}
-            {error && <div className="error"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>{error}</div>}
+            <ErrorDisplay error={error} />
 
-            {result && (
-              <div className="result">
-                <h4 className="result-title"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>{t('common.conversionComplete')}</h4>
-
-                {compressionRatio !== null && compressionRatio > 0 && (
-                  <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '12px 16px', borderRadius: '8px', marginBottom: '16px', textAlign: 'center' }}>
-                    <div style={{ fontWeight: '600', color: 'var(--success-color)', fontSize: '1.25rem' }}>{t('media.gif.compressionResult', { percent: compressionRatio })}</div>
-                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '4px' }}>{formatFileSize(file.size)} → {formatFileSize(resultSize)}</div>
-                  </div>
-                )}
-
-                <button className="download-button" onClick={handleDownload}>{t('media.downloadFormat', { format: 'MP4' })}</button>
-              </div>
-            )}
+            <ResultDisplay
+              result={result}
+              onDownload={handleDownload}
+              downloadLabel={t('media.downloadFormat', { format: 'MP4' })}
+            >
+              {compressionRatio !== null && compressionRatio > 0 && (
+                <div className="compression-result">
+                  <div style={{ fontWeight: '600', color: 'var(--success-color)', fontSize: '1.25rem' }}>{t('media.gif.compressionResult', { percent: compressionRatio })}</div>
+                  <div style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '4px' }}>{formatFileSize(file.size)} → {formatFileSize(resultSize)}</div>
+                </div>
+              )}
+            </ResultDisplay>
 
             {!result && !converting && (
               <button className="convert-button" onClick={handleConvert} disabled={!file}>{t('media.convertToFormat', { format: 'MP4' })}</button>

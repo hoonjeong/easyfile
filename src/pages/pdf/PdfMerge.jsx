@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import SEOHead from '../../components/SEOHead';
 import ProgressBar from '../../components/ProgressBar';
+import ErrorDisplay from '../../components/ErrorDisplay';
 import { mergePdfs } from '../../utils/pdfUtils';
 import { downloadFile } from '../../utils/download';
 import { securityCheck, validateFileType } from '../../utils/fileValidation';
@@ -191,14 +192,7 @@ const PdfMerge = () => {
 
         {merging && <ProgressBar progress={progress} />}
 
-        {error && (
-          <div className="error">
-            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            {error}
-          </div>
-        )}
+        <ErrorDisplay error={error} />
 
         {result && (
           <div className="result">

@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import html2canvas from 'html2canvas';
 import SEOHead from '../../components/SEOHead';
 import ProgressBar from '../../components/ProgressBar';
+import ErrorDisplay from '../../components/ErrorDisplay';
+import ResultDisplay from '../../components/ResultDisplay';
 import { downloadFile } from '../../utils/download';
 
 /**
@@ -257,14 +259,13 @@ const LatexConverter = () => {
         </div>
 
         {converting && <ProgressBar progress={progress} />}
-        {error && <div className="error"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>{error}</div>}
+        <ErrorDisplay error={error} />
 
-        {result && (
-          <div className="result">
-            <h4 className="result-title"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>{t('common.conversionComplete')}</h4>
-            <button className="download-button" onClick={handleDownload}>{t('document.downloadFormat', { format: outputFormat.toUpperCase() })}</button>
-          </div>
-        )}
+        <ResultDisplay
+          result={result}
+          onDownload={handleDownload}
+          downloadLabel={t('document.downloadFormat', { format: outputFormat.toUpperCase() })}
+        />
 
         {!result && !converting && latexInput && mathJaxReady && (
           <button className="convert-button" onClick={handleConvert} disabled={!latexInput || !mathJaxReady}>{t('document.convertToFormat', { format: outputFormat.toUpperCase() })}</button>

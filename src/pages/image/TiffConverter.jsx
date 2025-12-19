@@ -4,6 +4,8 @@ import SEOHead from '../../components/SEOHead';
 import DropZone from '../../components/DropZone';
 import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
+import ErrorDisplay from '../../components/ErrorDisplay';
+import ResultDisplay from '../../components/ResultDisplay';
 import { createPreviewUrl, revokePreviewUrl } from '../../utils/imageConverter';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import * as UTIF from 'utif2';
@@ -141,14 +143,12 @@ const TiffConverter = () => {
             </div>
 
             {converting && <ProgressBar progress={progress} />}
-            {error && <div className="error"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>{error}</div>}
-
-            {result && (
-              <div className="result">
-                <h4 className="result-title"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>{t('common.conversionComplete')}</h4>
-                <button className="download-button" onClick={handleDownload}>{outputFormat === 'image/jpeg' ? t('image.downloadJpg') : t('image.downloadPng')}</button>
-              </div>
-            )}
+            <ErrorDisplay error={error} />
+            <ResultDisplay
+              result={result}
+              onDownload={handleDownload}
+              downloadLabel={outputFormat === 'image/jpeg' ? t('image.downloadJpg') : t('image.downloadPng')}
+            />
 
             {!result && !converting && (
               <button className="convert-button" onClick={handleConvert} disabled={!file}>{outputFormat === 'image/jpeg' ? t('image.convertToJpg') : t('image.convertToPng')}</button>
