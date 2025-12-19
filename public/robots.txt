@@ -1,0 +1,7 @@
+# EasyFile - robots.txt
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://easyfile.tools/sitemap.xml
