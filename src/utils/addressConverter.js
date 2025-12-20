@@ -459,13 +459,21 @@ export const convertAddress = ({
       addressLine1 = addressLine1.substring(0, cityIndex).replace(/,\s*$/, '').trim();
     }
   } else if (addressLine1 && districtEnglish) {
-    // For Seoul (no separate city), remove state only if present at the end
-    // "123, Gangnam-daero, Gangnam-gu, Seoul" -> "123, Gangnam-daero, Gangnam-gu"
+    // For areas without separate city (Seoul gu, or gun areas)
+    // First remove state if present
     const state = convertState(sido, 'full');
     if (state) {
       const stateIndex = addressLine1.toLowerCase().lastIndexOf(state.toLowerCase());
       if (stateIndex > 0) {
         addressLine1 = addressLine1.substring(0, stateIndex).replace(/,\s*$/, '').trim();
+      }
+    }
+    // For gun (county) areas, also remove the gun from ADDRESS 1 to avoid duplication with CITY
+    // "11 Simgok 2-gil, Eosangcheon-myeon, Danyang-gun" -> "11 Simgok 2-gil, Eosangcheon-myeon"
+    if (districtEnglish.endsWith('-gun')) {
+      const gunIndex = addressLine1.toLowerCase().lastIndexOf(districtEnglish.toLowerCase());
+      if (gunIndex > 0) {
+        addressLine1 = addressLine1.substring(0, gunIndex).replace(/,\s*$/, '').trim();
       }
     }
   }

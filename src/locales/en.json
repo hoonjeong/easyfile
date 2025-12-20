@@ -520,6 +520,7 @@
     "pcccPlaceholder": "13 digits starting with P",
     "pcccHelp": "Personal customs clearance code issued by Korea Customs",
     "pcccSaved": "Saved",
+    "pcccAutoSave": "Auto-save",
     "pcccInvalid": "Invalid format (P + 12 digits)",
     "shoppingSite": "Select Shopping Site",
     "convert": "Convert to English",

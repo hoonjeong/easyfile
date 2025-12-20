@@ -22,8 +22,17 @@ const AddressConverter = () => {
   const [userName, setUserName] = useState('');
   const [nameInputMode, setNameInputMode] = useState('korean'); // 'korean' or 'english'
   const [phone, setPhone] = useState('');
-  const [pccc, setPccc] = useLocalStorage('jikgupass-pccc', '');
+  const [savedPccc, setSavedPccc] = useLocalStorage('jikgupass-pccc', '');
+  const [savePcccEnabled, setSavePcccEnabled] = useLocalStorage('jikgupass-save-pccc', false);
+  const [pccc, setPccc] = useState('');
   const [shoppingSite, setShoppingSite] = useState('amazon');
+
+  // Load saved PCCC on mount if auto-save is enabled
+  useEffect(() => {
+    if (savePcccEnabled && savedPccc) {
+      setPccc(savedPccc);
+    }
+  }, []);
   const [convertedAddress, setConvertedAddress] = useState(null);
   const [toast, setToast] = useState('');
   const [error, setError] = useState('');
@@ -325,9 +334,6 @@ const AddressConverter = () => {
         <div className="address-section">
           <label className="address-label">
             {t('address.pccc')}
-            {pccc && validatePccc(pccc) && (
-              <span className="address-pccc-saved">{t('address.pcccSaved')}</span>
-            )}
           </label>
           <input
             type="text"
@@ -335,11 +341,32 @@ const AddressConverter = () => {
             placeholder={t('address.pcccPlaceholder')}
             value={pccc}
             onChange={(e) => {
-              setPccc(e.target.value.toUpperCase());
+              const value = e.target.value.toUpperCase();
+              setPccc(value);
               setConvertedAddress(null);
+              // Save to localStorage if auto-save is enabled and valid
+              if (savePcccEnabled && validatePccc(value)) {
+                setSavedPccc(value);
+              }
             }}
             maxLength={13}
           />
+          <label className="address-checkbox-label">
+            <input
+              type="checkbox"
+              checked={savePcccEnabled}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                setSavePcccEnabled(checked);
+                if (checked && validatePccc(pccc)) {
+                  setSavedPccc(pccc);
+                } else if (!checked) {
+                  setSavedPccc('');
+                }
+              }}
+            />
+            <span>{t('address.pcccAutoSave')}</span>
+          </label>
           <div className="address-help">{t('address.pcccHelp')}</div>
           {pccc && !validatePccc(pccc) && (
             <div className="address-pccc-invalid">{t('address.pcccInvalid')}</div>
