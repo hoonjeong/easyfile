@@ -431,32 +431,32 @@ export const convertAddress = ({
   // Build address line 1 (street address only, without city/state)
   let addressLine1 = englishAddress || '';
 
-  // Extract city from englishAddress (the part after sigunguEnglish, before state)
-  // English address format: "11 Sohyang-ro, Wonmi-gu, Bucheon-si, Gyeonggi-do"
-  // sigunguEnglish = "Wonmi-gu", city should be "Bucheon-si"
-  let cityFromAddress = '';
-  if (englishAddress && sigunguEnglish) {
-    const sigunguIndex = englishAddress.toLowerCase().indexOf(sigunguEnglish.toLowerCase());
-    if (sigunguIndex > 0) {
-      // Get everything after sigunguEnglish
-      const afterSigungu = englishAddress.substring(sigunguIndex + sigunguEnglish.length);
-      // Split by comma and get the next part (city)
-      const parts = afterSigungu.split(',').map(p => p.trim()).filter(p => p);
-      if (parts.length > 0) {
-        // First part after sigungu is the city (e.g., "Bucheon-si")
-        cityFromAddress = parts[0];
-      }
+  // Kakao API returns sigunguEnglish as "Wonmi-gu Bucheon-si" (space-separated)
+  // But englishAddress uses comma: "11 Sohyang-ro, Wonmi-gu, Bucheon-si"
+  // We need to extract the first part (district/gu) to find it in englishAddress
+  let districtEnglish = '';  // e.g., "Wonmi-gu"
+  let cityEnglish = '';      // e.g., "Bucheon-si"
+
+  if (sigunguEnglish) {
+    // Split by space to separate district and city
+    // "Wonmi-gu Bucheon-si" -> ["Wonmi-gu", "Bucheon-si"]
+    const sigunguParts = sigunguEnglish.split(/\s+/);
+    if (sigunguParts.length >= 2) {
+      districtEnglish = sigunguParts[0];  // "Wonmi-gu"
+      cityEnglish = sigunguParts.slice(1).join(' ');  // "Bucheon-si"
+    } else {
+      // Only one part (e.g., Seoul's "Gangnam-gu")
+      districtEnglish = sigunguParts[0];
     }
   }
 
-  // Remove sigungu, city, and state from addressLine1 to avoid duplication
-  // We want only: "11 Sohyang-ro"
-  if (addressLine1 && sigunguEnglish) {
-    // Find where sigunguEnglish starts and cut everything from there
-    const sigunguIndex = addressLine1.toLowerCase().indexOf(sigunguEnglish.toLowerCase());
-    if (sigunguIndex > 0) {
-      // Remove ", sigunguEnglish..." part
-      addressLine1 = addressLine1.substring(0, sigunguIndex).replace(/,\s*$/, '').trim();
+  // Remove district, city, and state from addressLine1
+  // "11 Sohyang-ro, Wonmi-gu, Bucheon-si" -> "11 Sohyang-ro"
+  if (addressLine1 && districtEnglish) {
+    const districtIndex = addressLine1.toLowerCase().indexOf(districtEnglish.toLowerCase());
+    if (districtIndex > 0) {
+      // Remove everything from district onwards
+      addressLine1 = addressLine1.substring(0, districtIndex).replace(/,\s*$/, '').trim();
     }
   }
 
@@ -509,7 +509,7 @@ export const convertAddress = ({
     addressLine2Length: line2Result.text.length,
     addressLine2Max: preset.addressLine2Max,
 
-    city: cityFromAddress || sigunguEnglish || sigungu || '',
+    city: cityEnglish || districtEnglish || sigunguEnglish || sigungu || '',
     state,
     zipCode: zonecode || '',
     country: 'South Korea',
