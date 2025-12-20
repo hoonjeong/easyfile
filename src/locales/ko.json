@@ -45,7 +45,7 @@
     "document": "문서",
     "media": "미디어",
     "pdf": "PDF",
-    "address": "주소변환",
+    "address": "영문주소",
     "games": "미니게임"
   },
   "home": {
@@ -503,9 +503,17 @@
     "detailAddress": "상세주소 (동/호수)",
     "detailPlaceholder": "예: 101동 1501호, A동 302호",
     "detailPreview": "영문 변환 미리보기",
-    "userName": "수령인 이름 (영문)",
+    "userName": "수령인 이름",
     "userNamePlaceholder": "예: Hong Gildong",
+    "userNamePlaceholderKorean": "예: 홍길동",
+    "userNamePlaceholderEnglish": "예: Gildong Hong",
     "userNameHelp": "영문 이름은 '이름 성' 순서로 입력 (예: Gildong Hong)",
+    "userNameHelpKorean": "한글 이름 입력 시 자동으로 영문 변환됩니다",
+    "nameMode": {
+      "korean": "한글 입력",
+      "english": "영문 입력"
+    },
+    "namePreview": "영문 변환",
     "phone": "연락처",
     "phonePlaceholder": "예: 010-1234-5678",
     "pccc": "개인통관고유부호 (PCCC)",

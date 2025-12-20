@@ -9,6 +9,8 @@ import {
   convertAddress,
   openKakaoPostcode,
   validatePccc,
+  romanizeKoreanName,
+  containsKorean,
 } from '../utils/addressConverter';
 
 const AddressConverter = () => {
@@ -18,6 +20,7 @@ const AddressConverter = () => {
   const [koreanAddress, setKoreanAddress] = useState(null);
   const [detailAddress, setDetailAddress] = useState('');
   const [userName, setUserName] = useState('');
+  const [nameInputMode, setNameInputMode] = useState('korean'); // 'korean' or 'english'
   const [phone, setPhone] = useState('');
   const [pccc, setPccc] = useLocalStorage('jikgupass-pccc', '');
   const [shoppingSite, setShoppingSite] = useState('amazon');
@@ -25,6 +28,11 @@ const AddressConverter = () => {
   const [toast, setToast] = useState('');
   const [error, setError] = useState('');
   const [scriptLoaded, setScriptLoaded] = useState(false);
+
+  // Romanized name preview (for Korean input mode)
+  const romanizedName = nameInputMode === 'korean' && containsKorean(userName)
+    ? romanizeKoreanName(userName)
+    : null;
 
   // Detail address preview
   const parsedDetail = parseDetailAddress(detailAddress);
@@ -59,17 +67,24 @@ const AddressConverter = () => {
       return;
     }
 
+    // Determine the final name to use
+    let finalName = userName.trim();
+    if (nameInputMode === 'korean' && containsKorean(userName)) {
+      const romanized = romanizeKoreanName(userName);
+      finalName = romanized.fullName;
+    }
+
     const result = convertAddress({
       koreanAddress,
       detailAddress,
-      userName: userName.trim(),
+      userName: finalName,
       phone,
       pccc,
       sitePreset: shoppingSite,
     });
 
     setConvertedAddress(result);
-  }, [koreanAddress, detailAddress, userName, phone, pccc, shoppingSite, t]);
+  }, [koreanAddress, detailAddress, userName, nameInputMode, phone, pccc, shoppingSite, t]);
 
   // Handle copy to clipboard
   const handleCopy = useCallback(async (text, fieldName) => {
@@ -241,17 +256,54 @@ const AddressConverter = () => {
         {/* User Name */}
         <div className="address-section">
           <label className="address-label">{t('address.userName')}</label>
+          <div className="address-name-mode-selector">
+            <button
+              className={`address-name-mode-button ${nameInputMode === 'korean' ? 'active' : ''}`}
+              onClick={() => {
+                setNameInputMode('korean');
+                setUserName('');
+                setConvertedAddress(null);
+              }}
+            >
+              {t('address.nameMode.korean')}
+            </button>
+            <button
+              className={`address-name-mode-button ${nameInputMode === 'english' ? 'active' : ''}`}
+              onClick={() => {
+                setNameInputMode('english');
+                setUserName('');
+                setConvertedAddress(null);
+              }}
+            >
+              {t('address.nameMode.english')}
+            </button>
+          </div>
           <input
             type="text"
             className="address-input"
-            placeholder={t('address.userNamePlaceholder')}
+            placeholder={nameInputMode === 'korean'
+              ? t('address.userNamePlaceholderKorean')
+              : t('address.userNamePlaceholderEnglish')}
             value={userName}
             onChange={(e) => {
               setUserName(e.target.value);
               setConvertedAddress(null);
             }}
           />
-          <div className="address-help">{t('address.userNameHelp')}</div>
+          {romanizedName && (
+            <div className="address-name-preview">
+              <span className="address-name-preview-label">{t('address.namePreview')}:</span>
+              <span className="address-name-preview-value">{romanizedName.fullName}</span>
+              <span className="address-name-preview-detail">
+                (First: {romanizedName.firstName}, Last: {romanizedName.lastName})
+              </span>
+            </div>
+          )}
+          <div className="address-help">
+            {nameInputMode === 'korean'
+              ? t('address.userNameHelpKorean')
+              : t('address.userNameHelp')}
+          </div>
         </div>
 
         {/* Phone */}

@@ -45,7 +45,7 @@
     "document": "Document",
     "media": "Media",
     "pdf": "PDF",
-    "address": "Address",
+    "address": "EN Address",
     "games": "Mini Games"
   },
   "home": {
@@ -503,9 +503,17 @@
     "detailAddress": "Detail Address (Building/Unit)",
     "detailPlaceholder": "e.g., 101dong 1501ho, Bldg A Unit 302",
     "detailPreview": "English Preview",
-    "userName": "Recipient Name (English)",
+    "userName": "Recipient Name",
     "userNamePlaceholder": "e.g., Hong Gildong",
+    "userNamePlaceholderKorean": "e.g., 홍길동",
+    "userNamePlaceholderEnglish": "e.g., Gildong Hong",
     "userNameHelp": "Enter name in 'First Last' format (e.g., Gildong Hong)",
+    "userNameHelpKorean": "Korean names are automatically converted to English",
+    "nameMode": {
+      "korean": "Korean",
+      "english": "English"
+    },
+    "namePreview": "Romanized",
     "phone": "Phone Number",
     "phonePlaceholder": "e.g., 010-1234-5678",
     "pccc": "Personal Customs Code (PCCC)",

@@ -3,6 +3,116 @@
  * Converts Korean addresses to English format for international shopping sites
  */
 
+// Korean name romanization tables (based on Revised Romanization)
+const KOREAN_INITIALS = ['g', 'kk', 'n', 'd', 'tt', 'r', 'm', 'b', 'pp', 's', 'ss', '', 'j', 'jj', 'ch', 'k', 't', 'p', 'h'];
+const KOREAN_VOWELS = ['a', 'ae', 'ya', 'yae', 'eo', 'e', 'yeo', 'ye', 'o', 'wa', 'wae', 'oe', 'yo', 'u', 'wo', 'we', 'wi', 'yu', 'eu', 'ui', 'i'];
+const KOREAN_FINALS = ['', 'k', 'k', 'k', 'n', 'n', 'n', 't', 'l', 'k', 'm', 'p', 'l', 'l', 'l', 'l', 'l', 'm', 'p', 'p', 't', 't', 'ng', 't', 't', 'k', 't', 'p', 't'];
+
+// Common Korean surnames with preferred romanization
+const KOREAN_SURNAMES = {
+  '김': 'Kim', '이': 'Lee', '박': 'Park', '최': 'Choi', '정': 'Jung', '강': 'Kang',
+  '조': 'Cho', '윤': 'Yoon', '장': 'Jang', '임': 'Lim', '한': 'Han', '오': 'Oh',
+  '서': 'Seo', '신': 'Shin', '권': 'Kwon', '황': 'Hwang', '안': 'Ahn', '송': 'Song',
+  '류': 'Ryu', '유': 'Yoo', '홍': 'Hong', '전': 'Jeon', '고': 'Ko', '문': 'Moon',
+  '양': 'Yang', '손': 'Son', '배': 'Bae', '백': 'Baek', '허': 'Heo', '남': 'Nam',
+  '심': 'Shim', '노': 'Noh', '하': 'Ha', '곽': 'Kwak', '성': 'Sung', '차': 'Cha',
+  '주': 'Joo', '우': 'Woo', '구': 'Koo', '민': 'Min', '진': 'Jin', '나': 'Na',
+  '지': 'Ji', '엄': 'Eom', '채': 'Chae', '원': 'Won', '천': 'Cheon', '방': 'Bang',
+  '공': 'Kong', '현': 'Hyun', '함': 'Ham', '변': 'Byun', '염': 'Yeom', '석': 'Seok',
+  '선': 'Sun', '설': 'Sul', '마': 'Ma', '길': 'Gil', '연': 'Yeon', '위': 'Wi',
+  '표': 'Pyo', '명': 'Myung', '기': 'Ki', '반': 'Ban', '피': 'Pi', '왕': 'Wang',
+  '금': 'Keum', '옥': 'Ok', '육': 'Yuk', '인': 'In', '맹': 'Maeng', '제': 'Je',
+  '모': 'Mo', '탁': 'Tak', '국': 'Kook', '여': 'Yeo', '어': 'Eo', '사': 'Sa',
+};
+
+/**
+ * Convert a single Korean syllable to romanized form
+ * @param {string} char - Single Korean character
+ * @returns {string} - Romanized string
+ */
+const romanizeSyllable = (char) => {
+  const code = char.charCodeAt(0);
+
+  // Check if it's a Korean syllable (가-힣)
+  if (code < 0xAC00 || code > 0xD7A3) {
+    return char;
+  }
+
+  const syllableIndex = code - 0xAC00;
+  const initialIndex = Math.floor(syllableIndex / 588);
+  const vowelIndex = Math.floor((syllableIndex % 588) / 28);
+  const finalIndex = syllableIndex % 28;
+
+  return KOREAN_INITIALS[initialIndex] + KOREAN_VOWELS[vowelIndex] + KOREAN_FINALS[finalIndex];
+};
+
+/**
+ * Convert Korean name to English (romanized)
+ * @param {string} koreanName - Korean name (e.g., "홍길동")
+ * @returns {object} - { firstName, lastName, fullName }
+ */
+export const romanizeKoreanName = (koreanName) => {
+  if (!koreanName || !koreanName.trim()) {
+    return { firstName: '', lastName: '', fullName: '' };
+  }
+
+  const name = koreanName.trim();
+
+  // Check if already contains English characters
+  if (/[a-zA-Z]/.test(name)) {
+    // Assume it's already romanized, try to split
+    const parts = name.split(/\s+/);
+    if (parts.length >= 2) {
+      return {
+        firstName: parts[0],
+        lastName: parts.slice(1).join(' '),
+        fullName: name
+      };
+    }
+    return { firstName: name, lastName: '', fullName: name };
+  }
+
+  // Korean name: typically 2-4 characters, first is surname
+  const chars = [...name];
+
+  if (chars.length < 2) {
+    const romanized = romanizeSyllable(chars[0]);
+    const capitalized = romanized.charAt(0).toUpperCase() + romanized.slice(1);
+    return { firstName: capitalized, lastName: '', fullName: capitalized };
+  }
+
+  // First character is surname
+  const surnameChar = chars[0];
+  const givenNameChars = chars.slice(1);
+
+  // Use common surname mapping or romanize
+  let surname = KOREAN_SURNAMES[surnameChar];
+  if (!surname) {
+    const romanized = romanizeSyllable(surnameChar);
+    surname = romanized.charAt(0).toUpperCase() + romanized.slice(1);
+  }
+
+  // Romanize given name
+  let givenName = givenNameChars.map(romanizeSyllable).join('');
+  givenName = givenName.charAt(0).toUpperCase() + givenName.slice(1);
+
+  return {
+    firstName: givenName,
+    lastName: surname,
+    fullName: `${givenName} ${surname}`
+  };
+};
+
+/**
+ * Check if string contains Korean characters
+ * @param {string} str - String to check
+ * @returns {boolean}
+ */
+export const containsKorean = (str) => {
+  if (!str) return false;
+  return /[가-힣]/.test(str);
+};
+
 // Korean Province/City to English mapping
 export const STATE_MAPPINGS = {
   '서울특별시': { full: 'Seoul', abbr: 'Seoul' },

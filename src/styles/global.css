@@ -1084,6 +1084,64 @@ button {
   font-weight: 500;
 }
 
+/* Name Mode Selector */
+.address-name-mode-selector {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.address-name-mode-button {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.address-name-mode-button:hover {
+  border-color: var(--primary-color);
+  color: var(--text-primary);
+}
+
+.address-name-mode-button.active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+/* Name Preview */
+.address-name-preview {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: rgba(79, 70, 229, 0.1);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+}
+
+.address-name-preview-label {
+  color: var(--text-tertiary);
+}
+
+.address-name-preview-value {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.address-name-preview-detail {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
 /* PCCC */
 .address-pccc-saved {
   padding: 2px 8px;
