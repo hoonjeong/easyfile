@@ -35,6 +35,9 @@ import PdfDelete from './pages/pdf/PdfDelete';
 import PdfReorder from './pages/pdf/PdfReorder';
 import PdfRotate from './pages/pdf/PdfRotate';
 
+// Address converter
+import AddressConverter from './pages/AddressConverter';
+
 import './styles/global.css';
 
 function App() {
@@ -77,6 +80,9 @@ function App() {
             <Route path="/pdf/delete" element={<PdfDelete />} />
             <Route path="/pdf/reorder" element={<PdfReorder />} />
             <Route path="/pdf/rotate" element={<PdfRotate />} />
+
+            {/* Address converter */}
+            <Route path="/address" element={<AddressConverter />} />
           </Routes>
         </Layout>
       </Router>

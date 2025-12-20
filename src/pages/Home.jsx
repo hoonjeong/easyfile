@@ -67,6 +67,20 @@ const Home = () => {
       ]
     },
     {
+      id: 'address',
+      titleKey: 'categories.address.title',
+      descriptionKey: 'categories.address.description',
+      icon: '📮',
+      iconClass: 'address',
+      path: '/address',
+      converters: [
+        { name: 'Amazon', path: '/address' },
+        { name: 'AliExpress', path: '/address' },
+        { name: 'iHerb', path: '/address' },
+        { name: 'eBay', path: '/address' },
+      ]
+    },
+    {
       id: 'games',
       titleKey: 'categories.games.title',
       descriptionKey: 'categories.games.description',

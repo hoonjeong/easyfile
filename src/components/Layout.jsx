@@ -11,6 +11,7 @@ const Layout = ({ children }) => {
     { path: '/image', labelKey: 'nav.image' },
     { path: '/document', labelKey: 'nav.document' },
     { path: '/media', labelKey: 'nav.media' },
+    { path: '/address', labelKey: 'nav.address' },
     { path: 'https://shortgames.kr/', labelKey: 'nav.games', external: true },
   ];
 

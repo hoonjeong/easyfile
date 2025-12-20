@@ -45,6 +45,7 @@
     "document": "Document",
     "media": "Media",
     "pdf": "PDF",
+    "address": "Address",
     "games": "Mini Games"
   },
   "home": {
@@ -97,6 +98,10 @@
     "games": {
       "title": "Mini Games",
       "description": "Simple and fun browser-based mini games"
+    },
+    "address": {
+      "title": "Address Converter",
+      "description": "Convert Korean addresses to English for international shopping"
     }
   },
   "image": {
@@ -483,5 +488,82 @@
     "dragDrop": "Drag & Drop - Intuitive interface",
     "preview": "Live Preview - See changes instantly",
     "individual": "Individual/Batch Rotation - Rotate selected pages only"
+  },
+  "address": {
+    "title": "JikguPass",
+    "subtitle": "English Address Converter for International Shopping",
+    "description": "Convert Korean addresses to English format for Amazon, AliExpress, iHerb and more",
+    "pageTitle": "JikguPass - English Address Converter | EasyFile",
+    "pageDescription": "Convert Korean addresses to English format for Amazon, AliExpress, iHerb and other international shopping sites. Automatic apartment unit formatting and customs code storage.",
+    "seoKeywords": "korean address converter, english address for amazon, overseas shopping address, aliexpress address, iherb shipping address, korean to english address, international shipping address",
+    "searchAddress": "Search Address",
+    "searchPlaceholder": "Search by street, district, or building name",
+    "clickToSearch": "Click to search address",
+    "selectedAddress": "Selected Address",
+    "detailAddress": "Detail Address (Building/Unit)",
+    "detailPlaceholder": "e.g., 101dong 1501ho, Bldg A Unit 302",
+    "detailPreview": "English Preview",
+    "userName": "Recipient Name (English)",
+    "userNamePlaceholder": "e.g., Hong Gildong",
+    "userNameHelp": "Enter name in 'First Last' format (e.g., Gildong Hong)",
+    "phone": "Phone Number",
+    "phonePlaceholder": "e.g., 010-1234-5678",
+    "pccc": "Personal Customs Code (PCCC)",
+    "pcccPlaceholder": "13 digits starting with P",
+    "pcccHelp": "Personal customs clearance code issued by Korea Customs",
+    "pcccSaved": "Saved",
+    "pcccInvalid": "Invalid format (P + 12 digits)",
+    "shoppingSite": "Select Shopping Site",
+    "convert": "Convert to English",
+    "result": "Conversion Result",
+    "copyAll": "Copy All",
+    "copied": "Copied!",
+    "copyFailed": "Copy failed",
+    "warning": {
+      "tooLong": "Exceeds limit ({{current}}/{{max}} chars) - Auto-abbreviated",
+      "abbreviated": "Auto-abbreviated"
+    },
+    "fields": {
+      "fullName": "Full Name",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "addressLine1": "Address Line 1",
+      "addressLine2": "Address Line 2",
+      "city": "City",
+      "state": "State/Province",
+      "zipCode": "Zip Code",
+      "country": "Country",
+      "phone": "Phone",
+      "pccc": "PCCC (Customs Code)"
+    },
+    "sites": {
+      "amazon": "Amazon",
+      "aliexpress": "AliExpress",
+      "iherb": "iHerb",
+      "ebay": "eBay",
+      "general": "General"
+    },
+    "tips": {
+      "title": "Address Input Tips",
+      "tip1": "Enter name in 'First Last' format (e.g., Gildong Hong)",
+      "tip2": "Apartment units are converted to 'Bldg 101, Unit 1501' format",
+      "tip3": "Long addresses are automatically abbreviated (Street → St)",
+      "tip4": "Your customs code is safely stored in your browser"
+    },
+    "whatIs": "What is JikguPass?",
+    "whatIsDesc": "JikguPass is a free tool that automatically converts Korean addresses to English format for international shopping. It provides site-specific formatting for Amazon, AliExpress, iHerb and other shopping sites, and securely stores your personal customs code in your browser for easy reuse. All data is processed locally and never sent to any server.",
+    "whyUse": "Why use JikguPass?",
+    "features": {
+      "siteOptimized": "Site-Optimized - Address format tailored for each shopping site",
+      "smartDetail": "Smart Unit Conversion - Automatically converts 101dong 1501ho to Bldg 101, Unit 1501",
+      "autoAbbr": "Auto-Abbreviation - Automatically shortens when exceeding character limits",
+      "pcccSave": "Customs Code Storage - Securely saves your PCCC in browser",
+      "oneCopy": "One-Click Copy - Quick input with copy buttons for each field"
+    },
+    "error": {
+      "noAddress": "Please search for an address first",
+      "noName": "Please enter recipient name",
+      "loadScript": "Error loading address search feature"
+    }
   }
 }
