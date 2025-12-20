@@ -424,7 +424,7 @@ export const convertAddress = ({
     return null;
   }
 
-  const { englishAddress, sido, sigungu, zonecode, buildingName } = koreanAddress;
+  const { englishAddress, sido, sigungu, sigunguEnglish, zonecode, buildingName } = koreanAddress;
   const parsedDetail = parseDetailAddress(detailAddress);
   const detailEnglish = translateDetailAddress(parsedDetail.dong, parsedDetail.ho);
 
@@ -480,7 +480,7 @@ export const convertAddress = ({
     addressLine2Length: line2Result.text.length,
     addressLine2Max: preset.addressLine2Max,
 
-    city: sigungu || '',
+    city: sigunguEnglish || sigungu || '',
     state,
     zipCode: zonecode || '',
     country: 'South Korea',
@@ -549,6 +549,7 @@ export const openKakaoPostcode = async (onComplete) => {
         englishAddress: data.roadAddressEnglish,
         sido: data.sido,
         sigungu: data.sigungu,
+        sigunguEnglish: data.sigunguEnglish,
         bname: data.bname,
         roadname: data.roadname,
         buildingName: data.buildingName,
