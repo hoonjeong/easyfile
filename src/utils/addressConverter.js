@@ -6,7 +6,7 @@
 // Korean name romanization tables (based on Revised Romanization)
 const KOREAN_INITIALS = ['g', 'kk', 'n', 'd', 'tt', 'r', 'm', 'b', 'pp', 's', 'ss', '', 'j', 'jj', 'ch', 'k', 't', 'p', 'h'];
 const KOREAN_VOWELS = ['a', 'ae', 'ya', 'yae', 'eo', 'e', 'yeo', 'ye', 'o', 'wa', 'wae', 'oe', 'yo', 'u', 'wo', 'we', 'wi', 'yu', 'eu', 'ui', 'i'];
-const KOREAN_FINALS = ['', 'k', 'k', 'k', 'n', 'n', 'n', 't', 'l', 'k', 'm', 'p', 'l', 'l', 'l', 'l', 'l', 'm', 'p', 'p', 't', 't', 'ng', 't', 't', 'k', 't', 'p', 't'];
+const KOREAN_FINALS = ['', 'k', 'k', 'k', 'n', 'n', 'n', 't', 'l', 'k', 'm', 'p', 'l', 'l', 'l', 'l', 'm', 'p', 'p', 't', 't', 'ng', 't', 't', 'k', 't', 'p', 't'];
 
 // Common Korean surnames with preferred romanization
 const KOREAN_SURNAMES = {
@@ -450,13 +450,23 @@ export const convertAddress = ({
     }
   }
 
-  // Remove district, city, and state from addressLine1
-  // "11 Sohyang-ro, Wonmi-gu, Bucheon-si" -> "11 Sohyang-ro"
-  if (addressLine1 && districtEnglish) {
-    const districtIndex = addressLine1.toLowerCase().indexOf(districtEnglish.toLowerCase());
-    if (districtIndex > 0) {
-      // Remove everything from district onwards
-      addressLine1 = addressLine1.substring(0, districtIndex).replace(/,\s*$/, '').trim();
+  // Remove city and state from addressLine1, but keep district (gu)
+  // "11 Sohyang-ro, Wonmi-gu, Bucheon-si" -> "11 Sohyang-ro, Wonmi-gu"
+  if (addressLine1 && cityEnglish) {
+    // If there's a city (e.g., "Bucheon-si"), remove from city onwards
+    const cityIndex = addressLine1.toLowerCase().indexOf(cityEnglish.toLowerCase());
+    if (cityIndex > 0) {
+      addressLine1 = addressLine1.substring(0, cityIndex).replace(/,\s*$/, '').trim();
+    }
+  } else if (addressLine1 && districtEnglish) {
+    // For Seoul (no separate city), remove state only if present at the end
+    // "123, Gangnam-daero, Gangnam-gu, Seoul" -> "123, Gangnam-daero, Gangnam-gu"
+    const state = convertState(sido, 'full');
+    if (state) {
+      const stateIndex = addressLine1.toLowerCase().lastIndexOf(state.toLowerCase());
+      if (stateIndex > 0) {
+        addressLine1 = addressLine1.substring(0, stateIndex).replace(/,\s*$/, '').trim();
+      }
     }
   }
 
