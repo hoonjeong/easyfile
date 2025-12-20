@@ -428,8 +428,25 @@ export const convertAddress = ({
   const parsedDetail = parseDetailAddress(detailAddress);
   const detailEnglish = translateDetailAddress(parsedDetail.dong, parsedDetail.ho);
 
-  // Build address line 1 (street address)
+  // Build address line 1 (street address only, without city/state)
   let addressLine1 = englishAddress || '';
+
+  // Remove city (sigunguEnglish) and state from addressLine1 to avoid duplication
+  if (addressLine1 && sigunguEnglish) {
+    // Remove ", Sigungu-gu, City" pattern from the end
+    const state = convertState(sido, 'full');
+    // Try to remove ", sigunguEnglish, state" or ", sigunguEnglish"
+    const patterns = [
+      new RegExp(`,\\s*${sigunguEnglish}\\s*,\\s*${state}\\s*$`, 'i'),
+      new RegExp(`,\\s*${sigunguEnglish}\\s*$`, 'i'),
+    ];
+    for (const pattern of patterns) {
+      if (pattern.test(addressLine1)) {
+        addressLine1 = addressLine1.replace(pattern, '').trim();
+        break;
+      }
+    }
+  }
 
   // Build address line 2 (detail + building name)
   let addressLine2Parts = [];
