@@ -431,20 +431,32 @@ export const convertAddress = ({
   // Build address line 1 (street address only, without city/state)
   let addressLine1 = englishAddress || '';
 
-  // Remove city (sigunguEnglish) and state from addressLine1 to avoid duplication
-  if (addressLine1 && sigunguEnglish) {
-    // Remove ", Sigungu-gu, City" pattern from the end
-    const state = convertState(sido, 'full');
-    // Try to remove ", sigunguEnglish, state" or ", sigunguEnglish"
-    const patterns = [
-      new RegExp(`,\\s*${sigunguEnglish}\\s*,\\s*${state}\\s*$`, 'i'),
-      new RegExp(`,\\s*${sigunguEnglish}\\s*$`, 'i'),
-    ];
-    for (const pattern of patterns) {
-      if (pattern.test(addressLine1)) {
-        addressLine1 = addressLine1.replace(pattern, '').trim();
-        break;
+  // Extract city from englishAddress (the part after sigunguEnglish, before state)
+  // English address format: "11 Sohyang-ro, Wonmi-gu, Bucheon-si, Gyeonggi-do"
+  // sigunguEnglish = "Wonmi-gu", city should be "Bucheon-si"
+  let cityFromAddress = '';
+  if (englishAddress && sigunguEnglish) {
+    const sigunguIndex = englishAddress.toLowerCase().indexOf(sigunguEnglish.toLowerCase());
+    if (sigunguIndex > 0) {
+      // Get everything after sigunguEnglish
+      const afterSigungu = englishAddress.substring(sigunguIndex + sigunguEnglish.length);
+      // Split by comma and get the next part (city)
+      const parts = afterSigungu.split(',').map(p => p.trim()).filter(p => p);
+      if (parts.length > 0) {
+        // First part after sigungu is the city (e.g., "Bucheon-si")
+        cityFromAddress = parts[0];
       }
+    }
+  }
+
+  // Remove sigungu, city, and state from addressLine1 to avoid duplication
+  // We want only: "11 Sohyang-ro"
+  if (addressLine1 && sigunguEnglish) {
+    // Find where sigunguEnglish starts and cut everything from there
+    const sigunguIndex = addressLine1.toLowerCase().indexOf(sigunguEnglish.toLowerCase());
+    if (sigunguIndex > 0) {
+      // Remove ", sigunguEnglish..." part
+      addressLine1 = addressLine1.substring(0, sigunguIndex).replace(/,\s*$/, '').trim();
     }
   }
 
@@ -497,7 +509,7 @@ export const convertAddress = ({
     addressLine2Length: line2Result.text.length,
     addressLine2Max: preset.addressLine2Max,
 
-    city: sigunguEnglish || sigungu || '',
+    city: cityFromAddress || sigunguEnglish || sigungu || '',
     state,
     zipCode: zonecode || '',
     country: 'South Korea',
