@@ -60,6 +60,10 @@ const BLOCKED_MIME_TYPES = [
 // Allowed file types for each category
 const ALLOWED_FILE_TYPES = {
   // Image converters
+  image: {
+    extensions: ['.jpg', '.jpeg', '.png', '.webp'],
+    mimeTypes: ['image/jpeg', 'image/png', 'image/webp']
+  },
   heic: {
     extensions: ['.heic', '.heif'],
     mimeTypes: ['image/heic', 'image/heif', 'image/heic-sequence', 'image/heif-sequence']
@@ -297,6 +301,7 @@ export const formatFileSize = (bytes) => {
  * Maximum file sizes by category (in bytes)
  */
 export const MAX_FILE_SIZES = {
+  image: 50 * 1024 * 1024,     // 50MB
   heic: 50 * 1024 * 1024,      // 50MB
   webp: 50 * 1024 * 1024,      // 50MB
   psd: 100 * 1024 * 1024,      // 100MB
