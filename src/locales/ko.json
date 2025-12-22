@@ -189,9 +189,9 @@
     "convertToJpg": "JPG로 변환하기",
     "convertToPng": "PNG로 변환하기",
     "compress": {
-      "title": "이미지 압축",
+      "title": "이미지 사이즈 줄이기",
       "description": "JPG, PNG, WebP 이미지 파일 크기 줄이기",
-      "pageTitle": "이미지 압축 - 무료 온라인 이미지 용량 줄이기",
+      "pageTitle": "이미지 사이즈 줄이기 - 무료 온라인 이미지 용량 줄이기",
       "pageDescription": "JPG, PNG, WebP 이미지 파일 크기를 무료로 줄이세요. 품질과 크기를 조절하여 최적화. 브라우저에서 바로 처리되어 안전합니다.",
       "seoKeywords": "이미지 압축, 사진 용량 줄이기, jpg 압축, png 압축, webp 압축, 이미지 최적화, 무료 이미지 압축, 온라인 이미지 압축",
       "quality": "이미지 품질",
@@ -489,9 +489,9 @@
       "error": "페이지 회전 중 오류가 발생했습니다."
     },
     "compress": {
-      "title": "PDF 압축",
+      "title": "PDF 사이즈 줄이기",
       "description": "PDF 파일 크기 줄이기",
-      "pageTitle": "PDF 압축 - 무료 온라인 PDF 용량 줄이기",
+      "pageTitle": "PDF 사이즈 줄이기 - 무료 온라인 PDF 용량 줄이기",
       "pageDescription": "PDF 파일 크기를 무료로 줄이세요. 이미지 품질을 조절하여 최적의 파일 크기. 브라우저에서 바로 처리되어 안전합니다.",
       "seoKeywords": "pdf 압축, pdf 용량 줄이기, pdf compress, pdf 파일 크기 줄이기, pdf 최적화, 무료 pdf 압축, 온라인 pdf 압축, pdf 경량화",
       "compressionLevel": "압축 수준",

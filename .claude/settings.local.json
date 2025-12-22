@@ -14,7 +14,15 @@
       "Bash(git commit:*)",
       "Bash(npm audit:*)",
       "Bash(npm ls:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "WebFetch(domain:localhost)",
+      "Bash(tree:*)",
+      "Bash(find:*)",
+      "Bash(wc:*)",
+      "Bash(grep:*)",
+      "Bash(node test-address.js:*)",
+      "Bash(node:*)",
+      "Bash(git restore:*)"
     ]
   }
 }

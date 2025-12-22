@@ -189,9 +189,9 @@
     "convertToJpg": "Convert to JPG",
     "convertToPng": "Convert to PNG",
     "compress": {
-      "title": "Compress Image",
+      "title": "Reduce Image Size",
       "description": "Reduce JPG, PNG, WebP image file size",
-      "pageTitle": "Compress Image - Free Online Image Compressor",
+      "pageTitle": "Reduce Image Size - Free Online Image Compressor",
       "pageDescription": "Reduce JPG, PNG, WebP image file size for free. Adjust quality and dimensions for optimization. 100% browser-based and secure.",
       "seoKeywords": "image compressor, compress image, reduce image size, jpg compressor, png compressor, webp compressor, image optimizer, free image compressor, online image compressor",
       "quality": "Image Quality",
@@ -489,9 +489,9 @@
       "error": "Error rotating pages."
     },
     "compress": {
-      "title": "Compress PDF",
+      "title": "Reduce PDF Size",
       "description": "Reduce PDF file size",
-      "pageTitle": "Compress PDF - Free Online PDF Compressor",
+      "pageTitle": "Reduce PDF Size - Free Online PDF Compressor",
       "pageDescription": "Reduce PDF file size for free. Adjust image quality for optimal file size. 100% browser-based and secure.",
       "seoKeywords": "compress pdf, reduce pdf size, pdf compressor, shrink pdf, optimize pdf, free pdf compressor, online pdf compressor, pdf file size reducer",
       "compressionLevel": "Compression Level",

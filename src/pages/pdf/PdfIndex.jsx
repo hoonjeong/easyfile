@@ -7,6 +7,13 @@ const PdfIndex = () => {
 
   const converters = [
     {
+      path: '/pdf/compress',
+      titleKey: 'pdf.compress.title',
+      descriptionKey: 'pdf.compress.description',
+      tags: ['Compress', 'Reduce'],
+      icon: '📦'
+    },
+    {
       path: '/pdf/pdf-to-image',
       titleKey: 'pdf.toImage.title',
       descriptionKey: 'pdf.toImage.description',
@@ -61,13 +68,6 @@ const PdfIndex = () => {
       descriptionKey: 'pdf.rotate.description',
       tags: ['Rotate', '90°'],
       icon: '🔄'
-    },
-    {
-      path: '/pdf/compress',
-      titleKey: 'pdf.compress.title',
-      descriptionKey: 'pdf.compress.description',
-      tags: ['Compress', 'Reduce'],
-      icon: '📦'
     }
   ];
 
