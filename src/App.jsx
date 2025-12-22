@@ -34,6 +34,10 @@ import PdfExtract from './pages/pdf/PdfExtract';
 import PdfDelete from './pages/pdf/PdfDelete';
 import PdfReorder from './pages/pdf/PdfReorder';
 import PdfRotate from './pages/pdf/PdfRotate';
+import PdfCompress from './pages/pdf/PdfCompress';
+
+// Image compressor
+import ImageCompress from './pages/image/ImageCompress';
 
 // Address converter
 import AddressConverter from './pages/AddressConverter';
@@ -57,6 +61,7 @@ function App() {
             <Route path="/image/tiff-to-jpg" element={<TiffConverter />} />
             <Route path="/image/svg-to-png" element={<SvgConverter />} />
             <Route path="/image/ico-to-png" element={<IcoConverter />} />
+            <Route path="/image/compress" element={<ImageCompress />} />
 
             {/* Document converters */}
             <Route path="/document" element={<DocumentIndex />} />
@@ -80,6 +85,7 @@ function App() {
             <Route path="/pdf/delete" element={<PdfDelete />} />
             <Route path="/pdf/reorder" element={<PdfReorder />} />
             <Route path="/pdf/rotate" element={<PdfRotate />} />
+            <Route path="/pdf/compress" element={<PdfCompress />} />
 
             {/* Address converter */}
             <Route path="/address" element={<AddressConverter />} />

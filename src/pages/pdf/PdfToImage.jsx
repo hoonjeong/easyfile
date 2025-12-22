@@ -14,6 +14,7 @@ const PdfToImage = () => {
   const [file, setFile] = useState(null);
   const [outputFormat, setOutputFormat] = useState('image/png');
   const [scale, setScale] = useState(2);
+  const [quality, setQuality] = useState(0.85);
   const [converting, setConverting] = useState(false);
   const [progress, setProgress] = useState(0);
   const [results, setResults] = useState([]);
@@ -42,7 +43,7 @@ const PdfToImage = () => {
     setProgress(0);
 
     try {
-      const images = await pdfToImages(file, scale, outputFormat, setProgress);
+      const images = await pdfToImages(file, scale, outputFormat, quality, setProgress);
       setResults(images);
     } catch (err) {
       console.error(err);
@@ -54,7 +55,8 @@ const PdfToImage = () => {
 
   const handleDownloadSingle = (image) => {
     const extension = outputFormat === 'image/jpeg' ? 'jpg' : 'png';
-    const filename = getFilenameWithNewExtension(file.name, `page${image.pageNum}.${extension}`);
+    const baseName = sanitizeFilename(file.name.replace(/\.pdf$/i, ''));
+    const filename = `${baseName}_page${image.pageNum}.${extension}`;
     downloadFile(image.blob, filename);
   };
 
@@ -135,6 +137,25 @@ const PdfToImage = () => {
                   onChange={(e) => setScale(Number(e.target.value))}
                 />
               </div>
+
+              {outputFormat === 'image/jpeg' && (
+                <div className="option-group">
+                  <label className="option-label">{t('pdf.toImage.quality')}: {Math.round(quality * 100)}%</label>
+                  <input
+                    type="range"
+                    className="option-slider"
+                    min="0.1"
+                    max="1"
+                    step="0.05"
+                    value={quality}
+                    onChange={(e) => setQuality(Number(e.target.value))}
+                  />
+                  <div className="quality-labels" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                    <span>{t('pdf.toImage.qualityLow')}</span>
+                    <span>{t('pdf.toImage.qualityHigh')}</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {converting && <ProgressBar progress={progress} />}

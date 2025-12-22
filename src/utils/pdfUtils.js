@@ -23,7 +23,7 @@ export const loadPdfDocument = async (file) => {
 /**
  * PDF 페이지를 이미지로 변환
  */
-export const pdfPageToImage = async (pdfDoc, pageNum, scale = 2, format = 'image/png') => {
+export const pdfPageToImage = async (pdfDoc, pageNum, scale = 2, format = 'image/png', quality = 0.85) => {
   const page = await pdfDoc.getPage(pageNum);
   let viewport = page.getViewport({ scale });
 
@@ -48,14 +48,14 @@ export const pdfPageToImage = async (pdfDoc, pageNum, scale = 2, format = 'image
   return new Promise((resolve) => {
     canvas.toBlob((blob) => {
       resolve(blob);
-    }, format, format === 'image/jpeg' ? 0.92 : undefined);
+    }, format, format === 'image/jpeg' ? quality : undefined);
   });
 };
 
 /**
  * PDF 전체를 이미지들로 변환
  */
-export const pdfToImages = async (file, scale = 2, format = 'image/png', onProgress) => {
+export const pdfToImages = async (file, scale = 2, format = 'image/png', quality = 0.85, onProgress) => {
   const pdfDoc = await loadPdfDocument(file);
   const numPages = pdfDoc.numPages;
 
@@ -67,7 +67,7 @@ export const pdfToImages = async (file, scale = 2, format = 'image/png', onProgr
   const images = [];
 
   for (let i = 1; i <= numPages; i++) {
-    const imageBlob = await pdfPageToImage(pdfDoc, i, scale, format);
+    const imageBlob = await pdfPageToImage(pdfDoc, i, scale, format, quality);
     images.push({
       pageNum: i,
       blob: imageBlob,
@@ -277,6 +277,73 @@ export const getPdfPageCount = async (file) => {
   const fileBytes = await file.arrayBuffer();
   const pdf = await PDFDocument.load(fileBytes);
   return pdf.getPageCount();
+};
+
+/**
+ * PDF 압축 (이미지 재압축 방식)
+ */
+export const compressPdf = async (file, quality = 0.7, onProgress) => {
+  const fileBytes = await file.arrayBuffer();
+  const sourcePdf = await PDFDocument.load(fileBytes, { ignoreEncryption: true });
+  const pdfDoc = await loadPdfDocument(file);
+  const numPages = pdfDoc.numPages;
+
+  if (numPages > MAX_PAGES) {
+    throw new Error(`PDF has too many pages (${numPages}). Maximum allowed: ${MAX_PAGES}`);
+  }
+
+  const newPdf = await PDFDocument.create();
+
+  for (let i = 1; i <= numPages; i++) {
+    const page = await pdfDoc.getPage(i);
+    const viewport = page.getViewport({ scale: 2 });
+
+    // Limit canvas size
+    let scale = 2;
+    const totalPixels = viewport.width * viewport.height;
+    if (totalPixels > MAX_CANVAS_PIXELS) {
+      const reductionFactor = Math.sqrt(MAX_CANVAS_PIXELS / totalPixels);
+      scale = 2 * reductionFactor;
+    }
+
+    const scaledViewport = page.getViewport({ scale });
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = Math.floor(scaledViewport.width);
+    canvas.height = Math.floor(scaledViewport.height);
+
+    await page.render({
+      canvasContext: context,
+      viewport: scaledViewport
+    }).promise;
+
+    // Convert to JPEG with specified quality
+    const jpegDataUrl = canvas.toDataURL('image/jpeg', quality);
+    const jpegBytes = Uint8Array.from(atob(jpegDataUrl.split(',')[1]), c => c.charCodeAt(0));
+
+    // Embed the JPEG image in new PDF
+    const jpegImage = await newPdf.embedJpg(jpegBytes);
+
+    // Get original page dimensions
+    const originalPage = sourcePdf.getPage(i - 1);
+    const { width, height } = originalPage.getSize();
+
+    // Add new page with same dimensions
+    const newPage = newPdf.addPage([width, height]);
+    newPage.drawImage(jpegImage, {
+      x: 0,
+      y: 0,
+      width: width,
+      height: height
+    });
+
+    if (onProgress) {
+      onProgress(Math.round((i / numPages) * 100));
+    }
+  }
+
+  const compressedBytes = await newPdf.save();
+  return new Blob([compressedBytes], { type: 'application/pdf' });
 };
 
 /**

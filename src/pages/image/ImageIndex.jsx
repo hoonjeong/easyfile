@@ -6,6 +6,7 @@ const ImageIndex = () => {
   const { t } = useTranslation();
 
   const converters = [
+    { path: '/image/compress', titleKey: 'image.compress.title', descKey: 'image.compress.description', tags: ['JPG', 'PNG', 'WebP', 'Compress'], icon: '📦' },
     { path: '/image/heic-to-jpg', titleKey: 'image.heic.title', descKey: 'image.heic.description', tags: ['HEIC', 'HEIF', 'iPhone', 'JPG', 'PNG'], icon: '📱' },
     { path: '/image/webp-to-jpg', titleKey: 'image.webp.title', descKey: 'image.webp.description', tags: ['WebP', 'JPG', 'PNG', 'Google'], icon: '🌐' },
     { path: '/image/psd-to-jpg', titleKey: 'image.psd.title', descKey: 'image.psd.description', tags: ['PSD', 'Photoshop', 'JPG', 'PNG'], icon: '🎨' },
