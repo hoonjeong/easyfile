@@ -80,16 +80,6 @@ const Home = () => {
         { name: 'iHerb', path: '/address' },
         { name: 'eBay', path: '/address' },
       ]
-    },
-    {
-      id: 'games',
-      titleKey: 'categories.games.title',
-      descriptionKey: 'categories.games.description',
-      icon: '🎮',
-      iconClass: 'games',
-      path: 'https://shortgames.kr/',
-      external: true,
-      converters: []
     }
   ];
 
