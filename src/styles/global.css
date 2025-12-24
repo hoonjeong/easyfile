@@ -1394,9 +1394,8 @@ button {
    ======================================== */
 
 .coupang-banner-wrapper {
-  max-width: 680px;
-  margin: 24px auto;
-  min-height: 140px;
+  max-width: 728px;
+  margin: 16px auto;
   display: flex;
   justify-content: center;
   align-items: center;

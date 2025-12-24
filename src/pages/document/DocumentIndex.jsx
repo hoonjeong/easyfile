@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SEOHead from '../../components/SEOHead';
+import CoupangBanner from '../../components/CoupangBanner';
 
 const DocumentIndex = () => {
   const { t } = useTranslation();
@@ -19,6 +20,8 @@ const DocumentIndex = () => {
         <h1 className="page-title">{t('document.pageTitle')}</h1>
         <p className="page-description">{t('document.pageDescription')}</p>
       </div>
+
+      <CoupangBanner />
 
       <div className="categories" style={{ marginTop: '20px' }}>
         {converters.map((converter) => (
