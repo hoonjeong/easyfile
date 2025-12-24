@@ -215,8 +215,6 @@ const GifConverter = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('media.gif.whatIs')}</h2>
         <p>{t('media.gif.whatIsDesc')}</p>

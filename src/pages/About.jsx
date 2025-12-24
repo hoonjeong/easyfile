@@ -226,8 +226,6 @@ const About = () => {
           </div>
         </section>
 
-        <CoupangBanner type="bottom" />
-
         {/* CTA Section */}
         <section className="about-cta">
           <h2 className="about-cta-title">{t('about.ctaTitle')}</h2>

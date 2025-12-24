@@ -102,8 +102,6 @@ const IcoConverter = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('image.ico.whatIs')}</h2>
         <p>{t('image.ico.whatIsDesc')}</p>

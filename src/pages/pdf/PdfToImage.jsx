@@ -208,8 +208,6 @@ const PdfToImage = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('pdf.toImage.why')}</h2>
         <p>{t('pdf.toImage.whyDesc')}</p>

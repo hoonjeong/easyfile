@@ -194,8 +194,6 @@ const AudioConverter = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('media.audio.whatIs')}</h2>
         <p>{t('media.audio.whatIsDesc')}</p>

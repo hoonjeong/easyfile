@@ -275,8 +275,6 @@ const LatexConverter = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('document.latex.whatIs')}</h2>
         <p>{t('document.latex.whatIsDesc')}</p>

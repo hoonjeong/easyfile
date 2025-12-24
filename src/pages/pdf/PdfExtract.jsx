@@ -167,8 +167,6 @@ const PdfExtract = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('pdf.extract.what')}</h2>
         <p>{t('pdf.extract.whatDesc')}</p>

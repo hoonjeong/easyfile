@@ -169,8 +169,6 @@ const PdfDelete = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('pdf.delete.what')}</h2>
         <p>{t('pdf.delete.whatDesc')}</p>

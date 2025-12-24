@@ -219,8 +219,6 @@ const Home = () => {
         ))}
       </section>
 
-      <CoupangBanner type="bottom" />
-
       <section className="seo-content">
         <h2>{t('home.whatIsEasyFile')}</h2>
         <p>{t('home.whatIsEasyFileDesc')}</p>

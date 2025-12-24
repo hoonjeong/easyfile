@@ -150,8 +150,6 @@ const PsdConverter = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('image.psd.whatIs')}</h2>
         <p>{t('image.psd.whatIsDesc')}</p>

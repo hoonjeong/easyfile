@@ -217,8 +217,6 @@ const PdfMerge = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('pdf.merge.what')}</h2>
         <p>{t('pdf.merge.whatDesc')}</p>

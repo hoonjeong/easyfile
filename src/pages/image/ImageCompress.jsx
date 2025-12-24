@@ -306,8 +306,6 @@ const ImageCompress = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('image.compress.what')}</h2>
         <p>{t('image.compress.whatDesc')}</p>

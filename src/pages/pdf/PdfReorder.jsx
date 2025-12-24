@@ -190,8 +190,6 @@ const PdfReorder = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('pdf.reorder.what')}</h2>
         <p>{t('pdf.reorder.whatDesc')}</p>

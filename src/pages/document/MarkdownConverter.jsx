@@ -225,8 +225,6 @@ ${htmlContent}
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('document.markdown.whatIs')}</h2>
         <p>{t('document.markdown.whatIsDesc')}</p>

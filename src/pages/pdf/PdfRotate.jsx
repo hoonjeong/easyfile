@@ -170,8 +170,6 @@ const PdfRotate = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('pdf.rotate.what')}</h2>
         <p>{t('pdf.rotate.whatDesc')}</p>

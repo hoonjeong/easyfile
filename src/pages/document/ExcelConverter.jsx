@@ -296,8 +296,6 @@ const ExcelConverter = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('document.excel.whatIs')}</h2>
         <p>{t('document.excel.whatIsDesc')}</p>

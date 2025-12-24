@@ -197,8 +197,6 @@ const VideoConverter = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('media.video.whatIs')}</h2>
         <p>{t('media.video.whatIsDesc')}</p>

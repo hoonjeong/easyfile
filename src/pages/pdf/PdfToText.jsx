@@ -175,8 +175,6 @@ const PdfToText = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('pdf.toText.what')}</h2>
         <p>{t('pdf.toText.whatDesc')}</p>

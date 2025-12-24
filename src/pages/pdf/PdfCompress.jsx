@@ -216,8 +216,6 @@ const PdfCompress = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('pdf.compress.what')}</h2>
         <p>{t('pdf.compress.whatDesc')}</p>

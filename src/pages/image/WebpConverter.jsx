@@ -124,8 +124,6 @@ const WebpConverter = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('image.webp.whatIs')}</h2>
         <p>{t('image.webp.whatIsDesc')}</p>

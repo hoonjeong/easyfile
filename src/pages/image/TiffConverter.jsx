@@ -160,8 +160,6 @@ const TiffConverter = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('image.tiff.whatIs')}</h2>
         <p>{t('image.tiff.whatIsDesc')}</p>

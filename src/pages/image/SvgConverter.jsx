@@ -127,8 +127,6 @@ const SvgConverter = () => {
         )}
       </div>
 
-      <CoupangBanner type="bottom" />
-
       <div className="seo-content">
         <h2>{t('image.svg.whatIs')}</h2>
         <p>{t('image.svg.whatIsDesc')}</p>

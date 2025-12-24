@@ -464,8 +464,6 @@ const AddressConverter = () => {
         </ul>
       </div>
 
-      <CoupangBanner type="bottom" />
-
       {/* SEO Content */}
       <div className="seo-content">
         <h2>{t('address.whatIs')}</h2>
