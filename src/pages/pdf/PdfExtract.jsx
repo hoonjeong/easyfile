@@ -5,6 +5,7 @@ import DropZone from '../../components/DropZone';
 import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
+import CoupangBanner from '../../components/CoupangBanner';
 import { extractPages, generateThumbnails } from '../../utils/pdfUtils';
 import { downloadFile, sanitizeFilename } from '../../utils/download';
 
@@ -100,6 +101,8 @@ const PdfExtract = () => {
         <p className="page-description">{t('pdf.extract.pageDescription')}</p>
       </div>
 
+      <CoupangBanner type="top" />
+
       <div className="converter-card">
         {!file ? (
           <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.pdf', 'application/pdf']} fileCategory="pdf" />
@@ -163,6 +166,8 @@ const PdfExtract = () => {
           </>
         )}
       </div>
+
+      <CoupangBanner type="bottom" />
 
       <div className="seo-content">
         <h2>{t('pdf.extract.what')}</h2>

@@ -6,6 +6,7 @@ import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
 import ResultDisplay from '../../components/ResultDisplay';
 import { downloadFile } from '../../utils/download';
+import CoupangBanner from '../../components/CoupangBanner';
 
 /**
  * Sanitize LaTeX input to prevent XSS attacks
@@ -186,6 +187,8 @@ const LatexConverter = () => {
         <p className="page-description">{t('document.latex.pageDescription')}</p>
       </div>
 
+      <CoupangBanner type="top" />
+
       <div className="converter-card">
         <div className="option-group">
           <label className="option-label">{t('document.latex.inputLabel')}</label>
@@ -271,6 +274,8 @@ const LatexConverter = () => {
           <button className="convert-button" onClick={handleConvert} disabled={!latexInput || !mathJaxReady}>{t('document.convertToFormat', { format: outputFormat.toUpperCase() })}</button>
         )}
       </div>
+
+      <CoupangBanner type="bottom" />
 
       <div className="seo-content">
         <h2>{t('document.latex.whatIs')}</h2>

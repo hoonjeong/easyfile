@@ -8,6 +8,7 @@ import ErrorDisplay from '../../components/ErrorDisplay';
 import ResultDisplay from '../../components/ResultDisplay';
 import { convertIcoToPng, createPreviewUrl, revokePreviewUrl } from '../../utils/imageConverter';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
+import CoupangBanner from '../../components/CoupangBanner';
 
 const IcoConverter = () => {
   const { t } = useTranslation();
@@ -77,6 +78,8 @@ const IcoConverter = () => {
         <p className="page-description">{t('image.ico.pageDescription')}</p>
       </div>
 
+      <CoupangBanner type="top" />
+
       <div className="converter-card">
         {!file ? (
           <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.ico', 'image/x-icon', 'image/vnd.microsoft.icon']} fileCategory="ico" />
@@ -98,6 +101,8 @@ const IcoConverter = () => {
           </>
         )}
       </div>
+
+      <CoupangBanner type="bottom" />
 
       <div className="seo-content">
         <h2>{t('image.ico.whatIs')}</h2>

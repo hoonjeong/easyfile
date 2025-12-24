@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import SEOHead from '../../components/SEOHead';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
+import CoupangBanner from '../../components/CoupangBanner';
 import { mergePdfs } from '../../utils/pdfUtils';
 import { downloadFile } from '../../utils/download';
 import { securityCheck, validateFileType } from '../../utils/fileValidation';
@@ -116,6 +117,8 @@ const PdfMerge = () => {
         <p className="page-description">{t('pdf.merge.pageDescription')}</p>
       </div>
 
+      <CoupangBanner type="top" />
+
       <div className="converter-card">
         <div style={{ marginBottom: '20px' }}>
           <label
@@ -213,6 +216,8 @@ const PdfMerge = () => {
           <button className="convert-button" onClick={handleMerge}>{t('pdf.merge.mergePdf')}</button>
         )}
       </div>
+
+      <CoupangBanner type="bottom" />
 
       <div className="seo-content">
         <h2>{t('pdf.merge.what')}</h2>

@@ -10,6 +10,7 @@ import { downloadFile, getFilenameWithNewExtension } from '../../utils/download'
 import { formatFileSize } from '../../utils/fileValidation';
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile, toBlobURL } from '@ffmpeg/util';
+import CoupangBanner from '../../components/CoupangBanner';
 
 const GifConverter = () => {
   const { t } = useTranslation();
@@ -160,6 +161,8 @@ const GifConverter = () => {
         <p className="page-description">{t('media.gif.pageDescription')}</p>
       </div>
 
+      <CoupangBanner type="top" />
+
       <div className="converter-card">
         {!file ? (
           <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.gif', 'image/gif']} fileCategory="gif" />
@@ -211,6 +214,8 @@ const GifConverter = () => {
           </>
         )}
       </div>
+
+      <CoupangBanner type="bottom" />
 
       <div className="seo-content">
         <h2>{t('media.gif.whatIs')}</h2>

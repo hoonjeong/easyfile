@@ -8,6 +8,7 @@ import ErrorDisplay from '../../components/ErrorDisplay';
 import ResultDisplay from '../../components/ResultDisplay';
 import { convertImageWithCanvas, createPreviewUrl, revokePreviewUrl } from '../../utils/imageConverter';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
+import CoupangBanner from '../../components/CoupangBanner';
 
 const WebpConverter = () => {
   const { t } = useTranslation();
@@ -81,6 +82,8 @@ const WebpConverter = () => {
         <p className="page-description">{t('image.webp.pageDescription')}</p>
       </div>
 
+      <CoupangBanner type="top" />
+
       <div className="converter-card">
         {!file ? (
           <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.webp', 'image/webp']} fileCategory="webp" />
@@ -120,6 +123,8 @@ const WebpConverter = () => {
           </>
         )}
       </div>
+
+      <CoupangBanner type="bottom" />
 
       <div className="seo-content">
         <h2>{t('image.webp.whatIs')}</h2>

@@ -9,6 +9,7 @@ import ResultDisplay from '../../components/ResultDisplay';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import ExcelJS from 'exceljs';
 import DOMPurify from 'dompurify';
+import CoupangBanner from '../../components/CoupangBanner';
 
 const ExcelConverter = () => {
   const { t } = useTranslation();
@@ -248,6 +249,8 @@ const ExcelConverter = () => {
         <p className="page-description">{t('document.excel.pageDescription')}</p>
       </div>
 
+      <CoupangBanner type="top" />
+
       <div className="converter-card">
         {!file ? (
           <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.xlsx', '.xls', '.csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel']} fileCategory="excel" />
@@ -292,6 +295,8 @@ const ExcelConverter = () => {
           </>
         )}
       </div>
+
+      <CoupangBanner type="bottom" />
 
       <div className="seo-content">
         <h2>{t('document.excel.whatIs')}</h2>

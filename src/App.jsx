@@ -42,6 +42,9 @@ import ImageCompress from './pages/image/ImageCompress';
 // Address converter
 import AddressConverter from './pages/AddressConverter';
 
+// About page
+import About from './pages/About';
+
 import './styles/global.css';
 
 function App() {
@@ -89,6 +92,9 @@ function App() {
 
             {/* Address converter */}
             <Route path="/address" element={<AddressConverter />} />
+
+            {/* About page */}
+            <Route path="/about" element={<About />} />
           </Routes>
         </Layout>
       </Router>

@@ -13,6 +13,7 @@ const Layout = ({ children }) => {
     { path: '/media', labelKey: 'nav.media' },
     { path: '/address', labelKey: 'nav.address' },
     { path: 'https://shortgames.kr/', labelKey: 'nav.games', external: true },
+    { path: '/about', labelKey: 'nav.about' },
   ];
 
   const changeLanguage = (lng) => {

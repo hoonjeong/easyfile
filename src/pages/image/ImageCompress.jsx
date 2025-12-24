@@ -6,6 +6,7 @@ import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
 import { downloadFile, sanitizeFilename } from '../../utils/download';
+import CoupangBanner from '../../components/CoupangBanner';
 
 const formatFileSize = (bytes) => {
   if (bytes === 0) return '0 Bytes';
@@ -136,6 +137,8 @@ const ImageCompress = () => {
         <h1 className="page-title">{t('image.compress.pageTitle')}</h1>
         <p className="page-description">{t('image.compress.pageDescription')}</p>
       </div>
+
+      <CoupangBanner type="top" />
 
       <div className="converter-card">
         {!file ? (
@@ -302,6 +305,8 @@ const ImageCompress = () => {
           </>
         )}
       </div>
+
+      <CoupangBanner type="bottom" />
 
       <div className="seo-content">
         <h2>{t('image.compress.what')}</h2>

@@ -9,6 +9,7 @@ import ResultDisplay from '../../components/ResultDisplay';
 import { createPreviewUrl, revokePreviewUrl } from '../../utils/imageConverter';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import { readPsd } from 'ag-psd';
+import CoupangBanner from '../../components/CoupangBanner';
 
 const PsdConverter = () => {
   const { t } = useTranslation();
@@ -107,6 +108,8 @@ const PsdConverter = () => {
         <p className="page-description">{t('image.psd.pageDescription')}</p>
       </div>
 
+      <CoupangBanner type="top" />
+
       <div className="converter-card">
         {!file ? (
           <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.psd', 'image/vnd.adobe.photoshop']} fileCategory="psd" />
@@ -146,6 +149,8 @@ const PsdConverter = () => {
           </>
         )}
       </div>
+
+      <CoupangBanner type="bottom" />
 
       <div className="seo-content">
         <h2>{t('image.psd.whatIs')}</h2>

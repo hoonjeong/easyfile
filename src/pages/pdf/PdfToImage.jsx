@@ -5,6 +5,7 @@ import DropZone from '../../components/DropZone';
 import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
+import CoupangBanner from '../../components/CoupangBanner';
 import { pdfToImages } from '../../utils/pdfUtils';
 import { downloadFile, getFilenameWithNewExtension, sanitizeFilename } from '../../utils/download';
 import JSZip from 'jszip';
@@ -92,6 +93,8 @@ const PdfToImage = () => {
         <h1 className="page-title">{t('pdf.toImage.pageTitle')}</h1>
         <p className="page-description">{t('pdf.toImage.pageDescription')}</p>
       </div>
+
+      <CoupangBanner type="top" />
 
       <div className="converter-card">
         {!file ? (
@@ -204,6 +207,8 @@ const PdfToImage = () => {
           </>
         )}
       </div>
+
+      <CoupangBanner type="bottom" />
 
       <div className="seo-content">
         <h2>{t('pdf.toImage.why')}</h2>

@@ -9,6 +9,7 @@ import ErrorDisplay from '../../components/ErrorDisplay';
 import ResultDisplay from '../../components/ResultDisplay';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import { marked } from 'marked';
+import CoupangBanner from '../../components/CoupangBanner';
 
 const MarkdownConverter = () => {
   const { t, i18n } = useTranslation();
@@ -145,6 +146,8 @@ ${htmlContent}
         <p className="page-description">{t('document.markdown.pageDescription')}</p>
       </div>
 
+      <CoupangBanner type="top" />
+
       <div className="converter-card">
         <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
           <button
@@ -221,6 +224,8 @@ ${htmlContent}
           </>
         )}
       </div>
+
+      <CoupangBanner type="bottom" />
 
       <div className="seo-content">
         <h2>{t('document.markdown.whatIs')}</h2>

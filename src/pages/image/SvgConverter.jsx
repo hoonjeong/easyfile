@@ -9,6 +9,7 @@ import ResultDisplay from '../../components/ResultDisplay';
 import { convertSvgToPng, revokePreviewUrl, createPreviewUrl } from '../../utils/imageConverter';
 import { createSafeSvgPreviewUrl } from '../../utils/svgSanitizer';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
+import CoupangBanner from '../../components/CoupangBanner';
 
 const SvgConverter = () => {
   const { t } = useTranslation();
@@ -86,6 +87,8 @@ const SvgConverter = () => {
         <p className="page-description">{t('image.svg.pageDescription')}</p>
       </div>
 
+      <CoupangBanner type="top" />
+
       <div className="converter-card">
         {!file ? (
           <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.svg', 'image/svg+xml']} fileCategory="svg" />
@@ -123,6 +126,8 @@ const SvgConverter = () => {
           </>
         )}
       </div>
+
+      <CoupangBanner type="bottom" />
 
       <div className="seo-content">
         <h2>{t('image.svg.whatIs')}</h2>

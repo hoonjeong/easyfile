@@ -8,6 +8,7 @@ import ErrorDisplay from '../../components/ErrorDisplay';
 import ResultDisplay from '../../components/ResultDisplay';
 import { convertHeic, createPreviewUrl, revokePreviewUrl } from '../../utils/imageConverter';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
+import CoupangBanner from '../../components/CoupangBanner';
 
 const HeicConverter = () => {
   const { t } = useTranslation();
@@ -72,6 +73,8 @@ const HeicConverter = () => {
         <p className="page-description">{t('image.heic.pageDescription')}</p>
       </div>
 
+      <CoupangBanner type="top" />
+
       <div className="converter-card">
         {!file ? (
           <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.heic', '.heif', 'image/heic', 'image/heif']} fileCategory="heic" />
@@ -111,6 +114,8 @@ const HeicConverter = () => {
           </>
         )}
       </div>
+
+      <CoupangBanner type="bottom" />
 
       <div className="seo-content">
         <h2>{t('image.heic.whatIs')}</h2>

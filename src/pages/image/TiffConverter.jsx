@@ -9,6 +9,7 @@ import ResultDisplay from '../../components/ResultDisplay';
 import { createPreviewUrl, revokePreviewUrl } from '../../utils/imageConverter';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import * as UTIF from 'utif2';
+import CoupangBanner from '../../components/CoupangBanner';
 
 const TiffConverter = () => {
   const { t } = useTranslation();
@@ -117,6 +118,8 @@ const TiffConverter = () => {
         <p className="page-description">{t('image.tiff.pageDescription')}</p>
       </div>
 
+      <CoupangBanner type="top" />
+
       <div className="converter-card">
         {!file ? (
           <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.tiff', '.tif', 'image/tiff']} fileCategory="tiff" />
@@ -156,6 +159,8 @@ const TiffConverter = () => {
           </>
         )}
       </div>
+
+      <CoupangBanner type="bottom" />
 
       <div className="seo-content">
         <h2>{t('image.tiff.whatIs')}</h2>

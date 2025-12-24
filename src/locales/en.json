@@ -46,7 +46,8 @@
     "media": "Media",
     "pdf": "PDF",
     "address": "Address Convert",
-    "games": "Mini Games"
+    "games": "Mini Games",
+    "about": "Guide"
   },
   "home": {
     "heroBadge": "No Server Upload - 100% Browser-Based",
@@ -628,5 +629,181 @@
       "noName": "Please enter recipient name",
       "loadScript": "Error loading address search feature"
     }
+  },
+  "about": {
+    "pageTitle": "EasyFile User Guide - Free Online File Converter",
+    "pageDescription": "Learn how to use all EasyFile features easily. Detailed guides for PDF, image, document, and media conversion tools.",
+    "heroBadge": "100% Free · No Installation · Privacy Protected",
+    "heroTitle": "Easy & Secure File Conversion,",
+    "heroSubtitle": "EasyFile is a free online tool that converts files directly in your browser. Your files are never sent to any server, ensuring complete privacy protection.",
+    "whyEasyFile": "Why EasyFile?",
+    "features": {
+      "privacy": {
+        "title": "Complete Privacy Protection",
+        "desc": "All file processing happens in your browser and is never sent to any server. Convert sensitive documents with peace of mind."
+      },
+      "fast": {
+        "title": "Fast Processing",
+        "desc": "Powered by modern WebAssembly technology for instant conversions without server round-trips. Large files are processed quickly."
+      },
+      "free": {
+        "title": "Completely Free",
+        "desc": "No registration, no file size limits, no daily usage limits. Use as much as you want, completely free."
+      },
+      "noInstall": {
+        "title": "No Installation Required",
+        "desc": "Just need a web browser. Use instantly from any device."
+      }
+    },
+    "guideTitle": "Feature Guides",
+    "guideSubtitle": "Check how to use each tool and get started",
+    "tryNow": "Try Now",
+    "howToUse": "How to Use",
+    "guide": {
+      "categories": {
+        "pdf": "PDF Tools",
+        "image": "Image Converter",
+        "document": "Document Converter",
+        "media": "Media Converter",
+        "address": "Address Converter"
+      },
+      "pdf": {
+        "toImage": {
+          "name": "PDF → Image",
+          "desc": "Convert each page of a PDF file to high-quality JPG or PNG images.",
+          "steps": ["Drag or select PDF file", "Choose resolution and output format", "Click convert button", "Download individually or as ZIP"]
+        },
+        "toText": {
+          "name": "PDF → Text",
+          "desc": "Extract text from PDF documents to copy or save as TXT file.",
+          "steps": ["Upload PDF file", "Click extract text button", "View all or by page", "Download TXT or copy"]
+        },
+        "merge": {
+          "name": "Merge PDF",
+          "desc": "Combine multiple PDF files into one. Reorder files as needed.",
+          "steps": ["Add multiple PDF files", "Drag to reorder", "Click merge button", "Download merged PDF"]
+        },
+        "split": {
+          "name": "Split PDF",
+          "desc": "Divide one PDF into multiple files. Split by page or custom range.",
+          "steps": ["Upload PDF file", "Choose split mode (by page/range)", "Click split button", "Download individual files"]
+        },
+        "extract": {
+          "name": "Extract Pages",
+          "desc": "Select specific pages from PDF and save as new PDF.",
+          "steps": ["Upload PDF file", "Click page thumbnails to extract", "Click extract button", "Download selected pages only"]
+        },
+        "delete": {
+          "name": "Delete Pages",
+          "desc": "Remove unwanted pages from PDF.",
+          "steps": ["Upload PDF file", "Click pages to delete (shown in red)", "Click delete button", "Download edited PDF"]
+        },
+        "reorder": {
+          "name": "Reorder Pages",
+          "desc": "Rearrange PDF pages in any order you want.",
+          "steps": ["Upload PDF file", "Drag and drop to reorder", "Click apply button", "Download reordered PDF"]
+        },
+        "rotate": {
+          "name": "Rotate Pages",
+          "desc": "Rotate PDF pages by 90°, 180°, or 270°.",
+          "steps": ["Upload PDF file", "Click rotate button below each page", "Click apply button", "Download rotated PDF"]
+        },
+        "compress": {
+          "name": "Compress PDF",
+          "desc": "Reduce PDF file size for email attachments or uploads.",
+          "steps": ["Upload PDF file", "Select compression level", "Click compress button", "Download compressed PDF"]
+        }
+      },
+      "image": {
+        "heic": {
+          "name": "HEIC → JPG/PNG",
+          "desc": "Convert iPhone HEIC photos to universally compatible JPG/PNG.",
+          "steps": ["Drag or select HEIC file", "Choose output format (JPG/PNG)", "Click convert button", "Download converted image"]
+        },
+        "webp": {
+          "name": "WebP → JPG/PNG",
+          "desc": "Convert WebP images from websites to universal formats.",
+          "steps": ["Upload WebP file", "Choose output format", "Click convert button", "Download as JPG/PNG"]
+        },
+        "psd": {
+          "name": "PSD → JPG/PNG",
+          "desc": "Convert PSD files to images without Photoshop.",
+          "steps": ["Upload PSD file", "Choose output format", "Click convert button", "Download as image"]
+        },
+        "tiff": {
+          "name": "TIFF → JPG/PNG",
+          "desc": "Convert high-resolution TIFF files to web-friendly formats.",
+          "steps": ["Upload TIFF file", "Choose format and quality", "Click convert button", "Download converted image"]
+        },
+        "svg": {
+          "name": "SVG → PNG",
+          "desc": "Convert SVG vector images to PNG raster images.",
+          "steps": ["Upload SVG file", "Choose output scale", "Click convert button", "Download as PNG"]
+        },
+        "ico": {
+          "name": "ICO → PNG",
+          "desc": "Convert icon files to PNG images.",
+          "steps": ["Upload ICO file", "Click convert button", "Download as PNG"]
+        },
+        "compress": {
+          "name": "Compress Image",
+          "desc": "Reduce image file size by adjusting quality and dimensions.",
+          "steps": ["Upload image file", "Set quality and max width", "Click compress button", "Download compressed image"]
+        }
+      },
+      "document": {
+        "excel": {
+          "name": "Excel → JSON/CSV",
+          "desc": "Convert Excel data to JSON, CSV, or HTML tables.",
+          "steps": ["Upload Excel file", "Choose output format (JSON/CSV/HTML)", "Click convert button", "Download converted file"]
+        },
+        "markdown": {
+          "name": "Markdown → HTML",
+          "desc": "Convert Markdown documents to web-ready HTML.",
+          "steps": ["Upload MD file or type directly", "Preview the result", "Click convert button", "Download as HTML"]
+        },
+        "latex": {
+          "name": "LaTeX → Image",
+          "desc": "Convert LaTeX equations to PNG or SVG images.",
+          "steps": ["Enter LaTeX equation", "Preview the result", "Choose format and size", "Download as image"]
+        }
+      },
+      "media": {
+        "audio": {
+          "name": "M4A → MP3",
+          "desc": "Convert iPhone voice memos and M4A files to universal MP3.",
+          "steps": ["Upload M4A file", "Choose format and bitrate", "Click convert button", "Download as MP3"]
+        },
+        "video": {
+          "name": "WebM → MP4",
+          "desc": "Convert web recordings WebM to editable MP4.",
+          "steps": ["Upload WebM file", "Choose quality setting", "Click convert button", "Download as MP4"]
+        },
+        "gif": {
+          "name": "GIF → MP4",
+          "desc": "Convert large GIFs to MP4 to dramatically reduce file size.",
+          "steps": ["Upload GIF file", "Choose quality setting", "Click convert button", "Download as MP4"]
+        }
+      },
+      "address": {
+        "name": "Address Converter (JikguPass)",
+        "desc": "Automatically convert Korean addresses to English for international shopping sites.",
+        "steps": ["Click search address button", "Search and select street address", "Enter details, name, and phone", "Select shopping site and convert", "Copy each field and paste"]
+      }
+    },
+    "faqTitle": "Frequently Asked Questions",
+    "faq": {
+      "q1": "Are files sent to a server?",
+      "a1": "No, all file processing happens only in your browser. Files are never sent to external servers, ensuring complete privacy protection.",
+      "q2": "Is it free? Are there usage limits?",
+      "a2": "Completely free. No registration, no file size limits, no daily usage limits. Use as much as you want.",
+      "q3": "Which browsers are supported?",
+      "a3": "All modern browsers including Chrome, Firefox, Safari, and Edge are supported. For the best experience, we recommend using the latest browser version.",
+      "q4": "What about converted file quality?",
+      "a4": "We maintain original quality as much as possible. For images and PDFs, you can adjust quality options to balance file size and quality."
+    },
+    "ctaTitle": "Get Started Now",
+    "ctaSubtitle": "Convert files for free without installation or registration",
+    "ctaButton": "Go to Home"
   }
 }

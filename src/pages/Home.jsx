@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SEOHead from '../components/SEOHead';
+import CoupangBanner from '../components/CoupangBanner';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -157,6 +158,8 @@ const Home = () => {
         </p>
       </section>
 
+      <CoupangBanner type="top" />
+
       <section className="categories">
         {categories.map((category) => (
           category.external ? (
@@ -215,6 +218,8 @@ const Home = () => {
           </div>
         ))}
       </section>
+
+      <CoupangBanner type="bottom" />
 
       <section className="seo-content">
         <h2>{t('home.whatIsEasyFile')}</h2>

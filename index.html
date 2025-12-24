@@ -5,13 +5,13 @@
     <!-- Content Security Policy -->
     <meta http-equiv="Content-Security-Policy" content="
       default-src 'self';
-      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://pagead2.googlesyndication.com https://www.googletagservices.com https://adservice.google.com https://www.google-analytics.com https://*.daumcdn.net;
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://*.daumcdn.net https://ads-partners.coupang.com;
       style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://*.daumcdn.net;
       img-src 'self' data: blob: https:;
       font-src 'self' https://cdn.jsdelivr.net;
-      connect-src 'self' https://cdn.jsdelivr.net https://unpkg.com https://pagead2.googlesyndication.com https://*.daum.net https://*.daumcdn.net;
+      connect-src 'self' https://cdn.jsdelivr.net https://unpkg.com https://*.daum.net https://*.daumcdn.net https://ads-partners.coupang.com https://*.coupang.com;
       worker-src 'self' blob:;
-      frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://*.daum.net https://*.daumcdn.net;
+      frame-src https://*.daum.net https://*.daumcdn.net https://ads-partners.coupang.com https://*.coupang.com https://coupa.ng;
       frame-ancestors 'self';
     ">
     <!-- Clickjacking Protection -->
@@ -40,9 +40,6 @@
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 
     <title>EasyFile - 무료 온라인 파일 변환기 | HEIC, WebP, PSD, Excel 변환</title>
-
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5588520972347187" crossorigin="anonymous"></script>
   </head>
   <body>
     <div id="root"></div>

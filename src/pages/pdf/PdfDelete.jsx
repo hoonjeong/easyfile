@@ -5,6 +5,7 @@ import DropZone from '../../components/DropZone';
 import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
+import CoupangBanner from '../../components/CoupangBanner';
 import { deletePages, generateThumbnails } from '../../utils/pdfUtils';
 import { downloadFile, sanitizeFilename } from '../../utils/download';
 
@@ -101,6 +102,8 @@ const PdfDelete = () => {
         <p className="page-description">{t('pdf.delete.pageDescription')}</p>
       </div>
 
+      <CoupangBanner type="top" />
+
       <div className="converter-card">
         {!file ? (
           <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.pdf', 'application/pdf']} fileCategory="pdf" />
@@ -165,6 +168,8 @@ const PdfDelete = () => {
           </>
         )}
       </div>
+
+      <CoupangBanner type="bottom" />
 
       <div className="seo-content">
         <h2>{t('pdf.delete.what')}</h2>

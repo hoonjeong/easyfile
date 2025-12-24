@@ -9,6 +9,7 @@ import ResultDisplay from '../../components/ResultDisplay';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile, toBlobURL } from '@ffmpeg/util';
+import CoupangBanner from '../../components/CoupangBanner';
 
 const VideoConverter = () => {
   const { t } = useTranslation();
@@ -151,6 +152,8 @@ const VideoConverter = () => {
         <p className="page-description">{t('media.video.pageDescription')}</p>
       </div>
 
+      <CoupangBanner type="top" />
+
       <div className="converter-card">
         {!file ? (
           <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.webm', 'video/webm']} fileCategory="video" />
@@ -193,6 +196,8 @@ const VideoConverter = () => {
           </>
         )}
       </div>
+
+      <CoupangBanner type="bottom" />
 
       <div className="seo-content">
         <h2>{t('media.video.whatIs')}</h2>

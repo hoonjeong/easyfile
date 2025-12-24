@@ -9,6 +9,7 @@ import ResultDisplay from '../../components/ResultDisplay';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile, toBlobURL } from '@ffmpeg/util';
+import CoupangBanner from '../../components/CoupangBanner';
 
 const AudioConverter = () => {
   const { t } = useTranslation();
@@ -140,6 +141,8 @@ const AudioConverter = () => {
         <p className="page-description">{t('media.audio.pageDescription')}</p>
       </div>
 
+      <CoupangBanner type="top" />
+
       <div className="converter-card">
         {!file ? (
           <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.m4a', '.aac', '.wav', '.ogg', '.flac', 'audio/*']} fileCategory="audio" />
@@ -190,6 +193,8 @@ const AudioConverter = () => {
           </>
         )}
       </div>
+
+      <CoupangBanner type="bottom" />
 
       <div className="seo-content">
         <h2>{t('media.audio.whatIs')}</h2>

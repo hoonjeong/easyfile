@@ -5,6 +5,7 @@ import DropZone from '../../components/DropZone';
 import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
+import CoupangBanner from '../../components/CoupangBanner';
 import { splitPdf, getPdfPageCount } from '../../utils/pdfUtils';
 import { downloadFile, sanitizeFilename } from '../../utils/download';
 import JSZip from 'jszip';
@@ -123,6 +124,8 @@ const PdfSplit = () => {
         <p className="page-description">{t('pdf.split.pageDescription')}</p>
       </div>
 
+      <CoupangBanner type="top" />
+
       <div className="converter-card">
         {!file ? (
           <DropZone onFileSelect={handleFileSelect} acceptedTypes={['.pdf', 'application/pdf']} fileCategory="pdf" />
@@ -198,6 +201,8 @@ const PdfSplit = () => {
           </>
         )}
       </div>
+
+      <CoupangBanner type="bottom" />
 
       <div className="seo-content">
         <h2>{t('pdf.split.what')}</h2>
