@@ -1,15 +1,13 @@
 import { useEffect, useRef } from 'react';
 
-const CoupangBanner = ({ type = 'top' }) => {
+const CoupangBanner = () => {
   const containerRef = useRef(null);
   const loadedRef = useRef(false);
 
   useEffect(() => {
     if (!containerRef.current || loadedRef.current) return;
 
-    const config = type === 'top'
-      ? { id: 558620, trackingCode: "AF3215781", subId: null, template: "carousel", width: "680", height: "140" }
-      : { id: 520389, trackingCode: "AF3215781", subId: null, template: "carousel", width: "680", height: "140" };
+    const config = { id: 953120, template: "carousel", trackingCode: "AF3215781", width: "680", height: "140", tsource: "" };
 
     const initBanner = () => {
       if (window.PartnersCoupang && containerRef.current) {
@@ -42,7 +40,7 @@ const CoupangBanner = ({ type = 'top' }) => {
     return () => {
       loadedRef.current = false;
     };
-  }, [type]);
+  }, []);
 
   return (
     <div className="coupang-banner-wrapper" ref={containerRef} />
