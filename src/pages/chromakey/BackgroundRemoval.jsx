@@ -60,7 +60,12 @@ const BackgroundRemoval = () => {
 
     try {
       // Remove background using AI
-      const blob = await removeBackground(sourceImage.url, {
+      const blob = await removeBackground(sourceImage.file, {
+        model: 'small',
+        output: {
+          format: 'image/png',
+          quality: 0.8
+        },
         progress: (key, current, total) => {
           const percentage = Math.round((current / total) * 100);
           setProgress(percentage);
@@ -115,7 +120,15 @@ const BackgroundRemoval = () => {
       setProgressMessage(t('bgRemoval.progress.complete'));
     } catch (err) {
       console.error('Background removal failed:', err);
-      setError(t('bgRemoval.error.processingFailed'));
+      console.error('Error details:', err.message, err.stack);
+      // Show more specific error message
+      if (err.message?.includes('SharedArrayBuffer')) {
+        setError('이 기능은 보안 컨텍스트(HTTPS)가 필요합니다. 로컬 개발 서버에서는 작동하지 않을 수 있습니다.');
+      } else if (err.message?.includes('fetch')) {
+        setError('AI 모델을 다운로드할 수 없습니다. 인터넷 연결을 확인해주세요.');
+      } else {
+        setError(t('bgRemoval.error.processingFailed') + ' (' + (err.message || 'Unknown error') + ')');
+      }
     } finally {
       setIsProcessing(false);
     }
