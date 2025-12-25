@@ -8,20 +8,16 @@ import CoupangBanner from '../../components/CoupangBanner';
 // Constants
 // ============================================================================
 
-const CHROMAKEY_COLORS = [
-  { value: 'transparent', title: 'Transparent' },
-  { value: '#00FF00', title: 'Green Screen' },
-  { value: '#0000FF', title: 'Blue Screen' },
-  { value: '#FF00FF', title: 'Magenta' },
-];
-
 const QUALITY_OPTIONS = [
   { value: 'small', labelKey: 'bgRemoval.qualityFast', fallback: '빠름 (낮은 품질)' },
   { value: 'medium', labelKey: 'bgRemoval.qualityBalanced', fallback: '균형 (권장)' },
   { value: 'large', labelKey: 'bgRemoval.qualityHigh', fallback: '고품질 (느림)' },
 ];
 
-const MASK_THRESHOLD = 128;
+// Lower threshold to include more edge pixels as subject
+// Higher value = more aggressive background removal (may cut into subject)
+// Lower value = more conservative (may include some background)
+const MASK_THRESHOLD = 30;
 
 // ============================================================================
 // Styles
@@ -38,16 +34,6 @@ const styles = {
     `,
     backgroundSize: '20px 20px',
     backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-  },
-  checkerboardSmall: {
-    backgroundImage: `
-      linear-gradient(45deg, #ccc 25%, transparent 25%),
-      linear-gradient(-45deg, #ccc 25%, transparent 25%),
-      linear-gradient(45deg, transparent 75%, #ccc 75%),
-      linear-gradient(-45deg, transparent 75%, #ccc 75%)
-    `,
-    backgroundSize: '10px 10px',
-    backgroundPosition: '0 0, 0 5px, 5px -5px, -5px 0px',
   },
   primaryButton: {
     padding: '12px 24px',
@@ -85,15 +71,6 @@ const styles = {
     cursor: 'pointer',
     fontSize: '16px',
   },
-  chromakeyButton: {
-    padding: '12px 24px',
-    backgroundColor: '#059669',
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '16px',
-  },
   indigoButton: {
     padding: '12px 24px',
     backgroundColor: '#6366F1',
@@ -111,12 +88,6 @@ const styles = {
     borderRadius: '8px',
     cursor: 'not-allowed',
     fontSize: '16px',
-  },
-  colorButton: {
-    width: '50px',
-    height: '50px',
-    borderRadius: '8px',
-    cursor: 'pointer',
   },
   select: {
     padding: '8px 12px',
@@ -148,12 +119,6 @@ const loadImage = (url) => {
     img.src = url;
   });
 };
-
-const parseHexColor = (hex) => ({
-  r: parseInt(hex.slice(1, 3), 16),
-  g: parseInt(hex.slice(3, 5), 16),
-  b: parseInt(hex.slice(5, 7), 16),
-});
 
 const downloadFile = (url, filename) => {
   const link = document.createElement('a');
@@ -188,6 +153,18 @@ const createMaskFromAlpha = (imageData) => {
     maskData.data[i + 3] = 255;
   }
   return maskData;
+};
+
+const createSharpAlphaImage = (imageData, threshold = MASK_THRESHOLD) => {
+  const result = new ImageData(imageData.width, imageData.height);
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    const alpha = imageData.data[i + 3];
+    result.data[i] = imageData.data[i];
+    result.data[i + 1] = imageData.data[i + 1];
+    result.data[i + 2] = imageData.data[i + 2];
+    result.data[i + 3] = alpha > threshold ? 255 : 0;
+  }
+  return result;
 };
 
 const drawBackgroundCover = (ctx, bgImg, canvasWidth, canvasHeight) => {
@@ -301,116 +278,6 @@ const BrushControls = ({ brushMode, setBrushMode, brushSize, setBrushSize, t }) 
   </div>
 );
 
-const ColorButton = ({ color, isSelected, onClick, title, isTransparent }) => {
-  const baseStyle = {
-    ...styles.colorButton,
-    border: isSelected ? '3px solid #000' : '1px solid #ccc',
-  };
-
-  if (isTransparent) {
-    return (
-      <button
-        onClick={onClick}
-        style={{ ...baseStyle, ...styles.checkerboardSmall, position: 'relative' }}
-        title={title}
-      >
-        <span style={{
-          fontSize: '10px',
-          position: 'absolute',
-          bottom: '2px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          color: '#666',
-        }}>
-          투명
-        </span>
-      </button>
-    );
-  }
-
-  return (
-    <button
-      onClick={onClick}
-      style={{ ...baseStyle, backgroundColor: color }}
-      title={title}
-    />
-  );
-};
-
-const ChromakeyPanel = ({
-  chromakeyColor,
-  onColorChange,
-  previewUrl,
-  onDownload,
-  onClose,
-  t,
-}) => {
-  const isCustomColor = chromakeyColor !== 'transparent' &&
-    !CHROMAKEY_COLORS.some(c => c.value === chromakeyColor);
-
-  return (
-    <div style={{
-      marginTop: '20px',
-      padding: '20px',
-      backgroundColor: '#f9fafb',
-      borderRadius: '12px',
-      border: '1px solid #e5e7eb',
-    }}>
-      <h4 style={{ margin: '0 0 15px 0', fontSize: '16px' }}>
-        {t('bgRemoval.chromakeyTitle', '크로마키 배경 색상 선택')}
-      </h4>
-
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '15px' }}>
-        {CHROMAKEY_COLORS.map(({ value, title }) => (
-          <ColorButton
-            key={value}
-            color={value}
-            isSelected={chromakeyColor === value}
-            onClick={() => onColorChange(value)}
-            title={value === 'transparent' ? t('bgRemoval.transparent', '투명') : title}
-            isTransparent={value === 'transparent'}
-          />
-        ))}
-        <input
-          type="color"
-          value={chromakeyColor === 'transparent' ? '#ffffff' : chromakeyColor}
-          onChange={(e) => onColorChange(e.target.value)}
-          style={{
-            ...styles.colorButton,
-            border: isCustomColor ? '3px solid #000' : '1px solid #ccc',
-            padding: '2px',
-          }}
-        />
-      </div>
-
-      {previewUrl && (
-        <div style={{
-          ...styles.checkerboard,
-          padding: '15px',
-          borderRadius: '8px',
-          textAlign: 'center',
-          marginBottom: '15px',
-        }}>
-          <img
-            src={previewUrl}
-            alt="Chromakey Preview"
-            style={{ maxWidth: '100%', maxHeight: '400px' }}
-          />
-        </div>
-      )}
-
-      <div style={{ display: 'flex', gap: '10px' }}>
-        <button onClick={onDownload} style={styles.successButton}>
-          {t('bgRemoval.downloadChromakey', '다운로드')}
-        </button>
-        <button onClick={onClose} style={styles.secondaryButton}>
-          {t('bgRemoval.close', '닫기')}
-        </button>
-      </div>
-    </div>
-  );
-};
-
 // ============================================================================
 // Main Component
 // ============================================================================
@@ -440,11 +307,9 @@ const BackgroundRemoval = () => {
   const [brushSize, setBrushSize] = useState(30);
   const [isDrawing, setIsDrawing] = useState(false);
   const [originalImageData, setOriginalImageData] = useState(null);
-
-  // Chromakey states
-  const [showChromakeyPanel, setShowChromakeyPanel] = useState(false);
-  const [chromakeyColor, setChromakeyColor] = useState('transparent');
-  const [chromakeyPreviewUrl, setChromakeyPreviewUrl] = useState(null);
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0, visible: false });
+  const [maskHistory, setMaskHistory] = useState([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
 
   // Refs
   const sourceInputRef = useRef(null);
@@ -453,6 +318,7 @@ const BackgroundRemoval = () => {
   const editCanvasRef = useRef(null);
   const maskCanvasRef = useRef(null);
   const originalCanvasRef = useRef(null);
+  const cursorCanvasRef = useRef(null);
 
   // ============================================================================
   // Image Upload Handlers
@@ -514,12 +380,9 @@ const BackgroundRemoval = () => {
         },
       });
 
-      const removedUrl = URL.createObjectURL(blob);
-      setRemovedBgImage(removedUrl);
-
       const [origImg, removedImg] = await Promise.all([
         loadImage(sourceImage.url),
-        loadImage(removedUrl),
+        loadImage(URL.createObjectURL(blob)),
       ]);
 
       // Store original image data
@@ -530,13 +393,28 @@ const BackgroundRemoval = () => {
       origCtx.drawImage(origImg, 0, 0);
       setOriginalImageData(origCtx.getImageData(0, 0, origImg.width, origImg.height));
 
+      // Get AI output and create sharp alpha version
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = removedImg.width;
+      tempCanvas.height = removedImg.height;
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.drawImage(removedImg, 0, 0);
+      const removedData = tempCtx.getImageData(0, 0, removedImg.width, removedImg.height);
+
+      // Create sharp alpha image (fully opaque subject, fully transparent background)
+      const sharpAlphaData = createSharpAlphaImage(removedData);
+      tempCtx.putImageData(sharpAlphaData, 0, 0);
+
+      // Create sharp result blob
+      const sharpBlob = await new Promise(resolve => tempCanvas.toBlob(resolve, 'image/png'));
+      const sharpUrl = URL.createObjectURL(sharpBlob);
+      setRemovedBgImage(sharpUrl);
+
       // Create mask from alpha channel
       const maskCanvas = maskCanvasRef.current;
       maskCanvas.width = removedImg.width;
       maskCanvas.height = removedImg.height;
       const maskCtx = maskCanvas.getContext('2d');
-      maskCtx.drawImage(removedImg, 0, 0);
-      const removedData = maskCtx.getImageData(0, 0, removedImg.width, removedImg.height);
       const maskData = createMaskFromAlpha(removedData);
       maskCtx.putImageData(maskData, 0, 0);
 
@@ -546,16 +424,17 @@ const BackgroundRemoval = () => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
         const bgImg = await loadImage(backgroundImage.url);
+        const sharpImg = await loadImage(sharpUrl);
 
-        canvas.width = removedImg.width;
-        canvas.height = removedImg.height;
+        canvas.width = sharpImg.width;
+        canvas.height = sharpImg.height;
         drawBackgroundCover(ctx, bgImg, canvas.width, canvas.height);
-        ctx.drawImage(removedImg, 0, 0);
+        ctx.drawImage(sharpImg, 0, 0);
 
         const resultBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
         setResultImage(URL.createObjectURL(resultBlob));
       } else {
-        setResultImage(removedUrl);
+        setResultImage(sharpUrl);
       }
 
       setProgress(100);
@@ -593,6 +472,81 @@ const BackgroundRemoval = () => {
     editCtx.putImageData(applyMaskVisualization(editData, maskData), 0, 0);
   }, []);
 
+  // Save current mask state to history
+  const saveMaskToHistory = useCallback(() => {
+    const maskCanvas = maskCanvasRef.current;
+    if (!maskCanvas) return;
+
+    const maskCtx = maskCanvas.getContext('2d');
+    const maskData = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+    const newHistory = maskHistory.slice(0, historyIndex + 1);
+    newHistory.push(maskData);
+
+    // Limit history to 50 states to prevent memory issues
+    if (newHistory.length > 50) {
+      newHistory.shift();
+    }
+
+    setMaskHistory(newHistory);
+    setHistoryIndex(newHistory.length - 1);
+  }, [maskHistory, historyIndex]);
+
+  // Undo function
+  const handleUndo = useCallback(() => {
+    if (historyIndex <= 0) return;
+
+    const newIndex = historyIndex - 1;
+    const maskCanvas = maskCanvasRef.current;
+    if (!maskCanvas) return;
+
+    const maskCtx = maskCanvas.getContext('2d');
+    maskCtx.putImageData(maskHistory[newIndex], 0, 0);
+    setHistoryIndex(newIndex);
+    updateEditPreview();
+  }, [historyIndex, maskHistory, updateEditPreview]);
+
+  // Redo function
+  const handleRedo = useCallback(() => {
+    if (historyIndex >= maskHistory.length - 1) return;
+
+    const newIndex = historyIndex + 1;
+    const maskCanvas = maskCanvasRef.current;
+    if (!maskCanvas) return;
+
+    const maskCtx = maskCanvas.getContext('2d');
+    maskCtx.putImageData(maskHistory[newIndex], 0, 0);
+    setHistoryIndex(newIndex);
+    updateEditPreview();
+  }, [historyIndex, maskHistory, updateEditPreview]);
+
+  // Draw cursor on cursor canvas
+  const drawCursor = useCallback((x, y) => {
+    const cursorCanvas = cursorCanvasRef.current;
+    const editCanvas = editCanvasRef.current;
+    if (!cursorCanvas || !editCanvas) return;
+
+    const ctx = cursorCanvas.getContext('2d');
+    ctx.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
+
+    // Calculate scaled brush size
+    const rect = editCanvas.getBoundingClientRect();
+    const scaleX = rect.width / editCanvas.width;
+    const scaledBrushSize = brushSize * scaleX;
+
+    // Draw brush cursor
+    ctx.beginPath();
+    ctx.arc(x, y, scaledBrushSize, 0, Math.PI * 2);
+    ctx.strokeStyle = brushMode === 'restore' ? '#10B981' : '#EF4444';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Draw center dot
+    ctx.beginPath();
+    ctx.arc(x, y, 2, 0, Math.PI * 2);
+    ctx.fillStyle = brushMode === 'restore' ? '#10B981' : '#EF4444';
+    ctx.fill();
+  }, [brushSize, brushMode]);
+
   useEffect(() => {
     if (isEditMode && maskCanvasRef.current && editCanvasRef.current && originalImageData) {
       const editCanvas = editCanvasRef.current;
@@ -601,8 +555,31 @@ const BackgroundRemoval = () => {
       editCanvas.width = maskCanvas.width;
       editCanvas.height = maskCanvas.height;
       updateEditPreview();
+
+      // Initialize history with current mask state
+      const maskCtx = maskCanvas.getContext('2d');
+      const initialMaskData = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+      setMaskHistory([initialMaskData]);
+      setHistoryIndex(0);
     }
   }, [isEditMode, originalImageData, updateEditPreview]);
+
+  // Update cursor canvas size when edit canvas changes
+  useEffect(() => {
+    const updateCursorCanvasSize = () => {
+      const editCanvas = editCanvasRef.current;
+      const cursorCanvas = cursorCanvasRef.current;
+      if (!editCanvas || !cursorCanvas || !isEditMode) return;
+
+      const rect = editCanvas.getBoundingClientRect();
+      cursorCanvas.width = rect.width;
+      cursorCanvas.height = rect.height;
+    };
+
+    updateCursorCanvasSize();
+    window.addEventListener('resize', updateCursorCanvasSize);
+    return () => window.removeEventListener('resize', updateCursorCanvasSize);
+  }, [isEditMode]);
 
   const getCanvasCoords = useCallback((e, canvas) => {
     const rect = canvas.getBoundingClientRect();
@@ -632,19 +609,51 @@ const BackgroundRemoval = () => {
   const handleMouseDown = useCallback((e) => {
     if (!isEditMode) return;
     e.preventDefault();
+    // Save current state before drawing
+    saveMaskToHistory();
     setIsDrawing(true);
     const coords = getCanvasCoords(e, editCanvasRef.current);
     drawOnMask(coords.x, coords.y);
-  }, [isEditMode, getCanvasCoords, drawOnMask]);
+  }, [isEditMode, getCanvasCoords, drawOnMask, saveMaskToHistory]);
 
   const handleMouseMove = useCallback((e) => {
-    if (!isDrawing || !isEditMode) return;
+    if (!isEditMode) return;
     e.preventDefault();
-    const coords = getCanvasCoords(e, editCanvasRef.current);
-    drawOnMask(coords.x, coords.y);
-  }, [isDrawing, isEditMode, getCanvasCoords, drawOnMask]);
+
+    // Update cursor position
+    const editCanvas = editCanvasRef.current;
+    if (editCanvas) {
+      const rect = editCanvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      setCursorPos({ x, y, visible: true });
+      drawCursor(x, y);
+    }
+
+    // Draw on mask if drawing
+    if (isDrawing) {
+      const coords = getCanvasCoords(e, editCanvasRef.current);
+      drawOnMask(coords.x, coords.y);
+    }
+  }, [isDrawing, isEditMode, getCanvasCoords, drawOnMask, drawCursor]);
 
   const handleMouseUp = useCallback(() => setIsDrawing(false), []);
+
+  const handleMouseEnter = useCallback(() => {
+    setCursorPos(prev => ({ ...prev, visible: true }));
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsDrawing(false);
+    setCursorPos(prev => ({ ...prev, visible: false }));
+    const cursorCanvas = cursorCanvasRef.current;
+    if (cursorCanvas) {
+      const ctx = cursorCanvas.getContext('2d');
+      ctx.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
+    }
+  }, []);
 
   const applyMaskAndGenerateResult = useCallback(async () => {
     if (!originalImageData || !maskCanvasRef.current) return;
@@ -660,10 +669,11 @@ const BackgroundRemoval = () => {
 
     const resultData = resultCtx.createImageData(maskCanvas.width, maskCanvas.height);
     for (let i = 0; i < originalImageData.data.length; i += 4) {
+      const maskAlpha = maskData.data[i];
       resultData.data[i] = originalImageData.data[i];
       resultData.data[i + 1] = originalImageData.data[i + 1];
       resultData.data[i + 2] = originalImageData.data[i + 2];
-      resultData.data[i + 3] = maskData.data[i];
+      resultData.data[i + 3] = maskAlpha > MASK_THRESHOLD ? 255 : 0;
     }
     resultCtx.putImageData(resultData, 0, 0);
 
@@ -695,70 +705,6 @@ const BackgroundRemoval = () => {
   }, [applyMaskAndGenerateResult]);
 
   const cancelEditMode = useCallback(() => setIsEditMode(false), []);
-
-  // ============================================================================
-  // Chromakey
-  // ============================================================================
-
-  const generateChromakeyPreview = useCallback(async (color) => {
-    if (!originalImageData || !maskCanvasRef.current) return;
-
-    const maskCanvas = maskCanvasRef.current;
-    const maskCtx = maskCanvas.getContext('2d');
-    const maskData = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
-
-    const resultCanvas = canvasRef.current;
-    resultCanvas.width = maskCanvas.width;
-    resultCanvas.height = maskCanvas.height;
-    const resultCtx = resultCanvas.getContext('2d');
-
-    const resultData = resultCtx.createImageData(maskCanvas.width, maskCanvas.height);
-    const isTransparent = color === 'transparent';
-    const { r, g, b } = isTransparent ? { r: 0, g: 0, b: 0 } : parseHexColor(color);
-
-    for (let i = 0; i < originalImageData.data.length; i += 4) {
-      if (maskData.data[i] > MASK_THRESHOLD) {
-        resultData.data[i] = originalImageData.data[i];
-        resultData.data[i + 1] = originalImageData.data[i + 1];
-        resultData.data[i + 2] = originalImageData.data[i + 2];
-        resultData.data[i + 3] = 255;
-      } else if (isTransparent) {
-        resultData.data[i + 3] = 0;
-      } else {
-        resultData.data[i] = r;
-        resultData.data[i + 1] = g;
-        resultData.data[i + 2] = b;
-        resultData.data[i + 3] = 255;
-      }
-    }
-    resultCtx.putImageData(resultData, 0, 0);
-
-    const resultBlob = await new Promise(resolve => resultCanvas.toBlob(resolve, 'image/png'));
-    setChromakeyPreviewUrl(URL.createObjectURL(resultBlob));
-  }, [originalImageData]);
-
-  const handleChromakeyColorChange = useCallback((color) => {
-    setChromakeyColor(color);
-    generateChromakeyPreview(color);
-  }, [generateChromakeyPreview]);
-
-  const enterChromakeyMode = useCallback(() => {
-    setShowChromakeyPanel(true);
-    setChromakeyColor('transparent');
-    generateChromakeyPreview('transparent');
-  }, [generateChromakeyPreview]);
-
-  const exitChromakeyMode = useCallback(() => {
-    setShowChromakeyPanel(false);
-    setChromakeyPreviewUrl(null);
-  }, []);
-
-  const downloadChromakeyImage = useCallback(() => {
-    if (!chromakeyPreviewUrl) return;
-    const baseName = getBaseName(sourceImage?.name);
-    const suffix = chromakeyColor === 'transparent' ? 'transparent' : 'chromakey';
-    downloadFile(chromakeyPreviewUrl, `${baseName}_${suffix}.png`);
-  }, [chromakeyPreviewUrl, chromakeyColor, sourceImage]);
 
   // ============================================================================
   // Download & Reset
@@ -928,23 +874,54 @@ const BackgroundRemoval = () => {
               borderRadius: '8px',
               textAlign: 'center',
               marginBottom: '20px',
+              position: 'relative',
+              display: 'inline-block',
+              width: '100%',
             }}>
-              <canvas
-                ref={editCanvasRef}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-                onTouchStart={handleMouseDown}
-                onTouchMove={handleMouseMove}
-                onTouchEnd={handleMouseUp}
-                style={{ maxWidth: '100%', maxHeight: '500px', cursor: 'crosshair', touchAction: 'none' }}
-              />
+              <div style={{ position: 'relative', display: 'inline-block' }}>
+                <canvas
+                  ref={editCanvasRef}
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  onTouchStart={handleMouseDown}
+                  onTouchMove={handleMouseMove}
+                  onTouchEnd={handleMouseUp}
+                  style={{ maxWidth: '100%', maxHeight: '500px', cursor: 'none', touchAction: 'none', display: 'block' }}
+                />
+                <canvas
+                  ref={cursorCanvasRef}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    pointerEvents: 'none',
+                    maxWidth: '100%',
+                    maxHeight: '500px',
+                  }}
+                />
+              </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center' }}>
               <button onClick={exitEditMode} style={styles.successButton}>
                 {t('bgRemoval.applyEdit', '편집 적용')}
+              </button>
+              <button
+                onClick={handleUndo}
+                disabled={historyIndex <= 0}
+                style={historyIndex <= 0 ? styles.disabledButton : styles.secondaryButton}
+              >
+                {t('bgRemoval.undo', '↩ 실행취소')}
+              </button>
+              <button
+                onClick={handleRedo}
+                disabled={historyIndex >= maskHistory.length - 1}
+                style={historyIndex >= maskHistory.length - 1 ? styles.disabledButton : styles.secondaryButton}
+              >
+                {t('bgRemoval.redo', '↪ 다시실행')}
               </button>
               <button onClick={cancelEditMode} style={styles.secondaryButton}>
                 {t('bgRemoval.cancelEdit', '취소')}
@@ -979,27 +956,10 @@ const BackgroundRemoval = () => {
 
               {originalImageData && (
                 <button onClick={enterEditMode} style={styles.warningButton}>
-                  {t('bgRemoval.editMaskBtn', '마스크 수정')}
-                </button>
-              )}
-
-              {originalImageData && !showChromakeyPanel && (
-                <button onClick={enterChromakeyMode} style={styles.chromakeyButton}>
-                  {t('bgRemoval.chromakeyBtn', '크로마키 배경')}
+                  {t('bgRemoval.editMaskBtn', '배경 추가 삭제/복원')}
                 </button>
               )}
             </div>
-
-            {showChromakeyPanel && (
-              <ChromakeyPanel
-                chromakeyColor={chromakeyColor}
-                onColorChange={handleChromakeyColorChange}
-                previewUrl={chromakeyPreviewUrl}
-                onDownload={downloadChromakeyImage}
-                onClose={exitChromakeyMode}
-                t={t}
-              />
-            )}
           </div>
         )}
 

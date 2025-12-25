@@ -6,28 +6,234 @@ import ErrorDisplay from '../../components/ErrorDisplay';
 import { downloadFile } from '../../utils/download';
 import CoupangBanner from '../../components/CoupangBanner';
 
+// ============================================================================
+// Constants
+// ============================================================================
+
+const DEFAULT_TOLERANCE = 50;
+const DEFAULT_EDGE_SMOOTH = 2;
+const DEFAULT_SPILL_REMOVAL = 30;
+
+// ============================================================================
+// Utility Functions
+// ============================================================================
+
+const rgbToHex = (r, g, b) => {
+  return '#' + [r, g, b].map(x => {
+    const hex = x.toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+  }).join('');
+};
+
+const hexToRgb = (hex) => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : { r: 0, g: 255, b: 0 };
+};
+
+const colorDistance = (r1, g1, b1, r2, g2, b2) => {
+  return Math.sqrt(
+    Math.pow(r1 - r2, 2) +
+    Math.pow(g1 - g2, 2) +
+    Math.pow(b1 - b2, 2)
+  );
+};
+
+// Check if image has transparency
+const detectTransparency = async (imageUrl) => {
+  const img = new Image();
+  await new Promise((resolve, reject) => {
+    img.onload = resolve;
+    img.onerror = reject;
+    img.src = imageUrl;
+  });
+
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  canvas.width = img.width;
+  canvas.height = img.height;
+  ctx.drawImage(img, 0, 0);
+
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+
+  // Check for any transparent pixel
+  let transparentPixels = 0;
+  const totalPixels = data.length / 4;
+
+  for (let i = 3; i < data.length; i += 4) {
+    if (data[i] < 255) {
+      transparentPixels++;
+    }
+  }
+
+  // Consider image transparent if more than 1% of pixels are transparent
+  const transparencyRatio = transparentPixels / totalPixels;
+  return transparencyRatio > 0.01;
+};
+
+// Auto detect chromakey color from image edges
+const detectChromaColor = async (imageUrl) => {
+  const img = new Image();
+  await new Promise((resolve, reject) => {
+    img.onload = resolve;
+    img.onerror = reject;
+    img.src = imageUrl;
+  });
+
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  canvas.width = img.width;
+  canvas.height = img.height;
+  ctx.drawImage(img, 0, 0);
+
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+  const width = canvas.width;
+  const height = canvas.height;
+
+  // Sample pixels from edges and corners
+  const edgePixels = [];
+  const sampleSize = Math.min(50, Math.floor(width / 10), Math.floor(height / 10));
+
+  // Top edge
+  for (let x = 0; x < width; x += Math.max(1, Math.floor(width / 100))) {
+    for (let y = 0; y < sampleSize; y++) {
+      const i = (y * width + x) * 4;
+      if (data[i + 3] > 200) { // Only opaque pixels
+        edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
+      }
+    }
+  }
+
+  // Bottom edge
+  for (let x = 0; x < width; x += Math.max(1, Math.floor(width / 100))) {
+    for (let y = height - sampleSize; y < height; y++) {
+      const i = (y * width + x) * 4;
+      if (data[i + 3] > 200) {
+        edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
+      }
+    }
+  }
+
+  // Left edge
+  for (let y = 0; y < height; y += Math.max(1, Math.floor(height / 100))) {
+    for (let x = 0; x < sampleSize; x++) {
+      const i = (y * width + x) * 4;
+      if (data[i + 3] > 200) {
+        edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
+      }
+    }
+  }
+
+  // Right edge
+  for (let y = 0; y < height; y += Math.max(1, Math.floor(height / 100))) {
+    for (let x = width - sampleSize; x < width; x++) {
+      const i = (y * width + x) * 4;
+      if (data[i + 3] > 200) {
+        edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
+      }
+    }
+  }
+
+  // Four corners (more weight)
+  const cornerSize = Math.min(30, Math.floor(width / 20), Math.floor(height / 20));
+  const corners = [
+    { startX: 0, startY: 0 },
+    { startX: width - cornerSize, startY: 0 },
+    { startX: 0, startY: height - cornerSize },
+    { startX: width - cornerSize, startY: height - cornerSize }
+  ];
+
+  for (const corner of corners) {
+    for (let y = corner.startY; y < corner.startY + cornerSize; y++) {
+      for (let x = corner.startX; x < corner.startX + cornerSize; x++) {
+        const i = (y * width + x) * 4;
+        if (data[i + 3] > 200) {
+          edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
+          edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
+        }
+      }
+    }
+  }
+
+  if (edgePixels.length === 0) {
+    return null;
+  }
+
+  // Find the most common color using color clustering
+  const colorGroups = [];
+  const groupDistance = 40;
+
+  for (const pixel of edgePixels) {
+    let foundGroup = false;
+    for (const group of colorGroups) {
+      if (colorDistance(pixel.r, pixel.g, pixel.b, group.r, group.g, group.b) < groupDistance) {
+        group.count++;
+        group.totalR += pixel.r;
+        group.totalG += pixel.g;
+        group.totalB += pixel.b;
+        group.r = Math.round(group.totalR / group.count);
+        group.g = Math.round(group.totalG / group.count);
+        group.b = Math.round(group.totalB / group.count);
+        foundGroup = true;
+        break;
+      }
+    }
+    if (!foundGroup) {
+      colorGroups.push({
+        r: pixel.r,
+        g: pixel.g,
+        b: pixel.b,
+        totalR: pixel.r,
+        totalG: pixel.g,
+        totalB: pixel.b,
+        count: 1
+      });
+    }
+  }
+
+  colorGroups.sort((a, b) => b.count - a.count);
+
+  if (colorGroups.length > 0) {
+    const dominantColor = colorGroups[0];
+    return rgbToHex(dominantColor.r, dominantColor.g, dominantColor.b);
+  }
+
+  return null;
+};
+
+// ============================================================================
+// Main Component
+// ============================================================================
+
 const ImageChromakey = () => {
   const { t } = useTranslation();
   const [chromakeyFile, setChromakeyFile] = useState(null);
   const [backgroundFile, setBackgroundFile] = useState(null);
   const [chromakeyPreview, setChromakeyPreview] = useState(null);
   const [backgroundPreview, setBackgroundPreview] = useState(null);
+  const [isTransparentImage, setIsTransparentImage] = useState(false);
   const [chromaColor, setChromaColor] = useState('#00ff00');
-  const [detectedColor, setDetectedColor] = useState(null);
-  const [isAutoDetect, setIsAutoDetect] = useState(true);
   const [detecting, setDetecting] = useState(false);
-  const [tolerance, setTolerance] = useState(50);
-  const [edgeSmooth, setEdgeSmooth] = useState(2);
-  const [spillRemoval, setSpillRemoval] = useState(30);
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState(null);
   const [resultPreview, setResultPreview] = useState(null);
   const [error, setError] = useState(null);
 
+  // Chromakey options
+  const [tolerance, setTolerance] = useState(DEFAULT_TOLERANCE);
+  const [edgeSmooth, setEdgeSmooth] = useState(DEFAULT_EDGE_SMOOTH);
+  const [spillRemoval, setSpillRemoval] = useState(DEFAULT_SPILL_REMOVAL);
+
   const canvasRef = useRef(null);
   const chromakeyInputRef = useRef(null);
   const backgroundInputRef = useRef(null);
+  const previewTimeoutRef = useRef(null);
 
   // Cleanup preview URLs
   useEffect(() => {
@@ -35,164 +241,136 @@ const ImageChromakey = () => {
       if (chromakeyPreview) URL.revokeObjectURL(chromakeyPreview);
       if (backgroundPreview) URL.revokeObjectURL(backgroundPreview);
       if (resultPreview) URL.revokeObjectURL(resultPreview);
+      if (previewTimeoutRef.current) clearTimeout(previewTimeoutRef.current);
     };
   }, []);
 
-  const rgbToHex = (r, g, b) => {
-    return '#' + [r, g, b].map(x => {
-      const hex = x.toString(16);
-      return hex.length === 1 ? '0' + hex : hex;
-    }).join('');
-  };
+  // Generate preview function (used for real-time updates)
+  const generatePreview = useCallback(async () => {
+    if (!chromakeyPreview || !backgroundPreview) return;
 
-  const hexToRgb = (hex) => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-    } : { r: 0, g: 255, b: 0 };
-  };
-
-  const colorDistance = (r1, g1, b1, r2, g2, b2) => {
-    return Math.sqrt(
-      Math.pow(r1 - r2, 2) +
-      Math.pow(g1 - g2, 2) +
-      Math.pow(b1 - b2, 2)
-    );
-  };
-
-  // Auto detect chromakey color from image edges
-  const detectChromaColor = useCallback(async (imageUrl) => {
-    setDetecting(true);
     try {
-      const img = new Image();
-      await new Promise((resolve, reject) => {
-        img.onload = resolve;
-        img.onerror = reject;
-        img.src = imageUrl;
+      const chromakeyImg = new Image();
+      const backgroundImg = new Image();
+
+      await Promise.all([
+        new Promise((resolve, reject) => {
+          chromakeyImg.onload = resolve;
+          chromakeyImg.onerror = reject;
+          chromakeyImg.src = chromakeyPreview;
+        }),
+        new Promise((resolve, reject) => {
+          backgroundImg.onload = resolve;
+          backgroundImg.onerror = reject;
+          backgroundImg.src = backgroundPreview;
+        })
+      ]);
+
+      const canvas = canvasRef.current || document.createElement('canvas');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+      canvas.width = chromakeyImg.width;
+      canvas.height = chromakeyImg.height;
+
+      // Draw background (scaled to cover)
+      const bgScale = Math.max(canvas.width / backgroundImg.width, canvas.height / backgroundImg.height);
+      const bgWidth = backgroundImg.width * bgScale;
+      const bgHeight = backgroundImg.height * bgScale;
+      const bgX = (canvas.width - bgWidth) / 2;
+      const bgY = (canvas.height - bgHeight) / 2;
+      ctx.drawImage(backgroundImg, bgX, bgY, bgWidth, bgHeight);
+
+      if (isTransparentImage) {
+        // For transparent images: just draw on top
+        ctx.drawImage(chromakeyImg, 0, 0);
+      } else {
+        // For chromakey images: process color replacement
+        const bgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        ctx.drawImage(chromakeyImg, 0, 0);
+        const chromaData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        const keyColor = hexToRgb(chromaColor);
+        const maxDistance = (tolerance / 100) * 441.67;
+        const smoothRange = (edgeSmooth / 100) * 50;
+        const spillFactor = spillRemoval / 100;
+
+        const isGreenDominant = keyColor.g > keyColor.r && keyColor.g > keyColor.b;
+        const isBlueDominant = keyColor.b > keyColor.r && keyColor.b > keyColor.g;
+
+        for (let i = 0; i < chromaData.data.length; i += 4) {
+          const r = chromaData.data[i];
+          const g = chromaData.data[i + 1];
+          const b = chromaData.data[i + 2];
+
+          const distance = colorDistance(r, g, b, keyColor.r, keyColor.g, keyColor.b);
+
+          if (distance < maxDistance) {
+            chromaData.data[i] = bgData.data[i];
+            chromaData.data[i + 1] = bgData.data[i + 1];
+            chromaData.data[i + 2] = bgData.data[i + 2];
+            chromaData.data[i + 3] = 255;
+          } else if (distance < maxDistance + smoothRange) {
+            const blendFactor = (distance - maxDistance) / smoothRange;
+            chromaData.data[i] = Math.round(bgData.data[i] * (1 - blendFactor) + r * blendFactor);
+            chromaData.data[i + 1] = Math.round(bgData.data[i + 1] * (1 - blendFactor) + g * blendFactor);
+            chromaData.data[i + 2] = Math.round(bgData.data[i + 2] * (1 - blendFactor) + b * blendFactor);
+            chromaData.data[i + 3] = 255;
+          } else {
+            if (spillFactor > 0) {
+              if (isGreenDominant) {
+                const greenSpill = g - Math.max(r, b);
+                if (greenSpill > 0) {
+                  chromaData.data[i + 1] = Math.round(g - greenSpill * spillFactor);
+                }
+              } else if (isBlueDominant) {
+                const blueSpill = b - Math.max(r, g);
+                if (blueSpill > 0) {
+                  chromaData.data[i + 2] = Math.round(b - blueSpill * spillFactor);
+                }
+              }
+            }
+          }
+        }
+
+        ctx.putImageData(chromaData, 0, 0);
+      }
+
+      const blob = await new Promise((resolve) => {
+        canvas.toBlob(resolve, 'image/png', 1.0);
       });
 
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d', { willReadFrequently: true });
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
+      if (resultPreview) URL.revokeObjectURL(resultPreview);
+      setResult(blob);
+      setResultPreview(URL.createObjectURL(blob));
 
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imageData.data;
-      const width = canvas.width;
-      const height = canvas.height;
-
-      // Sample pixels from edges (top, bottom, left, right borders)
-      const edgePixels = [];
-      const sampleSize = Math.min(50, Math.floor(width / 10), Math.floor(height / 10));
-
-      // Top edge
-      for (let x = 0; x < width; x += Math.max(1, Math.floor(width / 100))) {
-        for (let y = 0; y < sampleSize; y++) {
-          const i = (y * width + x) * 4;
-          edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
-        }
-      }
-
-      // Bottom edge
-      for (let x = 0; x < width; x += Math.max(1, Math.floor(width / 100))) {
-        for (let y = height - sampleSize; y < height; y++) {
-          const i = (y * width + x) * 4;
-          edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
-        }
-      }
-
-      // Left edge
-      for (let y = 0; y < height; y += Math.max(1, Math.floor(height / 100))) {
-        for (let x = 0; x < sampleSize; x++) {
-          const i = (y * width + x) * 4;
-          edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
-        }
-      }
-
-      // Right edge
-      for (let y = 0; y < height; y += Math.max(1, Math.floor(height / 100))) {
-        for (let x = width - sampleSize; x < width; x++) {
-          const i = (y * width + x) * 4;
-          edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
-        }
-      }
-
-      // Four corners (more weight)
-      const cornerSize = Math.min(30, Math.floor(width / 20), Math.floor(height / 20));
-      const corners = [
-        { startX: 0, startY: 0 },
-        { startX: width - cornerSize, startY: 0 },
-        { startX: 0, startY: height - cornerSize },
-        { startX: width - cornerSize, startY: height - cornerSize }
-      ];
-
-      for (const corner of corners) {
-        for (let y = corner.startY; y < corner.startY + cornerSize; y++) {
-          for (let x = corner.startX; x < corner.startX + cornerSize; x++) {
-            const i = (y * width + x) * 4;
-            // Add corner pixels multiple times for more weight
-            edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
-            edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
-          }
-        }
-      }
-
-      // Find the most common color using color clustering
-      // Group similar colors together (within distance of 30)
-      const colorGroups = [];
-      const groupDistance = 40;
-
-      for (const pixel of edgePixels) {
-        let foundGroup = false;
-        for (const group of colorGroups) {
-          if (colorDistance(pixel.r, pixel.g, pixel.b, group.r, group.g, group.b) < groupDistance) {
-            group.count++;
-            // Update average color
-            group.totalR += pixel.r;
-            group.totalG += pixel.g;
-            group.totalB += pixel.b;
-            group.r = Math.round(group.totalR / group.count);
-            group.g = Math.round(group.totalG / group.count);
-            group.b = Math.round(group.totalB / group.count);
-            foundGroup = true;
-            break;
-          }
-        }
-        if (!foundGroup) {
-          colorGroups.push({
-            r: pixel.r,
-            g: pixel.g,
-            b: pixel.b,
-            totalR: pixel.r,
-            totalG: pixel.g,
-            totalB: pixel.b,
-            count: 1
-          });
-        }
-      }
-
-      // Sort by count and get the most common color
-      colorGroups.sort((a, b) => b.count - a.count);
-
-      if (colorGroups.length > 0) {
-        const dominantColor = colorGroups[0];
-        const hex = rgbToHex(dominantColor.r, dominantColor.g, dominantColor.b);
-        setDetectedColor(hex);
-        if (isAutoDetect) {
-          setChromaColor(hex);
-        }
-      }
     } catch (err) {
-      console.error('Color detection error:', err);
-    } finally {
-      setDetecting(false);
+      console.error('Preview generation error:', err);
     }
-  }, [isAutoDetect]);
+  }, [chromakeyPreview, backgroundPreview, isTransparentImage, chromaColor, tolerance, edgeSmooth, spillRemoval, resultPreview]);
 
-  const handleChromakeySelect = useCallback((e) => {
+  // Real-time preview update with debouncing
+  useEffect(() => {
+    if (!chromakeyPreview || !backgroundPreview || detecting) return;
+
+    // Clear previous timeout
+    if (previewTimeoutRef.current) {
+      clearTimeout(previewTimeoutRef.current);
+    }
+
+    // Debounce preview generation (100ms delay)
+    previewTimeoutRef.current = setTimeout(() => {
+      generatePreview();
+    }, 100);
+
+    return () => {
+      if (previewTimeoutRef.current) {
+        clearTimeout(previewTimeoutRef.current);
+      }
+    };
+  }, [chromakeyPreview, backgroundPreview, chromaColor, tolerance, edgeSmooth, spillRemoval, isTransparentImage, detecting]);
+
+  const handleChromakeySelect = useCallback(async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -203,11 +381,26 @@ const ImageChromakey = () => {
     setResult(null);
     setResultPreview(null);
     setError(null);
-    setDetectedColor(null);
 
-    // Auto detect color
-    detectChromaColor(previewUrl);
-  }, [chromakeyPreview, detectChromaColor]);
+    setDetecting(true);
+    try {
+      // Check if image has transparency
+      const hasTransparency = await detectTransparency(previewUrl);
+      setIsTransparentImage(hasTransparency);
+
+      if (!hasTransparency) {
+        // Only detect chromakey color for non-transparent images
+        const detectedColor = await detectChromaColor(previewUrl);
+        if (detectedColor) {
+          setChromaColor(detectedColor);
+        }
+      }
+    } catch (err) {
+      console.error('Detection error:', err);
+    } finally {
+      setDetecting(false);
+    }
+  }, [chromakeyPreview]);
 
   const handleBackgroundSelect = useCallback((e) => {
     const file = e.target.files?.[0];
@@ -227,7 +420,7 @@ const ImageChromakey = () => {
     setChromakeyPreview(null);
     setResult(null);
     setResultPreview(null);
-    setDetectedColor(null);
+    setIsTransparentImage(false);
     if (chromakeyInputRef.current) chromakeyInputRef.current.value = '';
   };
 
@@ -240,127 +433,11 @@ const ImageChromakey = () => {
     if (backgroundInputRef.current) backgroundInputRef.current.value = '';
   };
 
-  const handleComposite = async () => {
-    if (!chromakeyFile || !backgroundFile) return;
-
-    setProcessing(true);
-    setError(null);
-    setProgress(10);
-
-    try {
-      // Load images
-      const chromakeyImg = new Image();
-      const backgroundImg = new Image();
-
-      await Promise.all([
-        new Promise((resolve, reject) => {
-          chromakeyImg.onload = resolve;
-          chromakeyImg.onerror = reject;
-          chromakeyImg.src = chromakeyPreview;
-        }),
-        new Promise((resolve, reject) => {
-          backgroundImg.onload = resolve;
-          backgroundImg.onerror = reject;
-          backgroundImg.src = backgroundPreview;
-        })
-      ]);
-
-      setProgress(30);
-
-      // Create canvas with chromakey image size
-      const canvas = canvasRef.current || document.createElement('canvas');
-      const ctx = canvas.getContext('2d', { willReadFrequently: true });
-
-      canvas.width = chromakeyImg.width;
-      canvas.height = chromakeyImg.height;
-
-      // Draw background (scaled to fit)
-      ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
-      const bgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-      setProgress(50);
-
-      // Draw chromakey image
-      ctx.drawImage(chromakeyImg, 0, 0);
-      const chromaData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-      setProgress(60);
-
-      // Process chromakey
-      const keyColor = hexToRgb(chromaColor);
-      const maxDistance = (tolerance / 100) * 441.67;
-      const smoothRange = (edgeSmooth / 100) * 50;
-      const spillFactor = spillRemoval / 100;
-
-      // Determine if it's green or blue dominant for spill removal
-      const isGreenDominant = keyColor.g > keyColor.r && keyColor.g > keyColor.b;
-      const isBlueDominant = keyColor.b > keyColor.r && keyColor.b > keyColor.g;
-
-      for (let i = 0; i < chromaData.data.length; i += 4) {
-        const r = chromaData.data[i];
-        const g = chromaData.data[i + 1];
-        const b = chromaData.data[i + 2];
-
-        const distance = colorDistance(r, g, b, keyColor.r, keyColor.g, keyColor.b);
-
-        if (distance < maxDistance) {
-          // Fully transparent - use background
-          chromaData.data[i] = bgData.data[i];
-          chromaData.data[i + 1] = bgData.data[i + 1];
-          chromaData.data[i + 2] = bgData.data[i + 2];
-          chromaData.data[i + 3] = 255;
-        } else if (distance < maxDistance + smoothRange) {
-          // Edge smoothing - blend with background
-          const blendFactor = (distance - maxDistance) / smoothRange;
-          chromaData.data[i] = Math.round(bgData.data[i] * (1 - blendFactor) + r * blendFactor);
-          chromaData.data[i + 1] = Math.round(bgData.data[i + 1] * (1 - blendFactor) + g * blendFactor);
-          chromaData.data[i + 2] = Math.round(bgData.data[i + 2] * (1 - blendFactor) + b * blendFactor);
-          chromaData.data[i + 3] = 255;
-        } else {
-          // Spill removal
-          if (spillFactor > 0) {
-            if (isGreenDominant) {
-              const greenSpill = g - Math.max(r, b);
-              if (greenSpill > 0) {
-                chromaData.data[i + 1] = Math.round(g - greenSpill * spillFactor);
-              }
-            } else if (isBlueDominant) {
-              const blueSpill = b - Math.max(r, g);
-              if (blueSpill > 0) {
-                chromaData.data[i + 2] = Math.round(b - blueSpill * spillFactor);
-              }
-            }
-          }
-        }
-      }
-
-      setProgress(90);
-
-      // Put processed image back
-      ctx.putImageData(chromaData, 0, 0);
-
-      // Convert to blob
-      const blob = await new Promise((resolve) => {
-        canvas.toBlob(resolve, 'image/png', 1.0);
-      });
-
-      setResult(blob);
-      setResultPreview(URL.createObjectURL(blob));
-      setProgress(100);
-
-    } catch (err) {
-      console.error('Chromakey error:', err);
-      setError(t('chromakey.image.error'));
-    } finally {
-      setProcessing(false);
-    }
-  };
-
   const handleDownload = () => {
     if (!result) return;
     const originalName = chromakeyFile?.name || 'image';
     const baseName = originalName.replace(/\.[^/.]+$/, '');
-    downloadFile(result, `${baseName}_chromakey.png`);
+    downloadFile(result, `${baseName}_composite.png`);
   };
 
   const handleReset = () => {
@@ -370,13 +447,9 @@ const ImageChromakey = () => {
     setResultPreview(null);
     setError(null);
     setProgress(0);
-  };
-
-  const handleAutoDetectToggle = () => {
-    setIsAutoDetect(!isAutoDetect);
-    if (!isAutoDetect && detectedColor) {
-      setChromaColor(detectedColor);
-    }
+    setTolerance(DEFAULT_TOLERANCE);
+    setEdgeSmooth(DEFAULT_EDGE_SMOOTH);
+    setSpillRemoval(DEFAULT_SPILL_REMOVAL);
   };
 
   return (
@@ -427,7 +500,14 @@ const ImageChromakey = () => {
                 <img
                   src={chromakeyPreview}
                   alt="Chromakey"
-                  style={{ width: '100%', maxHeight: '200px', objectFit: 'contain', borderRadius: '8px', border: '1px solid var(--border-color)' }}
+                  style={{
+                    width: '100%',
+                    maxHeight: '200px',
+                    objectFit: 'contain',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)',
+                    background: 'repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 50% / 16px 16px'
+                  }}
                 />
                 <button
                   onClick={removeChromakey}
@@ -461,12 +541,12 @@ const ImageChromakey = () => {
                     {t('chromakey.detecting')}...
                   </div>
                 )}
-                {detectedColor && !detecting && (
+                {!detecting && (
                   <div style={{
                     position: 'absolute',
                     bottom: '8px',
                     left: '8px',
-                    background: 'rgba(0,0,0,0.7)',
+                    background: isTransparentImage ? 'rgba(16, 185, 129, 0.9)' : 'rgba(0,0,0,0.7)',
                     color: 'white',
                     padding: '4px 8px',
                     borderRadius: '4px',
@@ -475,14 +555,23 @@ const ImageChromakey = () => {
                     alignItems: 'center',
                     gap: '6px'
                   }}>
-                    <span style={{
-                      width: '14px',
-                      height: '14px',
-                      borderRadius: '3px',
-                      background: detectedColor,
-                      border: '1px solid white'
-                    }} />
-                    {t('chromakey.detected')}
+                    {isTransparentImage ? (
+                      <>
+                        <span>✓</span>
+                        {t('chromakey.transparentDetected', '투명 이미지 감지됨')}
+                      </>
+                    ) : (
+                      <>
+                        <span style={{
+                          width: '14px',
+                          height: '14px',
+                          borderRadius: '3px',
+                          background: chromaColor,
+                          border: '1px solid white'
+                        }} />
+                        {t('chromakey.detected')}
+                      </>
+                    )}
                   </div>
                 )}
               </div>
@@ -542,127 +631,116 @@ const ImageChromakey = () => {
           </div>
         </div>
 
-        {/* Options */}
-        {chromakeyFile && backgroundFile && (
-          <div className="options">
-            <h4 className="options-title">
-              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              {t('common.options')}
+        {/* Info Message */}
+        {chromakeyFile && !detecting && (
+          <div style={{
+            padding: '12px 16px',
+            background: isTransparentImage ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.1)',
+            borderRadius: '8px',
+            marginBottom: '20px',
+            fontSize: '14px',
+            color: 'var(--text-secondary)'
+          }}>
+            {isTransparentImage ? (
+              <>
+                <strong style={{ color: '#10B981' }}>✓ {t('chromakey.transparentMode', '투명 이미지 모드')}</strong>
+                <br />
+                {t('chromakey.transparentModeDesc', '투명 영역에 배경 이미지가 자동으로 합성됩니다.')}
+              </>
+            ) : (
+              <>
+                <strong style={{ color: '#3B82F6' }}>🎨 {t('chromakey.chromakeyMode', '크로마키 모드')}</strong>
+                <br />
+                {t('chromakey.chromakeyModeDesc', '감지된 배경색이 새 배경으로 교체됩니다.')}
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Chromakey Options (only for non-transparent images) */}
+        {chromakeyFile && !detecting && !isTransparentImage && (
+          <div style={{
+            padding: '16px',
+            background: 'var(--bg-secondary)',
+            borderRadius: '8px',
+            marginBottom: '20px'
+          }}>
+            <h4 style={{ marginBottom: '16px', color: 'var(--text-primary)' }}>
+              {t('chromakey.options', '크로마키 옵션')}
             </h4>
 
-            <div className="option-group">
-              <label className="option-label">{t('chromakey.chromaColor')}</label>
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
-                <button
-                  onClick={handleAutoDetectToggle}
+            {/* Chroma Color Picker */}
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', color: 'var(--text-secondary)' }}>
+                <span>{t('chromakey.chromaColor', '크로마키 색상')}:</span>
+                <input
+                  type="color"
+                  value={chromaColor}
+                  onChange={(e) => setChromaColor(e.target.value)}
                   style={{
-                    padding: '8px 16px',
-                    background: isAutoDetect ? 'var(--primary-color)' : 'var(--bg-secondary)',
-                    color: isAutoDetect ? '#fff' : 'var(--text-primary)',
-                    border: '2px solid var(--primary-color)',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontWeight: isAutoDetect ? 'bold' : 'normal',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px'
+                    width: '40px',
+                    height: '30px',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
                   }}
-                >
-                  {detectedColor && (
-                    <span style={{
-                      width: '16px',
-                      height: '16px',
-                      borderRadius: '3px',
-                      background: detectedColor,
-                      border: '1px solid rgba(255,255,255,0.5)'
-                    }} />
-                  )}
-                  {t('chromakey.autoDetect')}
-                </button>
-                <button
-                  onClick={() => { setIsAutoDetect(false); setChromaColor('#00ff00'); }}
-                  style={{
-                    padding: '8px 16px',
-                    background: !isAutoDetect && chromaColor === '#00ff00' ? '#00ff00' : 'var(--bg-secondary)',
-                    color: !isAutoDetect && chromaColor === '#00ff00' ? '#000' : 'var(--text-primary)',
-                    border: '2px solid #00ff00',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontWeight: !isAutoDetect && chromaColor === '#00ff00' ? 'bold' : 'normal'
-                  }}
-                >
-                  {t('chromakey.greenScreen')}
-                </button>
-                <button
-                  onClick={() => { setIsAutoDetect(false); setChromaColor('#0000ff'); }}
-                  style={{
-                    padding: '8px 16px',
-                    background: !isAutoDetect && chromaColor === '#0000ff' ? '#0000ff' : 'var(--bg-secondary)',
-                    color: !isAutoDetect && chromaColor === '#0000ff' ? '#fff' : 'var(--text-primary)',
-                    border: '2px solid #0000ff',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontWeight: !isAutoDetect && chromaColor === '#0000ff' ? 'bold' : 'normal'
-                  }}
-                >
-                  {t('chromakey.blueScreen')}
-                </button>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <input
-                    type="color"
-                    value={chromaColor}
-                    onChange={(e) => { setIsAutoDetect(false); setChromaColor(e.target.value); }}
-                    style={{ width: '40px', height: '36px', padding: '2px', cursor: 'pointer', border: '1px solid var(--border-color)', borderRadius: '4px' }}
-                    title={t('chromakey.customColor')}
-                  />
-                  <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
-                    {chromaColor.toUpperCase()}
-                  </span>
-                </div>
-              </div>
+                />
+                <span style={{
+                  padding: '4px 8px',
+                  background: chromaColor,
+                  color: '#fff',
+                  borderRadius: '4px',
+                  fontSize: '12px',
+                  textShadow: '0 1px 2px rgba(0,0,0,0.5)'
+                }}>
+                  {chromaColor.toUpperCase()}
+                </span>
+              </label>
             </div>
 
-            <div className="option-group">
-              <label className="option-label">{t('chromakey.tolerance')}: {tolerance}%</label>
-              <input
-                type="range"
-                className="option-slider"
-                min="10"
-                max="100"
-                value={tolerance}
-                onChange={(e) => setTolerance(Number(e.target.value))}
-              />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-secondary)' }}>
-                <span>{t('chromakey.strict')}</span>
-                <span>{t('chromakey.loose')}</span>
-              </div>
+            {/* Tolerance Slider */}
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', color: 'var(--text-secondary)' }}>
+                <span style={{ minWidth: '100px' }}>{t('chromakey.tolerance', '허용 범위')}: {tolerance}%</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={tolerance}
+                  onChange={(e) => setTolerance(Number(e.target.value))}
+                  style={{ flex: 1, cursor: 'pointer' }}
+                />
+              </label>
             </div>
 
-            <div className="option-group">
-              <label className="option-label">{t('chromakey.edgeSmooth')}: {edgeSmooth}</label>
-              <input
-                type="range"
-                className="option-slider"
-                min="0"
-                max="10"
-                value={edgeSmooth}
-                onChange={(e) => setEdgeSmooth(Number(e.target.value))}
-              />
+            {/* Edge Smooth Slider */}
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', color: 'var(--text-secondary)' }}>
+                <span style={{ minWidth: '100px' }}>{t('chromakey.edgeSmooth', '엣지 스무딩')}: {edgeSmooth}%</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={edgeSmooth}
+                  onChange={(e) => setEdgeSmooth(Number(e.target.value))}
+                  style={{ flex: 1, cursor: 'pointer' }}
+                />
+              </label>
             </div>
 
-            <div className="option-group">
-              <label className="option-label">{t('chromakey.spillRemoval')}: {spillRemoval}%</label>
-              <input
-                type="range"
-                className="option-slider"
-                min="0"
-                max="100"
-                value={spillRemoval}
-                onChange={(e) => setSpillRemoval(Number(e.target.value))}
-              />
+            {/* Spill Removal Slider */}
+            <div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', color: 'var(--text-secondary)' }}>
+                <span style={{ minWidth: '100px' }}>{t('chromakey.spillRemoval', '색 번짐 제거')}: {spillRemoval}%</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={spillRemoval}
+                  onChange={(e) => setSpillRemoval(Number(e.target.value))}
+                  style={{ flex: 1, cursor: 'pointer' }}
+                />
+              </label>
             </div>
           </div>
         )}
@@ -696,16 +774,6 @@ const ImageChromakey = () => {
           </div>
         )}
 
-        {/* Convert Button */}
-        {chromakeyFile && backgroundFile && !result && !processing && (
-          <button
-            className="convert-button"
-            onClick={handleComposite}
-            style={{ marginTop: '20px' }}
-          >
-            {t('chromakey.composite')}
-          </button>
-        )}
       </div>
 
       <div className="seo-content">
@@ -716,7 +784,6 @@ const ImageChromakey = () => {
           <li><strong>{t('whyUse.free')}</strong></li>
           <li><strong>{t('whyUse.privacy')}</strong></li>
           <li><strong>{t('whyUse.fast')}</strong></li>
-          <li><strong>{t('chromakey.features.adjustable')}</strong></li>
         </ul>
       </div>
     </>
