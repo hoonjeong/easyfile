@@ -674,10 +674,10 @@
     }
   },
   "chromakey": {
-    "pageTitle": "Chromakey Composite",
-    "pageDescription": "Composite green screen and blue screen images/videos with backgrounds. All processing happens in your browser for complete privacy.",
-    "seoTitle": "Chromakey Composite - Free Online Green Screen Tool",
-    "seoDescription": "Composite green screen and blue screen images/videos with backgrounds for free. 100% browser-based, files never leave your device.",
+    "pageTitle": "Background Removal & Composite",
+    "pageDescription": "Remove image backgrounds with AI or composite green/blue screen images and videos with backgrounds. All processing happens in your browser for complete privacy.",
+    "seoTitle": "Background Removal & Composite - AI Background Remover, Chromakey Tool",
+    "seoDescription": "Remove image backgrounds with AI and composite green/blue screen images and videos for free. 100% browser-based, files never leave your device.",
     "chromaColor": "Chroma Color",
     "autoDetect": "Auto Detect",
     "detecting": "Detecting color",
