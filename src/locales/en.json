@@ -41,10 +41,11 @@
   },
   "nav": {
     "home": "Home",
-    "image": "Image",
-    "document": "Document",
-    "media": "Media",
-    "pdf": "PDF",
+    "image": "Image Convert",
+    "chromakey": "Chromakey",
+    "document": "Document Convert",
+    "media": "Media Convert",
+    "pdf": "PDF Convert",
     "address": "Address Convert",
     "games": "Mini Games",
     "about": "Guide"
@@ -54,8 +55,8 @@
     "heroTitle": "Free Online",
     "heroTitleHighlight": "File Converter",
     "heroSubtitle": "Convert images, documents, audio, and video files safely in your browser. Your files never leave your device, ensuring complete privacy.",
-    "seoTitle": "Free Online File Converter",
-    "seoDescription": "Convert HEIC, WebP, PSD, Excel, M4A and more for free. 100% browser-based, your files are never uploaded to servers.",
+    "seoTitle": "Free Online File Converter - PDF, Image, Chromakey, Document, Media Tools",
+    "seoDescription": "PDF merge/split/compress, HEIC/WebP/PSD image conversion, chromakey composite, Excel/Markdown document conversion, M4A/WebM/GIF media conversion for free. 100% browser-based, your files never leave your device.",
     "whatIsEasyFile": "What is EasyFile?",
     "whatIsEasyFileDesc": "EasyFile is a 100% browser-based free online file conversion service. Convert iPhone HEIC photos, WebP images, Photoshop PSD files and various other formats to universally compatible JPG and PNG.",
     "whyUseEasyFile": "Why use EasyFile?",
@@ -99,6 +100,10 @@
     "games": {
       "title": "Mini Games",
       "description": "Simple and fun browser-based mini games"
+    },
+    "chromakey": {
+      "title": "Chromakey Composite",
+      "description": "Composite green/blue screen images and videos with backgrounds"
     },
     "address": {
       "title": "Address Convert",
@@ -628,6 +633,62 @@
       "noAddress": "Please search for an address first",
       "noName": "Please enter recipient name",
       "loadScript": "Error loading address search feature"
+    }
+  },
+  "chromakey": {
+    "pageTitle": "Chromakey Composite",
+    "pageDescription": "Composite green screen and blue screen images/videos with backgrounds. All processing happens in your browser for complete privacy.",
+    "seoTitle": "Chromakey Composite - Free Online Green Screen Tool",
+    "seoDescription": "Composite green screen and blue screen images/videos with backgrounds for free. 100% browser-based, files never leave your device.",
+    "chromaColor": "Chroma Color",
+    "greenScreen": "Green Screen",
+    "blueScreen": "Blue Screen",
+    "customColor": "Custom Color",
+    "tolerance": "Tolerance",
+    "strict": "Strict",
+    "loose": "Loose",
+    "edgeSmooth": "Edge Smoothing",
+    "spillRemoval": "Spill Removal",
+    "similarity": "Similarity",
+    "blend": "Blend",
+    "sharp": "Sharp",
+    "smooth": "Smooth",
+    "result": "Composite Result",
+    "composite": "Composite",
+    "downloadResult": "Download Result",
+    "features": {
+      "title": "EasyFile Chromakey Features",
+      "free": "100% Free - Unlimited use without registration",
+      "secure": "Complete Security - Files never leave your device",
+      "realtime": "Real-time Processing - Instant compositing in browser",
+      "adjustable": "Fine Control - Adjust tolerance, edge, and spill removal",
+      "formats": "Various Formats - Supports both images and videos"
+    },
+    "image": {
+      "title": "Image Chromakey",
+      "description": "Composite green screen images with backgrounds",
+      "pageTitle": "Image Chromakey Composite - Free Online Green Screen Tool",
+      "pageDescription": "Composite green screen and blue screen photos with background images for free. Processed in your browser for complete privacy.",
+      "seoKeywords": "chromakey, green screen, blue screen, image composite, background composite, photo composite, free chromakey, online chromakey",
+      "chromakeyImage": "Chromakey Image",
+      "backgroundImage": "Background Image",
+      "selectChromakey": "Select Chromakey Image",
+      "selectBackground": "Select Background Image",
+      "whatIs": "What is Image Chromakey?",
+      "whatIsDesc": "Image chromakey removes the background color from photos taken with green or blue screen backgrounds and composites them with a different background image. It can be used for YouTube thumbnails, profile photos, marketing images, and more.",
+      "error": "Error compositing images. Please check if the files are valid images."
+    },
+    "video": {
+      "title": "Video Chromakey",
+      "description": "Composite green screen videos with backgrounds",
+      "pageTitle": "Video Chromakey Composite - Free Online Green Screen Video Tool",
+      "pageDescription": "Composite green screen and blue screen videos with background images for free. Processed in your browser for complete privacy.",
+      "seoKeywords": "video chromakey, video green screen, green screen video, blue screen video, video composite, background composite, free video composite, online video composite",
+      "chromakeyVideo": "Chromakey Video",
+      "selectVideo": "Select Chromakey Video",
+      "whatIs": "What is Video Chromakey?",
+      "whatIsDesc": "Video chromakey removes the background color from videos recorded with green or blue screen backgrounds and composites them with a background image. It's used for YouTube videos, presentations, educational content, and more.",
+      "error": "Error compositing video. Please check the file format."
     }
   },
   "about": {

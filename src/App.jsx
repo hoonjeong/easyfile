@@ -45,6 +45,11 @@ import AddressConverter from './pages/AddressConverter';
 // About page
 import About from './pages/About';
 
+// Chromakey tools
+import ChromakeyIndex from './pages/chromakey/ChromakeyIndex';
+import ImageChromakey from './pages/chromakey/ImageChromakey';
+import VideoChromakey from './pages/chromakey/VideoChromakey';
+
 import './styles/global.css';
 
 function App() {
@@ -92,6 +97,11 @@ function App() {
 
             {/* Address converter */}
             <Route path="/address" element={<AddressConverter />} />
+
+            {/* Chromakey tools */}
+            <Route path="/chromakey" element={<ChromakeyIndex />} />
+            <Route path="/chromakey/image" element={<ImageChromakey />} />
+            <Route path="/chromakey/video" element={<VideoChromakey />} />
 
             {/* About page */}
             <Route path="/about" element={<About />} />

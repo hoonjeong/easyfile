@@ -9,6 +9,7 @@ const Layout = ({ children }) => {
     { path: '/', labelKey: 'nav.home' },
     { path: '/pdf', labelKey: 'nav.pdf' },
     { path: '/image', labelKey: 'nav.image' },
+    { path: '/chromakey', labelKey: 'nav.chromakey' },
     { path: '/document', labelKey: 'nav.document' },
     { path: '/media', labelKey: 'nav.media' },
     { path: '/address', labelKey: 'nav.address' },

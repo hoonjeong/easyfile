@@ -41,6 +41,18 @@ const Home = () => {
       ]
     },
     {
+      id: 'chromakey',
+      titleKey: 'categories.chromakey.title',
+      descriptionKey: 'categories.chromakey.description',
+      icon: '🟢',
+      iconClass: 'media',
+      path: '/chromakey',
+      converters: [
+        { name: 'Image', path: '/chromakey/image' },
+        { name: 'Video', path: '/chromakey/video' },
+      ]
+    },
+    {
       id: 'document',
       titleKey: 'categories.document.title',
       descriptionKey: 'categories.document.description',

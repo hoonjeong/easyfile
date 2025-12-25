@@ -41,10 +41,11 @@
   },
   "nav": {
     "home": "홈",
-    "image": "이미지",
-    "document": "문서",
-    "media": "미디어",
-    "pdf": "PDF",
+    "image": "이미지변환",
+    "chromakey": "크로마키",
+    "document": "문서변환",
+    "media": "미디어변환",
+    "pdf": "PDF변환",
     "address": "영문주소변환",
     "games": "미니게임",
     "about": "사용 가이드"
@@ -54,8 +55,8 @@
     "heroTitle": "무료 온라인",
     "heroTitleHighlight": "파일 변환기",
     "heroSubtitle": "이미지, 문서, 오디오, 비디오 파일을 브라우저에서 안전하게 변환하세요. 파일이 서버로 전송되지 않아 개인정보가 보호됩니다.",
-    "seoTitle": "무료 온라인 파일 변환기",
-    "seoDescription": "HEIC, WebP, PSD, Excel, M4A 등 다양한 파일을 무료로 변환하세요. 100% 브라우저 기반으로 파일이 서버로 전송되지 않아 안전합니다.",
+    "seoTitle": "무료 온라인 파일 변환기 - PDF, 이미지, 크로마키, 문서, 미디어 변환",
+    "seoDescription": "PDF 병합/분할/압축, HEIC/WebP/PSD 이미지 변환, 크로마키 합성, Excel/Markdown 문서 변환, M4A/WebM/GIF 미디어 변환을 무료로. 100% 브라우저 기반으로 파일이 서버로 전송되지 않아 안전합니다.",
     "whatIsEasyFile": "EasyFile이란?",
     "whatIsEasyFileDesc": "EasyFile은 100% 브라우저 기반의 무료 온라인 파일 변환 서비스입니다. 아이폰의 HEIC 사진, 웹의 WebP 이미지, 포토샵 PSD 파일 등 다양한 형식을 누구나 열 수 있는 JPG, PNG로 변환할 수 있습니다.",
     "whyUseEasyFile": "왜 EasyFile을 사용해야 하나요?",
@@ -99,6 +100,10 @@
     "games": {
       "title": "미니게임",
       "description": "간단하고 재미있는 브라우저 기반 미니게임"
+    },
+    "chromakey": {
+      "title": "크로마키 합성",
+      "description": "그린스크린/블루스크린 이미지와 영상을 배경과 합성"
     },
     "address": {
       "title": "영문주소변환",
@@ -628,6 +633,62 @@
       "noAddress": "주소를 먼저 검색해주세요",
       "noName": "수령인 이름을 입력해주세요",
       "loadScript": "주소 검색 기능을 불러오는 중 오류가 발생했습니다"
+    }
+  },
+  "chromakey": {
+    "pageTitle": "크로마키 합성",
+    "pageDescription": "그린스크린, 블루스크린 이미지와 영상을 배경과 합성하세요. 모든 처리는 브라우저에서 이루어져 개인정보가 안전합니다.",
+    "seoTitle": "크로마키 합성 - 무료 온라인 그린스크린 합성 도구",
+    "seoDescription": "그린스크린, 블루스크린 이미지와 영상을 배경과 무료로 합성하세요. 100% 브라우저 기반으로 파일이 서버로 전송되지 않아 안전합니다.",
+    "chromaColor": "크로마키 색상",
+    "greenScreen": "그린스크린",
+    "blueScreen": "블루스크린",
+    "customColor": "사용자 지정 색상",
+    "tolerance": "허용 범위",
+    "strict": "엄격",
+    "loose": "느슨",
+    "edgeSmooth": "엣지 부드럽게",
+    "spillRemoval": "색번짐 제거",
+    "similarity": "유사도",
+    "blend": "블렌드",
+    "sharp": "선명",
+    "smooth": "부드럽게",
+    "result": "합성 결과",
+    "composite": "합성하기",
+    "downloadResult": "합성 결과 다운로드",
+    "features": {
+      "title": "EasyFile 크로마키 합성의 특징",
+      "free": "100% 무료 - 회원가입 없이 무제한 사용",
+      "secure": "완벽한 보안 - 파일이 서버로 전송되지 않음",
+      "realtime": "실시간 처리 - 브라우저에서 즉시 합성",
+      "adjustable": "세밀한 조절 - 허용 범위, 엣지, 색번짐 조절 가능",
+      "formats": "다양한 형식 - 이미지와 영상 모두 지원"
+    },
+    "image": {
+      "title": "이미지 크로마키",
+      "description": "그린스크린 이미지를 배경과 합성",
+      "pageTitle": "이미지 크로마키 합성 - 무료 온라인 그린스크린 합성",
+      "pageDescription": "그린스크린, 블루스크린 사진을 배경 이미지와 무료로 합성하세요. 브라우저에서 바로 처리되어 안전합니다.",
+      "seoKeywords": "크로마키, 그린스크린, 블루스크린, 이미지 합성, 배경 합성, 사진 합성, 무료 크로마키, 온라인 크로마키",
+      "chromakeyImage": "크로마키 이미지",
+      "backgroundImage": "배경 이미지",
+      "selectChromakey": "크로마키 이미지 선택",
+      "selectBackground": "배경 이미지 선택",
+      "whatIs": "이미지 크로마키란?",
+      "whatIsDesc": "이미지 크로마키는 그린스크린이나 블루스크린 배경으로 촬영한 사진에서 배경색을 제거하고, 원하는 다른 배경 이미지와 합성하는 기술입니다. 유튜브 썸네일, 프로필 사진, 마케팅 이미지 등 다양한 용도로 활용할 수 있습니다.",
+      "error": "이미지 합성 중 오류가 발생했습니다. 올바른 이미지 파일인지 확인해주세요."
+    },
+    "video": {
+      "title": "영상 크로마키",
+      "description": "그린스크린 영상을 배경과 합성",
+      "pageTitle": "영상 크로마키 합성 - 무료 온라인 그린스크린 영상 합성",
+      "pageDescription": "그린스크린, 블루스크린 영상을 배경 이미지와 무료로 합성하세요. 브라우저에서 바로 처리되어 안전합니다.",
+      "seoKeywords": "영상 크로마키, 비디오 크로마키, 그린스크린 영상, 블루스크린 영상, 영상 합성, 배경 합성, 무료 영상 합성, 온라인 영상 합성",
+      "chromakeyVideo": "크로마키 영상",
+      "selectVideo": "크로마키 영상 선택",
+      "whatIs": "영상 크로마키란?",
+      "whatIsDesc": "영상 크로마키는 그린스크린이나 블루스크린 배경으로 촬영한 영상에서 배경색을 제거하고, 원하는 배경 이미지와 합성하는 기술입니다. 유튜브 영상, 프레젠테이션, 교육 콘텐츠 등 다양한 영상 제작에 활용됩니다.",
+      "error": "영상 합성 중 오류가 발생했습니다. 파일 형식을 확인해주세요."
     }
   },
   "about": {
