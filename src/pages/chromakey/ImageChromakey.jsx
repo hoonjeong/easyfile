@@ -13,6 +13,9 @@ const ImageChromakey = () => {
   const [chromakeyPreview, setChromakeyPreview] = useState(null);
   const [backgroundPreview, setBackgroundPreview] = useState(null);
   const [chromaColor, setChromaColor] = useState('#00ff00');
+  const [detectedColor, setDetectedColor] = useState(null);
+  const [isAutoDetect, setIsAutoDetect] = useState(true);
+  const [detecting, setDetecting] = useState(false);
   const [tolerance, setTolerance] = useState(50);
   const [edgeSmooth, setEdgeSmooth] = useState(2);
   const [spillRemoval, setSpillRemoval] = useState(30);
@@ -35,17 +38,176 @@ const ImageChromakey = () => {
     };
   }, []);
 
+  const rgbToHex = (r, g, b) => {
+    return '#' + [r, g, b].map(x => {
+      const hex = x.toString(16);
+      return hex.length === 1 ? '0' + hex : hex;
+    }).join('');
+  };
+
+  const hexToRgb = (hex) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : { r: 0, g: 255, b: 0 };
+  };
+
+  const colorDistance = (r1, g1, b1, r2, g2, b2) => {
+    return Math.sqrt(
+      Math.pow(r1 - r2, 2) +
+      Math.pow(g1 - g2, 2) +
+      Math.pow(b1 - b2, 2)
+    );
+  };
+
+  // Auto detect chromakey color from image edges
+  const detectChromaColor = useCallback(async (imageUrl) => {
+    setDetecting(true);
+    try {
+      const img = new Image();
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+        img.src = imageUrl;
+      });
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      const width = canvas.width;
+      const height = canvas.height;
+
+      // Sample pixels from edges (top, bottom, left, right borders)
+      const edgePixels = [];
+      const sampleSize = Math.min(50, Math.floor(width / 10), Math.floor(height / 10));
+
+      // Top edge
+      for (let x = 0; x < width; x += Math.max(1, Math.floor(width / 100))) {
+        for (let y = 0; y < sampleSize; y++) {
+          const i = (y * width + x) * 4;
+          edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
+        }
+      }
+
+      // Bottom edge
+      for (let x = 0; x < width; x += Math.max(1, Math.floor(width / 100))) {
+        for (let y = height - sampleSize; y < height; y++) {
+          const i = (y * width + x) * 4;
+          edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
+        }
+      }
+
+      // Left edge
+      for (let y = 0; y < height; y += Math.max(1, Math.floor(height / 100))) {
+        for (let x = 0; x < sampleSize; x++) {
+          const i = (y * width + x) * 4;
+          edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
+        }
+      }
+
+      // Right edge
+      for (let y = 0; y < height; y += Math.max(1, Math.floor(height / 100))) {
+        for (let x = width - sampleSize; x < width; x++) {
+          const i = (y * width + x) * 4;
+          edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
+        }
+      }
+
+      // Four corners (more weight)
+      const cornerSize = Math.min(30, Math.floor(width / 20), Math.floor(height / 20));
+      const corners = [
+        { startX: 0, startY: 0 },
+        { startX: width - cornerSize, startY: 0 },
+        { startX: 0, startY: height - cornerSize },
+        { startX: width - cornerSize, startY: height - cornerSize }
+      ];
+
+      for (const corner of corners) {
+        for (let y = corner.startY; y < corner.startY + cornerSize; y++) {
+          for (let x = corner.startX; x < corner.startX + cornerSize; x++) {
+            const i = (y * width + x) * 4;
+            // Add corner pixels multiple times for more weight
+            edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
+            edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
+          }
+        }
+      }
+
+      // Find the most common color using color clustering
+      // Group similar colors together (within distance of 30)
+      const colorGroups = [];
+      const groupDistance = 40;
+
+      for (const pixel of edgePixels) {
+        let foundGroup = false;
+        for (const group of colorGroups) {
+          if (colorDistance(pixel.r, pixel.g, pixel.b, group.r, group.g, group.b) < groupDistance) {
+            group.count++;
+            // Update average color
+            group.totalR += pixel.r;
+            group.totalG += pixel.g;
+            group.totalB += pixel.b;
+            group.r = Math.round(group.totalR / group.count);
+            group.g = Math.round(group.totalG / group.count);
+            group.b = Math.round(group.totalB / group.count);
+            foundGroup = true;
+            break;
+          }
+        }
+        if (!foundGroup) {
+          colorGroups.push({
+            r: pixel.r,
+            g: pixel.g,
+            b: pixel.b,
+            totalR: pixel.r,
+            totalG: pixel.g,
+            totalB: pixel.b,
+            count: 1
+          });
+        }
+      }
+
+      // Sort by count and get the most common color
+      colorGroups.sort((a, b) => b.count - a.count);
+
+      if (colorGroups.length > 0) {
+        const dominantColor = colorGroups[0];
+        const hex = rgbToHex(dominantColor.r, dominantColor.g, dominantColor.b);
+        setDetectedColor(hex);
+        if (isAutoDetect) {
+          setChromaColor(hex);
+        }
+      }
+    } catch (err) {
+      console.error('Color detection error:', err);
+    } finally {
+      setDetecting(false);
+    }
+  }, [isAutoDetect]);
+
   const handleChromakeySelect = useCallback((e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     if (chromakeyPreview) URL.revokeObjectURL(chromakeyPreview);
+    const previewUrl = URL.createObjectURL(file);
     setChromakeyFile(file);
-    setChromakeyPreview(URL.createObjectURL(file));
+    setChromakeyPreview(previewUrl);
     setResult(null);
     setResultPreview(null);
     setError(null);
-  }, [chromakeyPreview]);
+    setDetectedColor(null);
+
+    // Auto detect color
+    detectChromaColor(previewUrl);
+  }, [chromakeyPreview, detectChromaColor]);
 
   const handleBackgroundSelect = useCallback((e) => {
     const file = e.target.files?.[0];
@@ -65,6 +227,7 @@ const ImageChromakey = () => {
     setChromakeyPreview(null);
     setResult(null);
     setResultPreview(null);
+    setDetectedColor(null);
     if (chromakeyInputRef.current) chromakeyInputRef.current.value = '';
   };
 
@@ -75,23 +238,6 @@ const ImageChromakey = () => {
     setResult(null);
     setResultPreview(null);
     if (backgroundInputRef.current) backgroundInputRef.current.value = '';
-  };
-
-  const hexToRgb = (hex) => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-    } : { r: 0, g: 255, b: 0 };
-  };
-
-  const colorDistance = (r1, g1, b1, r2, g2, b2) => {
-    return Math.sqrt(
-      Math.pow(r1 - r2, 2) +
-      Math.pow(g1 - g2, 2) +
-      Math.pow(b1 - b2, 2)
-    );
   };
 
   const handleComposite = async () => {
@@ -142,9 +288,13 @@ const ImageChromakey = () => {
 
       // Process chromakey
       const keyColor = hexToRgb(chromaColor);
-      const maxDistance = (tolerance / 100) * 441.67; // Max RGB distance is sqrt(255^2 * 3) ≈ 441.67
+      const maxDistance = (tolerance / 100) * 441.67;
       const smoothRange = (edgeSmooth / 100) * 50;
       const spillFactor = spillRemoval / 100;
+
+      // Determine if it's green or blue dominant for spill removal
+      const isGreenDominant = keyColor.g > keyColor.r && keyColor.g > keyColor.b;
+      const isBlueDominant = keyColor.b > keyColor.r && keyColor.b > keyColor.g;
 
       for (let i = 0; i < chromaData.data.length; i += 4) {
         const r = chromaData.data[i];
@@ -167,16 +317,14 @@ const ImageChromakey = () => {
           chromaData.data[i + 2] = Math.round(bgData.data[i + 2] * (1 - blendFactor) + b * blendFactor);
           chromaData.data[i + 3] = 255;
         } else {
-          // Spill removal - reduce green/blue tint from edges
+          // Spill removal
           if (spillFactor > 0) {
-            if (chromaColor === '#00ff00' || chromaColor === '#00FF00') {
-              // Green screen spill removal
+            if (isGreenDominant) {
               const greenSpill = g - Math.max(r, b);
               if (greenSpill > 0) {
                 chromaData.data[i + 1] = Math.round(g - greenSpill * spillFactor);
               }
-            } else if (chromaColor === '#0000ff' || chromaColor === '#0000FF') {
-              // Blue screen spill removal
+            } else if (isBlueDominant) {
               const blueSpill = b - Math.max(r, g);
               if (blueSpill > 0) {
                 chromaData.data[i + 2] = Math.round(b - blueSpill * spillFactor);
@@ -222,6 +370,13 @@ const ImageChromakey = () => {
     setResultPreview(null);
     setError(null);
     setProgress(0);
+  };
+
+  const handleAutoDetectToggle = () => {
+    setIsAutoDetect(!isAutoDetect);
+    if (!isAutoDetect && detectedColor) {
+      setChromaColor(detectedColor);
+    }
   };
 
   return (
@@ -292,6 +447,44 @@ const ImageChromakey = () => {
                 >
                   ×
                 </button>
+                {detecting && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '8px',
+                    left: '8px',
+                    background: 'rgba(0,0,0,0.7)',
+                    color: 'white',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    fontSize: '12px'
+                  }}>
+                    {t('chromakey.detecting')}...
+                  </div>
+                )}
+                {detectedColor && !detecting && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '8px',
+                    left: '8px',
+                    background: 'rgba(0,0,0,0.7)',
+                    color: 'white',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    fontSize: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}>
+                    <span style={{
+                      width: '14px',
+                      height: '14px',
+                      borderRadius: '3px',
+                      background: detectedColor,
+                      border: '1px solid white'
+                    }} />
+                    {t('chromakey.detected')}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -362,42 +555,73 @@ const ImageChromakey = () => {
 
             <div className="option-group">
               <label className="option-label">{t('chromakey.chromaColor')}</label>
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
                 <button
-                  onClick={() => setChromaColor('#00ff00')}
+                  onClick={handleAutoDetectToggle}
                   style={{
                     padding: '8px 16px',
-                    background: chromaColor === '#00ff00' ? '#00ff00' : 'var(--bg-secondary)',
-                    color: chromaColor === '#00ff00' ? '#000' : 'var(--text-primary)',
+                    background: isAutoDetect ? 'var(--primary-color)' : 'var(--bg-secondary)',
+                    color: isAutoDetect ? '#fff' : 'var(--text-primary)',
+                    border: '2px solid var(--primary-color)',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: isAutoDetect ? 'bold' : 'normal',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  {detectedColor && (
+                    <span style={{
+                      width: '16px',
+                      height: '16px',
+                      borderRadius: '3px',
+                      background: detectedColor,
+                      border: '1px solid rgba(255,255,255,0.5)'
+                    }} />
+                  )}
+                  {t('chromakey.autoDetect')}
+                </button>
+                <button
+                  onClick={() => { setIsAutoDetect(false); setChromaColor('#00ff00'); }}
+                  style={{
+                    padding: '8px 16px',
+                    background: !isAutoDetect && chromaColor === '#00ff00' ? '#00ff00' : 'var(--bg-secondary)',
+                    color: !isAutoDetect && chromaColor === '#00ff00' ? '#000' : 'var(--text-primary)',
                     border: '2px solid #00ff00',
                     borderRadius: '6px',
                     cursor: 'pointer',
-                    fontWeight: chromaColor === '#00ff00' ? 'bold' : 'normal'
+                    fontWeight: !isAutoDetect && chromaColor === '#00ff00' ? 'bold' : 'normal'
                   }}
                 >
                   {t('chromakey.greenScreen')}
                 </button>
                 <button
-                  onClick={() => setChromaColor('#0000ff')}
+                  onClick={() => { setIsAutoDetect(false); setChromaColor('#0000ff'); }}
                   style={{
                     padding: '8px 16px',
-                    background: chromaColor === '#0000ff' ? '#0000ff' : 'var(--bg-secondary)',
-                    color: chromaColor === '#0000ff' ? '#fff' : 'var(--text-primary)',
+                    background: !isAutoDetect && chromaColor === '#0000ff' ? '#0000ff' : 'var(--bg-secondary)',
+                    color: !isAutoDetect && chromaColor === '#0000ff' ? '#fff' : 'var(--text-primary)',
                     border: '2px solid #0000ff',
                     borderRadius: '6px',
                     cursor: 'pointer',
-                    fontWeight: chromaColor === '#0000ff' ? 'bold' : 'normal'
+                    fontWeight: !isAutoDetect && chromaColor === '#0000ff' ? 'bold' : 'normal'
                   }}
                 >
                   {t('chromakey.blueScreen')}
                 </button>
-                <input
-                  type="color"
-                  value={chromaColor}
-                  onChange={(e) => setChromaColor(e.target.value)}
-                  style={{ width: '40px', height: '36px', padding: '2px', cursor: 'pointer', border: '1px solid var(--border-color)', borderRadius: '4px' }}
-                  title={t('chromakey.customColor')}
-                />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <input
+                    type="color"
+                    value={chromaColor}
+                    onChange={(e) => { setIsAutoDetect(false); setChromaColor(e.target.value); }}
+                    style={{ width: '40px', height: '36px', padding: '2px', cursor: 'pointer', border: '1px solid var(--border-color)', borderRadius: '4px' }}
+                    title={t('chromakey.customColor')}
+                  />
+                  <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
+                    {chromaColor.toUpperCase()}
+                  </span>
+                </div>
               </div>
             </div>
 

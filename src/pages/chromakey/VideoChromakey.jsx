@@ -10,13 +10,16 @@ import CoupangBanner from '../../components/CoupangBanner';
 
 const VideoChromakey = () => {
   const { t } = useTranslation();
-  const { ffmpeg, ffmpegLoaded, loading: ffmpegLoading, loadFFmpeg, setProgressHandler } = useFFmpeg();
+  const { ffmpeg, loadFFmpeg, setProgressHandler } = useFFmpeg();
 
   const [videoFile, setVideoFile] = useState(null);
   const [backgroundFile, setBackgroundFile] = useState(null);
   const [videoPreview, setVideoPreview] = useState(null);
   const [backgroundPreview, setBackgroundPreview] = useState(null);
   const [chromaColor, setChromaColor] = useState('green');
+  const [detectedColor, setDetectedColor] = useState(null);
+  const [isAutoDetect, setIsAutoDetect] = useState(true);
+  const [detecting, setDetecting] = useState(false);
   const [similarity, setSimilarity] = useState(0.3);
   const [blend, setBlend] = useState(0.1);
   const [processing, setProcessing] = useState(false);
@@ -40,17 +43,173 @@ const VideoChromakey = () => {
     };
   }, []);
 
+  const rgbToHex = (r, g, b) => {
+    return '#' + [r, g, b].map(x => {
+      const hex = x.toString(16);
+      return hex.length === 1 ? '0' + hex : hex;
+    }).join('');
+  };
+
+  const colorDistance = (r1, g1, b1, r2, g2, b2) => {
+    return Math.sqrt(
+      Math.pow(r1 - r2, 2) +
+      Math.pow(g1 - g2, 2) +
+      Math.pow(b1 - b2, 2)
+    );
+  };
+
+  // Auto detect chromakey color from video first frame
+  const detectChromaColor = useCallback(async (videoUrl) => {
+    setDetecting(true);
+    try {
+      const video = document.createElement('video');
+      video.crossOrigin = 'anonymous';
+      video.muted = true;
+
+      await new Promise((resolve, reject) => {
+        video.onloadeddata = resolve;
+        video.onerror = reject;
+        video.src = videoUrl;
+        video.load();
+      });
+
+      // Seek to first frame
+      video.currentTime = 0;
+      await new Promise((resolve) => {
+        video.onseeked = resolve;
+      });
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0);
+
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      const width = canvas.width;
+      const height = canvas.height;
+
+      // Sample pixels from edges
+      const edgePixels = [];
+      const sampleSize = Math.min(50, Math.floor(width / 10), Math.floor(height / 10));
+
+      // Top edge
+      for (let x = 0; x < width; x += Math.max(1, Math.floor(width / 100))) {
+        for (let y = 0; y < sampleSize; y++) {
+          const i = (y * width + x) * 4;
+          edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
+        }
+      }
+
+      // Bottom edge
+      for (let x = 0; x < width; x += Math.max(1, Math.floor(width / 100))) {
+        for (let y = height - sampleSize; y < height; y++) {
+          const i = (y * width + x) * 4;
+          edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
+        }
+      }
+
+      // Left edge
+      for (let y = 0; y < height; y += Math.max(1, Math.floor(height / 100))) {
+        for (let x = 0; x < sampleSize; x++) {
+          const i = (y * width + x) * 4;
+          edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
+        }
+      }
+
+      // Right edge
+      for (let y = 0; y < height; y += Math.max(1, Math.floor(height / 100))) {
+        for (let x = width - sampleSize; x < width; x++) {
+          const i = (y * width + x) * 4;
+          edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
+        }
+      }
+
+      // Four corners (more weight)
+      const cornerSize = Math.min(30, Math.floor(width / 20), Math.floor(height / 20));
+      const corners = [
+        { startX: 0, startY: 0 },
+        { startX: width - cornerSize, startY: 0 },
+        { startX: 0, startY: height - cornerSize },
+        { startX: width - cornerSize, startY: height - cornerSize }
+      ];
+
+      for (const corner of corners) {
+        for (let y = corner.startY; y < corner.startY + cornerSize; y++) {
+          for (let x = corner.startX; x < corner.startX + cornerSize; x++) {
+            const i = (y * width + x) * 4;
+            edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
+            edgePixels.push({ r: data[i], g: data[i + 1], b: data[i + 2] });
+          }
+        }
+      }
+
+      // Find the most common color using color clustering
+      const colorGroups = [];
+      const groupDistance = 40;
+
+      for (const pixel of edgePixels) {
+        let foundGroup = false;
+        for (const group of colorGroups) {
+          if (colorDistance(pixel.r, pixel.g, pixel.b, group.r, group.g, group.b) < groupDistance) {
+            group.count++;
+            group.totalR += pixel.r;
+            group.totalG += pixel.g;
+            group.totalB += pixel.b;
+            group.r = Math.round(group.totalR / group.count);
+            group.g = Math.round(group.totalG / group.count);
+            group.b = Math.round(group.totalB / group.count);
+            foundGroup = true;
+            break;
+          }
+        }
+        if (!foundGroup) {
+          colorGroups.push({
+            r: pixel.r,
+            g: pixel.g,
+            b: pixel.b,
+            totalR: pixel.r,
+            totalG: pixel.g,
+            totalB: pixel.b,
+            count: 1
+          });
+        }
+      }
+
+      colorGroups.sort((a, b) => b.count - a.count);
+
+      if (colorGroups.length > 0) {
+        const dominantColor = colorGroups[0];
+        const hex = rgbToHex(dominantColor.r, dominantColor.g, dominantColor.b);
+        setDetectedColor(hex);
+        if (isAutoDetect) {
+          setChromaColor(hex);
+        }
+      }
+    } catch (err) {
+      console.error('Color detection error:', err);
+    } finally {
+      setDetecting(false);
+    }
+  }, [isAutoDetect]);
+
   const handleVideoSelect = useCallback((e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     if (videoPreview) URL.revokeObjectURL(videoPreview);
+    const previewUrl = URL.createObjectURL(file);
     setVideoFile(file);
-    setVideoPreview(URL.createObjectURL(file));
+    setVideoPreview(previewUrl);
     setResult(null);
     setResultPreview(null);
     setError(null);
-  }, [videoPreview]);
+    setDetectedColor(null);
+
+    // Auto detect color
+    detectChromaColor(previewUrl);
+  }, [videoPreview, detectChromaColor]);
 
   const handleBackgroundSelect = useCallback((e) => {
     const file = e.target.files?.[0];
@@ -70,6 +229,7 @@ const VideoChromakey = () => {
     setVideoPreview(null);
     setResult(null);
     setResultPreview(null);
+    setDetectedColor(null);
     if (videoInputRef.current) videoInputRef.current.value = '';
   };
 
@@ -114,19 +274,15 @@ const VideoChromakey = () => {
 
       // Determine color key based on selection
       let colorKey;
-      switch (chromaColor) {
-        case 'green':
-          colorKey = '0x00FF00';
-          break;
-        case 'blue':
-          colorKey = '0x0000FF';
-          break;
-        default:
-          colorKey = chromaColor.replace('#', '0x');
+      if (chromaColor === 'green') {
+        colorKey = '0x00FF00';
+      } else if (chromaColor === 'blue') {
+        colorKey = '0x0000FF';
+      } else {
+        colorKey = chromaColor.replace('#', '0x').toUpperCase();
       }
 
       // Run FFmpeg with chromakey filter
-      // Using colorkey filter for green/blue screen removal
       await ffmpeg.exec([
         '-i', 'input.mp4',
         '-i', 'background.png',
@@ -183,6 +339,13 @@ const VideoChromakey = () => {
     setResultPreview(null);
     setError(null);
     setProgress(0);
+  };
+
+  const handleAutoDetectToggle = () => {
+    setIsAutoDetect(!isAutoDetect);
+    if (!isAutoDetect && detectedColor) {
+      setChromaColor(detectedColor);
+    }
   };
 
   return (
@@ -254,6 +417,44 @@ const VideoChromakey = () => {
                 >
                   ×
                 </button>
+                {detecting && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '8px',
+                    left: '8px',
+                    background: 'rgba(0,0,0,0.7)',
+                    color: 'white',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    fontSize: '12px'
+                  }}>
+                    {t('chromakey.detecting')}...
+                  </div>
+                )}
+                {detectedColor && !detecting && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '8px',
+                    left: '8px',
+                    background: 'rgba(0,0,0,0.7)',
+                    color: 'white',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    fontSize: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}>
+                    <span style={{
+                      width: '14px',
+                      height: '14px',
+                      borderRadius: '3px',
+                      background: detectedColor,
+                      border: '1px solid white'
+                    }} />
+                    {t('chromakey.detected')}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -324,35 +525,66 @@ const VideoChromakey = () => {
 
             <div className="option-group">
               <label className="option-label">{t('chromakey.chromaColor')}</label>
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
                 <button
-                  onClick={() => setChromaColor('green')}
+                  onClick={handleAutoDetectToggle}
                   style={{
                     padding: '8px 16px',
-                    background: chromaColor === 'green' ? '#00ff00' : 'var(--bg-secondary)',
-                    color: chromaColor === 'green' ? '#000' : 'var(--text-primary)',
+                    background: isAutoDetect ? 'var(--primary-color)' : 'var(--bg-secondary)',
+                    color: isAutoDetect ? '#fff' : 'var(--text-primary)',
+                    border: '2px solid var(--primary-color)',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: isAutoDetect ? 'bold' : 'normal',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  {detectedColor && (
+                    <span style={{
+                      width: '16px',
+                      height: '16px',
+                      borderRadius: '3px',
+                      background: detectedColor,
+                      border: '1px solid rgba(255,255,255,0.5)'
+                    }} />
+                  )}
+                  {t('chromakey.autoDetect')}
+                </button>
+                <button
+                  onClick={() => { setIsAutoDetect(false); setChromaColor('green'); }}
+                  style={{
+                    padding: '8px 16px',
+                    background: !isAutoDetect && chromaColor === 'green' ? '#00ff00' : 'var(--bg-secondary)',
+                    color: !isAutoDetect && chromaColor === 'green' ? '#000' : 'var(--text-primary)',
                     border: '2px solid #00ff00',
                     borderRadius: '6px',
                     cursor: 'pointer',
-                    fontWeight: chromaColor === 'green' ? 'bold' : 'normal'
+                    fontWeight: !isAutoDetect && chromaColor === 'green' ? 'bold' : 'normal'
                   }}
                 >
                   {t('chromakey.greenScreen')}
                 </button>
                 <button
-                  onClick={() => setChromaColor('blue')}
+                  onClick={() => { setIsAutoDetect(false); setChromaColor('blue'); }}
                   style={{
                     padding: '8px 16px',
-                    background: chromaColor === 'blue' ? '#0000ff' : 'var(--bg-secondary)',
-                    color: chromaColor === 'blue' ? '#fff' : 'var(--text-primary)',
+                    background: !isAutoDetect && chromaColor === 'blue' ? '#0000ff' : 'var(--bg-secondary)',
+                    color: !isAutoDetect && chromaColor === 'blue' ? '#fff' : 'var(--text-primary)',
                     border: '2px solid #0000ff',
                     borderRadius: '6px',
                     cursor: 'pointer',
-                    fontWeight: chromaColor === 'blue' ? 'bold' : 'normal'
+                    fontWeight: !isAutoDetect && chromaColor === 'blue' ? 'bold' : 'normal'
                   }}
                 >
                   {t('chromakey.blueScreen')}
                 </button>
+                {isAutoDetect && detectedColor && (
+                  <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
+                    {detectedColor.toUpperCase()}
+                  </span>
+                )}
               </div>
             </div>
 
