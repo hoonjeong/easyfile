@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { removeBackground } from '@imgly/background-removal';
+import { AutoModel, AutoProcessor, RawImage } from '@huggingface/transformers';
 import { useTranslation } from 'react-i18next';
 import SEOHead from '../../components/SEOHead';
 import CoupangBanner from '../../components/CoupangBanner';
@@ -8,16 +8,77 @@ import CoupangBanner from '../../components/CoupangBanner';
 // Constants
 // ============================================================================
 
-const QUALITY_OPTIONS = [
-  { value: 'small', labelKey: 'bgRemoval.qualityFast', fallback: '빠름 (낮은 품질)' },
-  { value: 'medium', labelKey: 'bgRemoval.qualityBalanced', fallback: '균형 (권장)' },
-  { value: 'large', labelKey: 'bgRemoval.qualityHigh', fallback: '고품질 (느림)' },
-];
+const MODEL_ID = 'briaai/RMBG-1.4';
+
+// Model and processor cache (singleton pattern)
+let modelInstance = null;
+let processorInstance = null;
+let modelLoadingPromise = null;
 
 // Lower threshold to include more edge pixels as subject
 // Higher value = more aggressive background removal (may cut into subject)
 // Lower value = more conservative (may include some background)
 const MASK_THRESHOLD = 30;
+
+// Load RMBG-1.4 model and processor (cached)
+const loadModel = async (onProgress) => {
+  if (modelInstance && processorInstance) {
+    return { model: modelInstance, processor: processorInstance };
+  }
+
+  if (modelLoadingPromise) {
+    return modelLoadingPromise;
+  }
+
+  modelLoadingPromise = (async () => {
+    onProgress?.('loading', 0);
+
+    // Try WebGPU with fp32 for best quality
+    const model = await AutoModel.from_pretrained(MODEL_ID, {
+      device: 'webgpu',
+      dtype: 'fp32',
+      progress_callback: (progress) => {
+        if (progress.status === 'progress') {
+          const percent = Math.round((progress.loaded / progress.total) * 50);
+          onProgress?.('downloading', percent);
+        }
+      },
+    }).catch(async () => {
+      // Fallback to WASM with fp32 for best quality
+      console.log('WebGPU not available, falling back to WASM with fp32');
+      return AutoModel.from_pretrained(MODEL_ID, {
+        device: 'wasm',
+        dtype: 'fp32',
+        progress_callback: (progress) => {
+          if (progress.status === 'progress') {
+            const percent = Math.round((progress.loaded / progress.total) * 50);
+            onProgress?.('downloading', percent);
+          }
+        },
+      });
+    });
+
+    onProgress?.('loading', 50);
+
+    const processor = await AutoProcessor.from_pretrained(MODEL_ID, {
+      progress_callback: (progress) => {
+        if (progress.status === 'progress') {
+          const percent = 50 + Math.round((progress.loaded / progress.total) * 20);
+          onProgress?.('downloading', percent);
+        }
+      },
+    });
+
+    onProgress?.('loading', 70);
+
+    modelInstance = model;
+    processorInstance = processor;
+
+    return { model, processor };
+  })();
+
+  return modelLoadingPromise;
+};
 
 // ============================================================================
 // Styles
@@ -299,7 +360,6 @@ const BackgroundRemoval = () => {
 
   // Options
   const [useNewBackground, setUseNewBackground] = useState(false);
-  const [modelQuality, setModelQuality] = useState('medium');
 
   // Mask editing states
   const [isEditMode, setIsEditMode] = useState(false);
@@ -362,28 +422,42 @@ const BackgroundRemoval = () => {
 
     setIsProcessing(true);
     setProgress(0);
-    setProgressMessage(t('bgRemoval.progress.loading'));
+    setProgressMessage(t('bgRemoval.progress.loadingModel'));
     setError(null);
     setIsEditMode(false);
 
     try {
-      const blob = await removeBackground(sourceImage.file, {
-        model: modelQuality,
-        output: { format: 'image/png', quality: 1.0 },
-        progress: (key, current, total) => {
-          setProgress(Math.round((current / total) * 100));
-          if (key === 'compute:inference') {
-            setProgressMessage(t('bgRemoval.progress.processing'));
-          } else if (key === 'fetch:model') {
-            setProgressMessage(t('bgRemoval.progress.loadingModel'));
-          }
-        },
+      // Load model and processor
+      const { model, processor } = await loadModel((stage, percent) => {
+        setProgress(percent);
+        if (stage === 'downloading') {
+          setProgressMessage(t('bgRemoval.progress.loadingModel'));
+        }
       });
 
-      const [origImg, removedImg] = await Promise.all([
-        loadImage(sourceImage.url),
-        loadImage(URL.createObjectURL(blob)),
-      ]);
+      setProgress(70);
+      setProgressMessage(t('bgRemoval.progress.processing'));
+
+      // Load image using RawImage
+      const image = await RawImage.fromURL(sourceImage.url);
+
+      // Process image
+      const { pixel_values } = await processor(image);
+
+      setProgress(80);
+
+      // Run model inference
+      const { output } = await model({ input: pixel_values });
+
+      setProgress(90);
+
+      // Get mask from model output
+      const maskTensor = output[0].mul(255).to('uint8');
+      const maskImage = await RawImage.fromTensor(maskTensor);
+      const resizedMask = await maskImage.resize(image.width, image.height);
+
+      // Load original image
+      const origImg = await loadImage(sourceImage.url);
 
       // Store original image data
       const origCanvas = originalCanvasRef.current;
@@ -391,32 +465,44 @@ const BackgroundRemoval = () => {
       origCanvas.height = origImg.height;
       const origCtx = origCanvas.getContext('2d');
       origCtx.drawImage(origImg, 0, 0);
-      setOriginalImageData(origCtx.getImageData(0, 0, origImg.width, origImg.height));
+      const origData = origCtx.getImageData(0, 0, origImg.width, origImg.height);
+      setOriginalImageData(origData);
 
-      // Get AI output and create sharp alpha version
-      const tempCanvas = document.createElement('canvas');
-      tempCanvas.width = removedImg.width;
-      tempCanvas.height = removedImg.height;
-      const tempCtx = tempCanvas.getContext('2d');
-      tempCtx.drawImage(removedImg, 0, 0);
-      const removedData = tempCtx.getImageData(0, 0, removedImg.width, removedImg.height);
+      // Create result with alpha channel from mask
+      const resultCanvas = document.createElement('canvas');
+      resultCanvas.width = origImg.width;
+      resultCanvas.height = origImg.height;
+      const resultCtx = resultCanvas.getContext('2d');
+      resultCtx.drawImage(origImg, 0, 0);
+      const resultData = resultCtx.getImageData(0, 0, resultCanvas.width, resultCanvas.height);
 
-      // Create sharp alpha image (fully opaque subject, fully transparent background)
-      const sharpAlphaData = createSharpAlphaImage(removedData);
-      tempCtx.putImageData(sharpAlphaData, 0, 0);
+      // Apply mask as alpha channel (smooth alpha for better edge quality)
+      const maskData = resizedMask.data;
+      for (let i = 0; i < maskData.length; i++) {
+        // Use smooth alpha directly from the model for better edge quality
+        resultData.data[i * 4 + 3] = maskData[i];
+      }
+      resultCtx.putImageData(resultData, 0, 0);
 
-      // Create sharp result blob
-      const sharpBlob = await new Promise(resolve => tempCanvas.toBlob(resolve, 'image/png'));
-      const sharpUrl = URL.createObjectURL(sharpBlob);
-      setRemovedBgImage(sharpUrl);
+      // Create result blob
+      const resultBlob = await new Promise(resolve => resultCanvas.toBlob(resolve, 'image/png'));
+      const resultUrl = URL.createObjectURL(resultBlob);
+      setRemovedBgImage(resultUrl);
 
-      // Create mask from alpha channel
+      // Create mask canvas for editing
       const maskCanvas = maskCanvasRef.current;
-      maskCanvas.width = removedImg.width;
-      maskCanvas.height = removedImg.height;
+      maskCanvas.width = origImg.width;
+      maskCanvas.height = origImg.height;
       const maskCtx = maskCanvas.getContext('2d');
-      const maskData = createMaskFromAlpha(removedData);
-      maskCtx.putImageData(maskData, 0, 0);
+      const maskImageData = maskCtx.createImageData(origImg.width, origImg.height);
+      for (let i = 0; i < maskData.length; i++) {
+        const alpha = maskData[i];
+        maskImageData.data[i * 4] = alpha;
+        maskImageData.data[i * 4 + 1] = alpha;
+        maskImageData.data[i * 4 + 2] = alpha;
+        maskImageData.data[i * 4 + 3] = 255;
+      }
+      maskCtx.putImageData(maskImageData, 0, 0);
 
       // Composite with background if needed
       if (useNewBackground && backgroundImage) {
@@ -424,26 +510,26 @@ const BackgroundRemoval = () => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
         const bgImg = await loadImage(backgroundImage.url);
-        const sharpImg = await loadImage(sharpUrl);
+        const resultImg = await loadImage(resultUrl);
 
-        canvas.width = sharpImg.width;
-        canvas.height = sharpImg.height;
+        canvas.width = resultImg.width;
+        canvas.height = resultImg.height;
         drawBackgroundCover(ctx, bgImg, canvas.width, canvas.height);
-        ctx.drawImage(sharpImg, 0, 0);
+        ctx.drawImage(resultImg, 0, 0);
 
-        const resultBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-        setResultImage(URL.createObjectURL(resultBlob));
+        const compositeBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        setResultImage(URL.createObjectURL(compositeBlob));
       } else {
-        setResultImage(sharpUrl);
+        setResultImage(resultUrl);
       }
 
       setProgress(100);
       setProgressMessage(t('bgRemoval.progress.complete'));
     } catch (err) {
       console.error('Background removal failed:', err);
-      if (err.message?.includes('SharedArrayBuffer')) {
-        setError('이 기능은 보안 컨텍스트(HTTPS)가 필요합니다. 로컬 개발 서버에서는 작동하지 않을 수 있습니다.');
-      } else if (err.message?.includes('fetch')) {
+      if (err.message?.includes('WebGPU') || err.message?.includes('GPU')) {
+        setError('WebGPU를 사용할 수 없습니다. 브라우저가 WebGPU를 지원하는지 확인해주세요.');
+      } else if (err.message?.includes('fetch') || err.message?.includes('network')) {
         setError('AI 모델을 다운로드할 수 없습니다. 인터넷 연결을 확인해주세요.');
       } else {
         setError(`${t('bgRemoval.error.processingFailed')} (${err.message || 'Unknown error'})`);
@@ -451,7 +537,7 @@ const BackgroundRemoval = () => {
     } finally {
       setIsProcessing(false);
     }
-  }, [sourceImage, backgroundImage, useNewBackground, modelQuality, t]);
+  }, [sourceImage, backgroundImage, useNewBackground, t]);
 
   // ============================================================================
   // Mask Editing
@@ -735,12 +821,6 @@ const BackgroundRemoval = () => {
   }, []);
 
   // ============================================================================
-  // Derived Values
-  // ============================================================================
-
-  const canProcess = sourceImage && !isProcessing && (!useNewBackground || backgroundImage);
-
-  // ============================================================================
   // Render
   // ============================================================================
 
@@ -772,24 +852,6 @@ const BackgroundRemoval = () => {
               uploadText={t('bgRemoval.uploadSource')}
               subText={t('bgRemoval.supportedFormats')}
             />
-          </div>
-        )}
-
-        {/* Quality Option */}
-        {!isEditMode && (
-          <div className="option-section" style={{ margin: '20px 0' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ fontWeight: '500' }}>{t('bgRemoval.quality', '품질')}:</span>
-              <select
-                value={modelQuality}
-                onChange={(e) => setModelQuality(e.target.value)}
-                style={styles.select}
-              >
-                {QUALITY_OPTIONS.map(({ value, labelKey, fallback }) => (
-                  <option key={value} value={value}>{t(labelKey, fallback)}</option>
-                ))}
-              </select>
-            </label>
           </div>
         )}
 
@@ -835,8 +897,8 @@ const BackgroundRemoval = () => {
           <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
             <button
               onClick={processRemoval}
-              disabled={!canProcess}
-              style={canProcess ? styles.primaryButton : styles.disabledButton}
+              disabled={!sourceImage || isProcessing || (useNewBackground && !backgroundImage)}
+              style={sourceImage && !isProcessing && (!useNewBackground || backgroundImage) ? styles.primaryButton : styles.disabledButton}
             >
               {isProcessing ? t('bgRemoval.processing') : t('bgRemoval.removeBackground')}
             </button>
