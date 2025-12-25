@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   base: '/',
   optimizeDeps: {
-    exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util']
+    exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util', 'onnxruntime-web']
   },
   server: {
     headers: {

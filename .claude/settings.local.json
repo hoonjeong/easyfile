@@ -22,7 +22,12 @@
       "Bash(grep:*)",
       "Bash(node test-address.js:*)",
       "Bash(node:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "Bash(xargs ls:*)",
+      "Bash(npm info:*)",
+      "Bash(tasklist:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)"
     ]
   }
 }
