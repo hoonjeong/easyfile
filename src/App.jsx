@@ -47,6 +47,7 @@ import About from './pages/About';
 
 // Chromakey tools
 import ChromakeyIndex from './pages/chromakey/ChromakeyIndex';
+import BackgroundRemoval from './pages/chromakey/BackgroundRemoval';
 import ImageChromakey from './pages/chromakey/ImageChromakey';
 import VideoChromakey from './pages/chromakey/VideoChromakey';
 
@@ -100,6 +101,7 @@ function App() {
 
             {/* Chromakey tools */}
             <Route path="/chromakey" element={<ChromakeyIndex />} />
+            <Route path="/chromakey/background-removal" element={<BackgroundRemoval />} />
             <Route path="/chromakey/image" element={<ImageChromakey />} />
             <Route path="/chromakey/video" element={<VideoChromakey />} />
 

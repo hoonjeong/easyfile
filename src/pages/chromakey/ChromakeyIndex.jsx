@@ -8,6 +8,13 @@ const ChromakeyIndex = () => {
 
   const tools = [
     {
+      path: '/chromakey/background-removal',
+      titleKey: 'bgRemoval.title',
+      descKey: 'bgRemoval.description',
+      tags: ['AI', 'PNG', 'JPG', 'Transparent'],
+      icon: '✨'
+    },
+    {
       path: '/chromakey/image',
       titleKey: 'chromakey.image.title',
       descKey: 'chromakey.image.description',

@@ -42,7 +42,7 @@
   "nav": {
     "home": "홈",
     "image": "이미지변환",
-    "chromakey": "크로마키",
+    "chromakey": "이미지배경제거/합성",
     "document": "문서변환",
     "media": "미디어변환",
     "pdf": "PDF변환",
@@ -102,8 +102,8 @@
       "description": "간단하고 재미있는 브라우저 기반 미니게임"
     },
     "chromakey": {
-      "title": "크로마키 합성",
-      "description": "그린스크린/블루스크린 이미지와 영상을 배경과 합성"
+      "title": "이미지배경제거/합성",
+      "description": "AI 배경 제거, 그린스크린/블루스크린 이미지·영상 합성"
     },
     "address": {
       "title": "영문주소변환",
@@ -635,12 +635,53 @@
       "loadScript": "주소 검색 기능을 불러오는 중 오류가 발생했습니다"
     }
   },
+  "bgRemoval": {
+    "title": "AI 배경 제거",
+    "description": "AI가 자동으로 이미지 배경을 제거하고, 원하는 배경으로 합성할 수 있습니다.",
+    "seoTitle": "AI 배경 제거 - 무료 온라인 배경 제거 도구",
+    "seoDescription": "AI가 자동으로 이미지 배경을 제거합니다. 투명 배경 PNG 저장 또는 새 배경과 합성. 100% 브라우저 기반으로 파일이 서버로 전송되지 않습니다.",
+    "sourceImage": "원본 이미지",
+    "backgroundImage": "새 배경 이미지",
+    "uploadSource": "배경을 제거할 이미지를 선택하세요",
+    "uploadBackground": "합성할 배경 이미지를 선택하세요",
+    "supportedFormats": "JPG, PNG, WebP 지원",
+    "useNewBackground": "새 배경 이미지와 합성하기",
+    "removeBackground": "배경 제거하기",
+    "processing": "처리 중...",
+    "reset": "다시 시작",
+    "result": "결과",
+    "downloadComposite": "합성 이미지 다운로드",
+    "downloadTransparent": "투명 배경 PNG 다운로드",
+    "downloadTransparentOnly": "투명 배경만 다운로드",
+    "progress": {
+      "loading": "AI 모델 로딩 중...",
+      "loadingModel": "AI 모델 다운로드 중...",
+      "processing": "배경 제거 중...",
+      "compositing": "배경 합성 중...",
+      "complete": "완료!"
+    },
+    "features": {
+      "title": "AI 배경 제거의 특징",
+      "ai": "AI 기반 - 복잡한 배경도 정확하게 제거",
+      "privacy": "100% 개인정보 보호 - 파일이 서버로 전송되지 않음",
+      "composite": "배경 합성 - 제거 후 원하는 배경으로 합성 가능",
+      "transparent": "투명 배경 - PNG로 투명 배경 저장",
+      "free": "완전 무료 - 회원가입 없이 무제한 사용"
+    },
+    "error": {
+      "invalidImage": "올바른 이미지 파일이 아닙니다.",
+      "processingFailed": "배경 제거에 실패했습니다. 다시 시도해주세요."
+    }
+  },
   "chromakey": {
     "pageTitle": "크로마키 합성",
     "pageDescription": "그린스크린, 블루스크린 이미지와 영상을 배경과 합성하세요. 모든 처리는 브라우저에서 이루어져 개인정보가 안전합니다.",
     "seoTitle": "크로마키 합성 - 무료 온라인 그린스크린 합성 도구",
     "seoDescription": "그린스크린, 블루스크린 이미지와 영상을 배경과 무료로 합성하세요. 100% 브라우저 기반으로 파일이 서버로 전송되지 않아 안전합니다.",
     "chromaColor": "크로마키 색상",
+    "autoDetect": "자동 감지",
+    "detecting": "색상 감지 중",
+    "detected": "색상 감지됨",
     "greenScreen": "그린스크린",
     "blueScreen": "블루스크린",
     "customColor": "사용자 지정 색상",
@@ -724,6 +765,7 @@
       "categories": {
         "pdf": "PDF 도구",
         "image": "이미지 변환",
+        "chromakey": "이미지배경제거/합성",
         "document": "문서 변환",
         "media": "미디어 변환",
         "address": "영문주소 변환"
@@ -810,6 +852,23 @@
           "name": "이미지 용량 줄이기",
           "desc": "이미지 품질과 크기를 조절하여 파일 용량을 줄입니다.",
           "steps": ["이미지 파일 업로드", "품질과 최대 너비 설정", "압축 버튼 클릭", "압축된 이미지 다운로드"]
+        }
+      },
+      "chromakey": {
+        "bgRemoval": {
+          "name": "AI 배경 제거",
+          "desc": "AI가 자동으로 이미지 배경을 제거합니다. 투명 배경 저장 또는 새 배경과 합성 가능합니다.",
+          "steps": ["배경 제거할 이미지 업로드", "새 배경 합성 여부 선택", "(선택) 배경 이미지 업로드", "배경 제거 버튼 클릭", "투명 PNG 또는 합성 이미지 다운로드"]
+        },
+        "image": {
+          "name": "이미지 크로마키",
+          "desc": "그린스크린/블루스크린 사진에서 배경색을 제거하고 원하는 배경과 합성합니다. 색상을 자동 감지합니다.",
+          "steps": ["크로마키 이미지 업로드", "배경 이미지 업로드", "색상 자동 감지 또는 수동 선택", "허용 범위와 엣지 조절", "합성 버튼 클릭 후 다운로드"]
+        },
+        "video": {
+          "name": "영상 크로마키",
+          "desc": "그린스크린/블루스크린 영상에서 배경색을 제거하고 배경 이미지와 합성합니다.",
+          "steps": ["크로마키 영상 업로드", "배경 이미지 업로드", "색상 자동 감지 또는 수동 선택", "유사도와 블렌드 조절", "합성 버튼 클릭 후 다운로드"]
         }
       },
       "document": {

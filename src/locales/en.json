@@ -42,7 +42,7 @@
   "nav": {
     "home": "Home",
     "image": "Image Convert",
-    "chromakey": "Chromakey",
+    "chromakey": "Background Removal",
     "document": "Document Convert",
     "media": "Media Convert",
     "pdf": "PDF Convert",
@@ -102,8 +102,8 @@
       "description": "Simple and fun browser-based mini games"
     },
     "chromakey": {
-      "title": "Chromakey Composite",
-      "description": "Composite green/blue screen images and videos with backgrounds"
+      "title": "Background Removal",
+      "description": "AI background removal, green/blue screen image & video compositing"
     },
     "address": {
       "title": "Address Convert",
@@ -635,12 +635,53 @@
       "loadScript": "Error loading address search feature"
     }
   },
+  "bgRemoval": {
+    "title": "AI Background Removal",
+    "description": "AI automatically removes image backgrounds. Optionally composite with a new background.",
+    "seoTitle": "AI Background Removal - Free Online Background Remover",
+    "seoDescription": "AI automatically removes image backgrounds. Save as transparent PNG or composite with new background. 100% browser-based, files never leave your device.",
+    "sourceImage": "Source Image",
+    "backgroundImage": "New Background Image",
+    "uploadSource": "Select image to remove background",
+    "uploadBackground": "Select background image for compositing",
+    "supportedFormats": "Supports JPG, PNG, WebP",
+    "useNewBackground": "Composite with new background",
+    "removeBackground": "Remove Background",
+    "processing": "Processing...",
+    "reset": "Start Over",
+    "result": "Result",
+    "downloadComposite": "Download Composite Image",
+    "downloadTransparent": "Download Transparent PNG",
+    "downloadTransparentOnly": "Download Transparent Only",
+    "progress": {
+      "loading": "Loading AI model...",
+      "loadingModel": "Downloading AI model...",
+      "processing": "Removing background...",
+      "compositing": "Compositing background...",
+      "complete": "Complete!"
+    },
+    "features": {
+      "title": "AI Background Removal Features",
+      "ai": "AI-Powered - Accurately removes complex backgrounds",
+      "privacy": "100% Privacy - Files never leave your device",
+      "composite": "Background Composite - Composite with any background after removal",
+      "transparent": "Transparent Output - Save as transparent PNG",
+      "free": "Completely Free - Unlimited use without registration"
+    },
+    "error": {
+      "invalidImage": "Invalid image file.",
+      "processingFailed": "Background removal failed. Please try again."
+    }
+  },
   "chromakey": {
     "pageTitle": "Chromakey Composite",
     "pageDescription": "Composite green screen and blue screen images/videos with backgrounds. All processing happens in your browser for complete privacy.",
     "seoTitle": "Chromakey Composite - Free Online Green Screen Tool",
     "seoDescription": "Composite green screen and blue screen images/videos with backgrounds for free. 100% browser-based, files never leave your device.",
     "chromaColor": "Chroma Color",
+    "autoDetect": "Auto Detect",
+    "detecting": "Detecting color",
+    "detected": "Color detected",
     "greenScreen": "Green Screen",
     "blueScreen": "Blue Screen",
     "customColor": "Custom Color",
@@ -724,6 +765,7 @@
       "categories": {
         "pdf": "PDF Tools",
         "image": "Image Converter",
+        "chromakey": "Background Removal",
         "document": "Document Converter",
         "media": "Media Converter",
         "address": "Address Converter"
@@ -810,6 +852,23 @@
           "name": "Compress Image",
           "desc": "Reduce image file size by adjusting quality and dimensions.",
           "steps": ["Upload image file", "Set quality and max width", "Click compress button", "Download compressed image"]
+        }
+      },
+      "chromakey": {
+        "bgRemoval": {
+          "name": "AI Background Removal",
+          "desc": "AI automatically removes image backgrounds. Save as transparent or composite with new background.",
+          "steps": ["Upload image to remove background", "Choose whether to composite with new background", "(Optional) Upload background image", "Click remove background button", "Download transparent PNG or composite image"]
+        },
+        "image": {
+          "name": "Image Chromakey",
+          "desc": "Remove background color from green/blue screen photos and composite with your desired background. Auto-detects colors.",
+          "steps": ["Upload chromakey image", "Upload background image", "Auto-detect or manually select color", "Adjust tolerance and edge smoothing", "Click composite and download"]
+        },
+        "video": {
+          "name": "Video Chromakey",
+          "desc": "Remove background color from green/blue screen videos and composite with background image.",
+          "steps": ["Upload chromakey video", "Upload background image", "Auto-detect or manually select color", "Adjust similarity and blend", "Click composite and download"]
         }
       },
       "document": {

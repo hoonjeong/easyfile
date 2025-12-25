@@ -86,6 +86,17 @@ const About = () => {
       ]
     },
     {
+      category: 'chromakey',
+      icon: '✨',
+      color: '#22C55E',
+      bgColor: 'rgba(34, 197, 94, 0.1)',
+      tools: [
+        { path: '/chromakey/background-removal', nameKey: 'about.guide.chromakey.bgRemoval.name', descKey: 'about.guide.chromakey.bgRemoval.desc', steps: 'about.guide.chromakey.bgRemoval.steps' },
+        { path: '/chromakey/image', nameKey: 'about.guide.chromakey.image.name', descKey: 'about.guide.chromakey.image.desc', steps: 'about.guide.chromakey.image.steps' },
+        { path: '/chromakey/video', nameKey: 'about.guide.chromakey.video.name', descKey: 'about.guide.chromakey.video.desc', steps: 'about.guide.chromakey.video.steps' }
+      ]
+    },
+    {
       category: 'document',
       icon: '📝',
       color: '#10B981',
