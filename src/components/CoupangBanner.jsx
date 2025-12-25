@@ -1,18 +1,59 @@
+import { useEffect, useRef } from 'react';
+
 const CoupangBanner = () => {
+  const containerRef = useRef(null);
+  const initializedRef = useRef(false);
+
+  useEffect(() => {
+    if (initializedRef.current || !containerRef.current) return;
+    initializedRef.current = true;
+
+    const loadBanner = () => {
+      // Check if script already exists
+      const existingScript = document.querySelector('script[src="https://ads-partners.coupang.com/g.js"]');
+
+      if (existingScript && window.PartnersCoupang) {
+        // Script already loaded, just create banner
+        createBanner();
+      } else if (!existingScript) {
+        // Load script first time
+        const script = document.createElement('script');
+        script.src = 'https://ads-partners.coupang.com/g.js';
+        script.async = true;
+        script.onload = () => {
+          createBanner();
+        };
+        document.head.appendChild(script);
+      } else {
+        // Script exists but not loaded yet, wait for it
+        existingScript.addEventListener('load', createBanner);
+      }
+    };
+
+    const createBanner = () => {
+      if (window.PartnersCoupang && containerRef.current) {
+        try {
+          new window.PartnersCoupang.G({
+            id: 953120,
+            trackingCode: "AF3215781",
+            subId: null,
+            template: "carousel",
+            width: "680",
+            height: "140",
+            container: containerRef.current
+          });
+        } catch (e) {
+          console.error('Failed to create Coupang banner:', e);
+        }
+      }
+    };
+
+    loadBanner();
+  }, []);
+
   return (
     <div className="coupang-banner-wrapper">
-      <a
-        href="https://link.coupang.com/a/dhCgXQ"
-        target="_blank"
-        rel="noopener noreferrer"
-        referrerPolicy="unsafe-url"
-      >
-        <img
-          src="https://ads-partners.coupang.com/banners/520391?subId=&traceId=V0-301-879dd1202e5c73b2-I520391&w=728&h=90"
-          alt="쿠팡 파트너스 배너"
-          style={{ maxWidth: '100%', height: 'auto' }}
-        />
-      </a>
+      <div ref={containerRef} style={{ maxWidth: '100%', overflow: 'hidden' }} />
     </div>
   );
 };
