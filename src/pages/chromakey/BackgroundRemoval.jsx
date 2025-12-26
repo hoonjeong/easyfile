@@ -490,6 +490,11 @@ const BackgroundRemoval = () => {
   const processRemoval = useCallback(async () => {
     if (!sourceImage) return;
 
+    // iOS does not support ONNX Runtime WASM properly
+    if (isIOS()) {
+      setError('iOS에서는 AI 배경 제거를 지원하지 않습니다. PC 또는 Android를 이용해주세요.');
+      return;
+    }
 
     setIsProcessing(true);
     setProgress(0);
@@ -598,8 +603,14 @@ const BackgroundRemoval = () => {
       setProgressMessage(t('bgRemoval.progress.complete'));
     } catch (err) {
       const errorMsg = err.message || '';
-      // Show full error for debugging
-      setError(`오류: ${errorMsg}`);
+
+      if (errorMsg.includes('memory') || errorMsg.includes('OOM')) {
+        setError('메모리가 부족합니다. 더 작은 이미지를 사용해주세요.');
+      } else if (errorMsg.includes('fetch') || errorMsg.includes('network')) {
+        setError('모델 다운로드에 실패했습니다. 인터넷 연결을 확인해주세요.');
+      } else {
+        setError('처리 중 오류가 발생했습니다. 페이지를 새로고침 후 다시 시도해주세요.');
+      }
     } finally {
       setIsProcessing(false);
     }
