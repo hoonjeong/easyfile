@@ -600,21 +600,8 @@ const BackgroundRemoval = () => {
       setProgressMessage(t('bgRemoval.progress.complete'));
     } catch (err) {
       const errorMsg = err.message || '';
-
-      // Provide user-friendly error messages based on error type
-      if (errorMsg.includes('WebGPU') || errorMsg.includes('GPU')) {
-        setError('WebGPU를 사용할 수 없습니다. 브라우저가 WebGPU를 지원하는지 확인해주세요.');
-      } else if (errorMsg.includes('fetch') || errorMsg.includes('network') || errorMsg.includes('Failed to fetch')) {
-        setError('AI 모델을 다운로드할 수 없습니다. 인터넷 연결을 확인해주세요.');
-      } else if (errorMsg.includes('memory') || errorMsg.includes('OOM') || errorMsg.includes('allocation')) {
-        setError('메모리가 부족합니다. 더 작은 이미지를 사용하거나 다른 앱을 종료한 후 다시 시도해주세요.');
-      } else if (errorMsg.includes('모델 로딩 실패')) {
-        setError('AI 모델을 불러올 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.');
-      } else if (errorMsg.includes('WASM') || errorMsg.includes('wasm')) {
-        setError('브라우저가 이 기능을 지원하지 않습니다. 최신 Chrome, Safari, Edge 브라우저를 사용해주세요.');
-      } else {
-        setError(`${t('bgRemoval.error.processingFailed')} (${errorMsg || 'Unknown error'})`);
-      }
+      // DEBUG: Show full error message for troubleshooting
+      setError(`오류: ${errorMsg}`);
     } finally {
       setIsProcessing(false);
     }
