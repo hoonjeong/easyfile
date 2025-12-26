@@ -62,9 +62,9 @@ const loadModel = async (onProgress) => {
     let model;
     const mobile = isMobile();
 
-    // Use quantized model for mobile (smaller, ~45MB vs ~180MB)
-    // fp32 for desktop (better quality), uint8 for mobile (faster, less memory)
-    const mobileDtype = 'uint8';
+    // Use quantized model for mobile (smaller, ~44MB vs ~176MB)
+    // fp32 for desktop (better quality), q8 for mobile (faster, less memory)
+    const mobileDtype = 'q8';
     const desktopDtype = 'fp32';
 
     // Try WebGPU first (desktop browsers with GPU support)
