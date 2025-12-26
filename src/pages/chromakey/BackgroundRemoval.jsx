@@ -27,6 +27,15 @@ const isIOSSafari = () => {
   return isIOS && isSafari;
 };
 
+// Check if SharedArrayBuffer is available (needed for multi-threaded WASM)
+const hasSharedArrayBuffer = () => {
+  try {
+    return typeof SharedArrayBuffer !== 'undefined';
+  } catch {
+    return false;
+  }
+};
+
 // Model and processor cache (singleton pattern)
 let modelInstance = null;
 let processorInstance = null;
@@ -67,9 +76,15 @@ const loadModel = async (onProgress) => {
     let model;
     const mobile = isMobile();
 
-    // Enable WASM proxy only for iOS Safari (required for compatibility)
+    // Configure WASM for compatibility
     if (isIOSSafari()) {
       env.backends.onnx.wasm.proxy = true;
+    }
+
+    // Use single-threaded mode if SharedArrayBuffer is not available
+    // (required for mobile browsers without COOP/COEP headers)
+    if (!hasSharedArrayBuffer()) {
+      env.backends.onnx.wasm.numThreads = 1;
     }
 
     // Try WebGPU first (desktop browsers with GPU support, not on mobile)
