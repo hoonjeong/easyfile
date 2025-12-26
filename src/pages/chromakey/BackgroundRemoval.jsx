@@ -490,11 +490,6 @@ const BackgroundRemoval = () => {
   const processRemoval = useCallback(async () => {
     if (!sourceImage) return;
 
-    // Check iOS compatibility first (iOS doesn't support SharedArrayBuffer properly)
-    if (isIOS()) {
-      setError('iOS에서는 AI 배경 제거 기능을 사용할 수 없습니다. 데스크톱 또는 Android를 사용해주세요.');
-      return;
-    }
 
     setIsProcessing(true);
     setProgress(0);
