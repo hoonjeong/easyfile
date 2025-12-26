@@ -18,13 +18,11 @@ const isMobile = () => {
     (navigator.maxTouchPoints > 0 && window.innerWidth < 1024);
 };
 
-// Detect iOS Safari
-const isIOSSafari = () => {
+// Detect iOS (any browser on iOS uses WebKit)
+const isIOS = () => {
   if (typeof navigator === 'undefined') return false;
-  const ua = navigator.userAgent;
-  const isIOS = /iPad|iPhone|iPod/.test(ua);
-  const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
-  return isIOS && isSafari;
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 };
 
 // Check if SharedArrayBuffer is available (needed for multi-threaded WASM)
@@ -77,7 +75,7 @@ const loadModel = async (onProgress) => {
     const mobile = isMobile();
 
     // Configure WASM for compatibility
-    if (isIOSSafari()) {
+    if (isIOS()) {
       env.backends.onnx.wasm.proxy = true;
     }
 
@@ -120,8 +118,7 @@ const loadModel = async (onProgress) => {
           },
         });
       } catch (wasmError) {
-        const errorDetail = `WASM 실패: ${wasmError.message || wasmError}. Mobile: ${mobile}, SharedArrayBuffer: ${hasSharedArrayBuffer()}, iOS: ${isIOSSafari()}`;
-        throw new Error(errorDetail);
+        throw new Error(`모델 로딩 실패: ${wasmError.message}`);
       }
     }
 
@@ -493,6 +490,12 @@ const BackgroundRemoval = () => {
   const processRemoval = useCallback(async () => {
     if (!sourceImage) return;
 
+    // Check iOS compatibility first (iOS doesn't support SharedArrayBuffer properly)
+    if (isIOS()) {
+      setError('iOS에서는 AI 배경 제거 기능을 사용할 수 없습니다. 데스크톱 또는 Android를 사용해주세요.');
+      return;
+    }
+
     setIsProcessing(true);
     setProgress(0);
     setProgressMessage(t('bgRemoval.progress.loadingModel'));
@@ -600,8 +603,16 @@ const BackgroundRemoval = () => {
       setProgressMessage(t('bgRemoval.progress.complete'));
     } catch (err) {
       const errorMsg = err.message || '';
-      // DEBUG: Show full error message for troubleshooting
-      setError(`오류: ${errorMsg}`);
+
+      if (errorMsg.includes('memory') || errorMsg.includes('OOM') || errorMsg.includes('allocation')) {
+        setError('메모리가 부족합니다. 더 작은 이미지를 사용하거나 다른 앱을 종료한 후 다시 시도해주세요.');
+      } else if (errorMsg.includes('fetch') || errorMsg.includes('network') || errorMsg.includes('Failed to fetch')) {
+        setError('AI 모델을 다운로드할 수 없습니다. 인터넷 연결을 확인해주세요.');
+      } else if (errorMsg.includes('backend') || errorMsg.includes('WASM') || errorMsg.includes('wasm')) {
+        setError('브라우저가 이 기능을 지원하지 않습니다. 데스크톱 Chrome, Edge 또는 Android Chrome을 사용해주세요.');
+      } else {
+        setError(`처리 중 오류가 발생했습니다: ${errorMsg}`);
+      }
     } finally {
       setIsProcessing(false);
     }
