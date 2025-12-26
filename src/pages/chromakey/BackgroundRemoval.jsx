@@ -72,17 +72,12 @@ const loadModel = async (onProgress) => {
       env.backends.onnx.wasm.proxy = true;
     }
 
-    // Use quantized model for mobile (smaller, ~44MB vs ~176MB)
-    // fp32 for desktop (better quality), q8 for mobile (faster, less memory)
-    const mobileDtype = 'q8';
-    const desktopDtype = 'fp32';
-
-    // Try WebGPU first (desktop browsers with GPU support)
+    // Try WebGPU first (desktop browsers with GPU support, not on mobile)
     if (!mobile) {
       try {
         model = await AutoModel.from_pretrained(MODEL_ID, {
           device: 'webgpu',
-          dtype: desktopDtype,
+          dtype: 'fp32',
           progress_callback: (progress) => {
             if (progress.status === 'progress') {
               const percent = Math.round((progress.loaded / progress.total) * 50);
@@ -97,13 +92,11 @@ const loadModel = async (onProgress) => {
     }
 
     // Fallback to WASM (mobile browsers, older desktops, or WebGPU failed)
+    // Use default dtype (auto-selects best available quantization)
     if (!model) {
       try {
-        const dtype = mobile ? mobileDtype : desktopDtype;
-
         model = await AutoModel.from_pretrained(MODEL_ID, {
           device: 'wasm',
-          dtype: dtype,
           progress_callback: (progress) => {
             if (progress.status === 'progress') {
               const percent = Math.round((progress.loaded / progress.total) * 50);
