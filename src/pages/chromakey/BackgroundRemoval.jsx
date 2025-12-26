@@ -598,16 +598,8 @@ const BackgroundRemoval = () => {
       setProgressMessage(t('bgRemoval.progress.complete'));
     } catch (err) {
       const errorMsg = err.message || '';
-
-      if (errorMsg.includes('memory') || errorMsg.includes('OOM') || errorMsg.includes('allocation')) {
-        setError('메모리가 부족합니다. 더 작은 이미지를 사용하거나 다른 앱을 종료한 후 다시 시도해주세요.');
-      } else if (errorMsg.includes('fetch') || errorMsg.includes('network') || errorMsg.includes('Failed to fetch')) {
-        setError('AI 모델을 다운로드할 수 없습니다. 인터넷 연결을 확인해주세요.');
-      } else if (errorMsg.includes('backend') || errorMsg.includes('WASM') || errorMsg.includes('wasm')) {
-        setError('브라우저가 이 기능을 지원하지 않습니다. 데스크톱 Chrome, Edge 또는 Android Chrome을 사용해주세요.');
-      } else {
-        setError(`처리 중 오류가 발생했습니다: ${errorMsg}`);
-      }
+      // Show full error for debugging
+      setError(`오류: ${errorMsg}`);
     } finally {
       setIsProcessing(false);
     }
