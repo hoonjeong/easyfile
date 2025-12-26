@@ -1,14 +1,26 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { AutoModel, AutoProcessor, RawImage } from '@huggingface/transformers';
+import { AutoModel, AutoProcessor, RawImage, env } from '@huggingface/transformers';
 import { useTranslation } from 'react-i18next';
+
 import SEOHead from '../../components/SEOHead';
 import CoupangBanner from '../../components/CoupangBanner';
 
 // ============================================================================
-// Constants
+// Constants & Configuration
 // ============================================================================
 
 const MODEL_ID = 'briaai/RMBG-1.4';
+
+// Detect mobile device for optimized settings
+const isMobile = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+    (navigator.maxTouchPoints > 0 && window.innerWidth < 1024);
+};
+
+// Configure WASM proxy for iOS Safari compatibility
+if (typeof window !== 'undefined') {
+  env.backends.onnx.wasm.proxy = true;
+}
 
 // Model and processor cache (singleton pattern)
 let modelInstance = null;
@@ -20,43 +32,82 @@ let modelLoadingPromise = null;
 // Lower value = more conservative (may include some background)
 const MASK_THRESHOLD = 30;
 
+// Reset model loading state (call on error to allow retry)
+const resetModelState = () => {
+  modelInstance = null;
+  processorInstance = null;
+  modelLoadingPromise = null;
+};
+
 // Load RMBG-1.4 model and processor (cached)
 const loadModel = async (onProgress) => {
+  // Return cached model if already loaded successfully
   if (modelInstance && processorInstance) {
     return { model: modelInstance, processor: processorInstance };
   }
 
+  // If loading is in progress, wait for it
   if (modelLoadingPromise) {
-    return modelLoadingPromise;
+    try {
+      return await modelLoadingPromise;
+    } catch (error) {
+      // Previous loading failed, reset and try again
+      resetModelState();
+    }
   }
 
   modelLoadingPromise = (async () => {
     onProgress?.('loading', 0);
 
-    // Try WebGPU with fp32 for best quality
-    const model = await AutoModel.from_pretrained(MODEL_ID, {
-      device: 'webgpu',
-      dtype: 'fp32',
-      progress_callback: (progress) => {
-        if (progress.status === 'progress') {
-          const percent = Math.round((progress.loaded / progress.total) * 50);
-          onProgress?.('downloading', percent);
-        }
-      },
-    }).catch(async () => {
-      // Fallback to WASM with fp32 for best quality
-      console.log('WebGPU not available, falling back to WASM with fp32');
-      return AutoModel.from_pretrained(MODEL_ID, {
-        device: 'wasm',
-        dtype: 'fp32',
-        progress_callback: (progress) => {
-          if (progress.status === 'progress') {
-            const percent = Math.round((progress.loaded / progress.total) * 50);
-            onProgress?.('downloading', percent);
-          }
-        },
-      });
-    });
+    let model;
+    const mobile = isMobile();
+
+    // Use quantized model for mobile (smaller, ~45MB vs ~180MB)
+    // fp32 for desktop (better quality), uint8 for mobile (faster, less memory)
+    const mobileDtype = 'uint8';
+    const desktopDtype = 'fp32';
+
+    // Try WebGPU first (desktop browsers with GPU support)
+    if (!mobile) {
+      try {
+        model = await AutoModel.from_pretrained(MODEL_ID, {
+          device: 'webgpu',
+          dtype: desktopDtype,
+          progress_callback: (progress) => {
+            if (progress.status === 'progress') {
+              const percent = Math.round((progress.loaded / progress.total) * 50);
+              onProgress?.('downloading', percent);
+            }
+          },
+        });
+        console.log('Using WebGPU with fp32');
+      } catch (webgpuError) {
+        console.log('WebGPU not available:', webgpuError.message);
+        model = null;
+      }
+    }
+
+    // Fallback to WASM (mobile browsers, older desktops, or WebGPU failed)
+    if (!model) {
+      try {
+        const dtype = mobile ? mobileDtype : desktopDtype;
+        console.log(`Using WASM with ${dtype} (mobile: ${mobile})`);
+
+        model = await AutoModel.from_pretrained(MODEL_ID, {
+          device: 'wasm',
+          dtype: dtype,
+          progress_callback: (progress) => {
+            if (progress.status === 'progress') {
+              const percent = Math.round((progress.loaded / progress.total) * 50);
+              onProgress?.('downloading', percent);
+            }
+          },
+        });
+      } catch (wasmError) {
+        console.error('WASM loading failed:', wasmError.message);
+        throw new Error(`모델 로딩 실패: ${wasmError.message}`);
+      }
+    }
 
     onProgress?.('loading', 50);
 
@@ -77,7 +128,13 @@ const loadModel = async (onProgress) => {
     return { model, processor };
   })();
 
-  return modelLoadingPromise;
+  try {
+    return await modelLoadingPromise;
+  } catch (error) {
+    // Reset state on failure so next attempt can try again
+    resetModelState();
+    throw error;
+  }
 };
 
 // ============================================================================
@@ -527,12 +584,21 @@ const BackgroundRemoval = () => {
       setProgressMessage(t('bgRemoval.progress.complete'));
     } catch (err) {
       console.error('Background removal failed:', err);
-      if (err.message?.includes('WebGPU') || err.message?.includes('GPU')) {
+      const errorMsg = err.message || '';
+
+      // Provide user-friendly error messages based on error type
+      if (errorMsg.includes('WebGPU') || errorMsg.includes('GPU')) {
         setError('WebGPU를 사용할 수 없습니다. 브라우저가 WebGPU를 지원하는지 확인해주세요.');
-      } else if (err.message?.includes('fetch') || err.message?.includes('network')) {
+      } else if (errorMsg.includes('fetch') || errorMsg.includes('network') || errorMsg.includes('Failed to fetch')) {
         setError('AI 모델을 다운로드할 수 없습니다. 인터넷 연결을 확인해주세요.');
+      } else if (errorMsg.includes('memory') || errorMsg.includes('OOM') || errorMsg.includes('allocation')) {
+        setError('메모리가 부족합니다. 더 작은 이미지를 사용하거나 다른 앱을 종료한 후 다시 시도해주세요.');
+      } else if (errorMsg.includes('모델 로딩 실패')) {
+        setError('AI 모델을 불러올 수 없습니다. 페이지를 새로고침하고 다시 시도해주세요.');
+      } else if (errorMsg.includes('WASM') || errorMsg.includes('wasm')) {
+        setError('브라우저가 이 기능을 지원하지 않습니다. 최신 Chrome, Safari, Edge 브라우저를 사용해주세요.');
       } else {
-        setError(`${t('bgRemoval.error.processingFailed')} (${err.message || 'Unknown error'})`);
+        setError(`${t('bgRemoval.error.processingFailed')} (${errorMsg || 'Unknown error'})`);
       }
     } finally {
       setIsProcessing(false);
