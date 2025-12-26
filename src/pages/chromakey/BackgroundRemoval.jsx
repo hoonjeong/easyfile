@@ -120,7 +120,8 @@ const loadModel = async (onProgress) => {
           },
         });
       } catch (wasmError) {
-        throw new Error(`모델 로딩 실패: ${wasmError.message}`);
+        const errorDetail = `WASM 실패: ${wasmError.message || wasmError}. Mobile: ${mobile}, SharedArrayBuffer: ${hasSharedArrayBuffer()}, iOS: ${isIOSSafari()}`;
+        throw new Error(errorDetail);
       }
     }
 
