@@ -90,9 +90,8 @@ const loadModel = async (onProgress) => {
             }
           },
         });
-        console.log('Using WebGPU with fp32');
       } catch (webgpuError) {
-        console.log('WebGPU not available:', webgpuError.message);
+        // WebGPU not available, will fallback to WASM
         model = null;
       }
     }
@@ -101,7 +100,6 @@ const loadModel = async (onProgress) => {
     if (!model) {
       try {
         const dtype = mobile ? mobileDtype : desktopDtype;
-        console.log(`Using WASM with ${dtype} (mobile: ${mobile})`);
 
         model = await AutoModel.from_pretrained(MODEL_ID, {
           device: 'wasm',
@@ -114,7 +112,6 @@ const loadModel = async (onProgress) => {
           },
         });
       } catch (wasmError) {
-        console.error('WASM loading failed:', wasmError.message);
         throw new Error(`모델 로딩 실패: ${wasmError.message}`);
       }
     }
@@ -593,7 +590,6 @@ const BackgroundRemoval = () => {
       setProgress(100);
       setProgressMessage(t('bgRemoval.progress.complete'));
     } catch (err) {
-      console.error('Background removal failed:', err);
       const errorMsg = err.message || '';
 
       // Provide user-friendly error messages based on error type
