@@ -1,7 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { AutoModel, AutoProcessor, RawImage, env } from '@huggingface/transformers';
 import { useTranslation } from 'react-i18next';
-
 import SEOHead from '../../components/SEOHead';
 import CoupangBanner from '../../components/CoupangBanner';
 
@@ -10,22 +9,29 @@ import CoupangBanner from '../../components/CoupangBanner';
 // ============================================================================
 
 const MODEL_ID = 'briaai/RMBG-1.4';
+const MASK_THRESHOLD = 30;
 
-// Detect mobile device for optimized settings
+// Model cache (singleton)
+let modelInstance = null;
+let processorInstance = null;
+let modelLoadingPromise = null;
+
+// ============================================================================
+// Device Detection
+// ============================================================================
+
 const isMobile = () => {
   if (typeof navigator === 'undefined') return false;
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
     (navigator.maxTouchPoints > 0 && window.innerWidth < 1024);
 };
 
-// Detect iOS (any browser on iOS uses WebKit)
 const isIOS = () => {
   if (typeof navigator === 'undefined') return false;
   return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 };
 
-// Check if SharedArrayBuffer is available (needed for multi-threaded WASM)
 const hasSharedArrayBuffer = () => {
   try {
     return typeof SharedArrayBuffer !== 'undefined';
@@ -34,36 +40,25 @@ const hasSharedArrayBuffer = () => {
   }
 };
 
-// Model and processor cache (singleton pattern)
-let modelInstance = null;
-let processorInstance = null;
-let modelLoadingPromise = null;
+// ============================================================================
+// Model Loading
+// ============================================================================
 
-// Lower threshold to include more edge pixels as subject
-// Higher value = more aggressive background removal (may cut into subject)
-// Lower value = more conservative (may include some background)
-const MASK_THRESHOLD = 30;
-
-// Reset model loading state (call on error to allow retry)
 const resetModelState = () => {
   modelInstance = null;
   processorInstance = null;
   modelLoadingPromise = null;
 };
 
-// Load RMBG-1.4 model and processor (cached)
 const loadModel = async (onProgress) => {
-  // Return cached model if already loaded successfully
   if (modelInstance && processorInstance) {
     return { model: modelInstance, processor: processorInstance };
   }
 
-  // If loading is in progress, wait for it
   if (modelLoadingPromise) {
     try {
       return await modelLoadingPromise;
-    } catch (error) {
-      // Previous loading failed, reset and try again
+    } catch {
       resetModelState();
     }
   }
@@ -75,17 +70,11 @@ const loadModel = async (onProgress) => {
     const mobile = isMobile();
 
     // Configure WASM for compatibility
-    if (isIOS()) {
-      env.backends.onnx.wasm.proxy = true;
-    }
-
-    // Use single-threaded mode if SharedArrayBuffer is not available
-    // (required for mobile browsers without COOP/COEP headers)
     if (!hasSharedArrayBuffer()) {
       env.backends.onnx.wasm.numThreads = 1;
     }
 
-    // Try WebGPU first (desktop browsers with GPU support, not on mobile)
+    // Try WebGPU first (desktop only)
     if (!mobile) {
       try {
         model = await AutoModel.from_pretrained(MODEL_ID, {
@@ -93,32 +82,28 @@ const loadModel = async (onProgress) => {
           dtype: 'fp32',
           progress_callback: (progress) => {
             if (progress.status === 'progress') {
-              const percent = Math.round((progress.loaded / progress.total) * 50);
-              onProgress?.('downloading', percent);
+              onProgress?.('downloading', Math.round((progress.loaded / progress.total) * 50));
             }
           },
         });
-      } catch (webgpuError) {
-        // WebGPU not available, will fallback to WASM
+      } catch {
         model = null;
       }
     }
 
-    // Fallback to WASM (mobile browsers, older desktops, or WebGPU failed)
-    // Use default dtype (auto-selects best available quantization)
+    // Fallback to WASM
     if (!model) {
       try {
         model = await AutoModel.from_pretrained(MODEL_ID, {
           device: 'wasm',
           progress_callback: (progress) => {
             if (progress.status === 'progress') {
-              const percent = Math.round((progress.loaded / progress.total) * 50);
-              onProgress?.('downloading', percent);
+              onProgress?.('downloading', Math.round((progress.loaded / progress.total) * 50));
             }
           },
         });
-      } catch (wasmError) {
-        throw new Error(`모델 로딩 실패: ${wasmError.message}`);
+      } catch (err) {
+        throw new Error(`모델 로딩 실패: ${err.message}`);
       }
     }
 
@@ -127,8 +112,7 @@ const loadModel = async (onProgress) => {
     const processor = await AutoProcessor.from_pretrained(MODEL_ID, {
       progress_callback: (progress) => {
         if (progress.status === 'progress') {
-          const percent = 50 + Math.round((progress.loaded / progress.total) * 20);
-          onProgress?.('downloading', percent);
+          onProgress?.('downloading', 50 + Math.round((progress.loaded / progress.total) * 20));
         }
       },
     });
@@ -144,7 +128,6 @@ const loadModel = async (onProgress) => {
   try {
     return await modelLoadingPromise;
   } catch (error) {
-    // Reset state on failure so next attempt can try again
     resetModelState();
     throw error;
   }
@@ -166,66 +149,12 @@ const styles = {
     backgroundSize: '20px 20px',
     backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
   },
-  primaryButton: {
+  button: {
     padding: '12px 24px',
-    backgroundColor: '#4F46E5',
-    color: 'white',
     border: 'none',
     borderRadius: '8px',
     cursor: 'pointer',
     fontSize: '16px',
-  },
-  secondaryButton: {
-    padding: '12px 24px',
-    backgroundColor: '#f3f4f6',
-    color: '#374151',
-    border: '1px solid #d1d5db',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '16px',
-  },
-  successButton: {
-    padding: '12px 24px',
-    backgroundColor: '#10B981',
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '16px',
-  },
-  warningButton: {
-    padding: '12px 24px',
-    backgroundColor: '#F59E0B',
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '16px',
-  },
-  indigoButton: {
-    padding: '12px 24px',
-    backgroundColor: '#6366F1',
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '16px',
-  },
-  disabledButton: {
-    padding: '12px 24px',
-    backgroundColor: '#ccc',
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    cursor: 'not-allowed',
-    fontSize: '16px',
-  },
-  select: {
-    padding: '8px 12px',
-    borderRadius: '6px',
-    border: '1px solid #d1d5db',
-    fontSize: '14px',
-    cursor: 'pointer',
   },
   brushButton: {
     padding: '8px 16px',
@@ -237,19 +166,26 @@ const styles = {
   },
 };
 
+const buttonStyles = {
+  primary: { ...styles.button, backgroundColor: '#4F46E5', color: 'white' },
+  secondary: { ...styles.button, backgroundColor: '#f3f4f6', color: '#374151', border: '1px solid #d1d5db' },
+  success: { ...styles.button, backgroundColor: '#10B981', color: 'white' },
+  warning: { ...styles.button, backgroundColor: '#F59E0B', color: 'white' },
+  indigo: { ...styles.button, backgroundColor: '#6366F1', color: 'white' },
+  disabled: { ...styles.button, backgroundColor: '#ccc', color: 'white', cursor: 'not-allowed' },
+};
+
 // ============================================================================
 // Utility Functions
 // ============================================================================
 
-const loadImage = (url) => {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => resolve(img);
-    img.onerror = reject;
-    img.src = url;
-  });
-};
+const loadImage = (url) => new Promise((resolve, reject) => {
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => resolve(img);
+  img.onerror = reject;
+  img.src = url;
+});
 
 const downloadFile = (url, filename) => {
   const link = document.createElement('a');
@@ -274,37 +210,11 @@ const applyMaskVisualization = (editData, maskData) => {
   return editData;
 };
 
-const createMaskFromAlpha = (imageData) => {
-  const maskData = new ImageData(imageData.width, imageData.height);
-  for (let i = 0; i < imageData.data.length; i += 4) {
-    const alpha = imageData.data[i + 3];
-    maskData.data[i] = alpha;
-    maskData.data[i + 1] = alpha;
-    maskData.data[i + 2] = alpha;
-    maskData.data[i + 3] = 255;
-  }
-  return maskData;
-};
-
-const createSharpAlphaImage = (imageData, threshold = MASK_THRESHOLD) => {
-  const result = new ImageData(imageData.width, imageData.height);
-  for (let i = 0; i < imageData.data.length; i += 4) {
-    const alpha = imageData.data[i + 3];
-    result.data[i] = imageData.data[i];
-    result.data[i + 1] = imageData.data[i + 1];
-    result.data[i + 2] = imageData.data[i + 2];
-    result.data[i + 3] = alpha > threshold ? 255 : 0;
-  }
-  return result;
-};
-
 const drawBackgroundCover = (ctx, bgImg, canvasWidth, canvasHeight) => {
   const scale = Math.max(canvasWidth / bgImg.width, canvasHeight / bgImg.height);
   const width = bgImg.width * scale;
   const height = bgImg.height * scale;
-  const x = (canvasWidth - width) / 2;
-  const y = (canvasHeight - height) / 2;
-  ctx.drawImage(bgImg, x, y, width, height);
+  ctx.drawImage(bgImg, (canvasWidth - width) / 2, (canvasHeight - height) / 2, width, height);
 };
 
 // ============================================================================
@@ -312,11 +222,7 @@ const drawBackgroundCover = (ctx, bgImg, canvasWidth, canvasHeight) => {
 // ============================================================================
 
 const UploadArea = ({ image, onUpload, inputRef, icon, uploadText, subText, maxHeight = '300px' }) => (
-  <div
-    className="upload-area"
-    onClick={() => inputRef.current?.click()}
-    style={{ cursor: 'pointer' }}
-  >
+  <div className="upload-area" onClick={() => inputRef.current?.click()} style={{ cursor: 'pointer' }}>
     {image ? (
       <div className="preview-container">
         <img src={image.url} alt="Preview" style={{ maxWidth: '100%', maxHeight }} />
@@ -329,82 +235,38 @@ const UploadArea = ({ image, onUpload, inputRef, icon, uploadText, subText, maxH
         {subText && <small>{subText}</small>}
       </div>
     )}
-    <input
-      ref={inputRef}
-      type="file"
-      accept="image/*"
-      onChange={onUpload}
-      style={{ display: 'none' }}
-    />
+    <input ref={inputRef} type="file" accept="image/*" onChange={onUpload} style={{ display: 'none' }} />
   </div>
 );
 
 const ProgressBar = ({ progress, message }) => (
   <div className="progress-section" style={{ marginBottom: '20px' }}>
-    <div style={{
-      width: '100%',
-      height: '8px',
-      backgroundColor: '#e5e7eb',
-      borderRadius: '4px',
-      overflow: 'hidden',
-    }}>
-      <div style={{
-        width: `${progress}%`,
-        height: '100%',
-        backgroundColor: '#4F46E5',
-        transition: 'width 0.3s ease',
-      }} />
+    <div style={{ width: '100%', height: '8px', backgroundColor: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
+      <div style={{ width: `${progress}%`, height: '100%', backgroundColor: '#4F46E5', transition: 'width 0.3s ease' }} />
     </div>
-    <p style={{ marginTop: '8px', color: '#6b7280', fontSize: '14px' }}>
-      {message} ({progress}%)
-    </p>
+    <p style={{ marginTop: '8px', color: '#6b7280', fontSize: '14px' }}>{message} ({progress}%)</p>
   </div>
 );
 
 const BrushControls = ({ brushMode, setBrushMode, brushSize, setBrushSize, t }) => (
-  <div style={{
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '15px',
-    marginBottom: '20px',
-    padding: '15px',
-    backgroundColor: '#f3f4f6',
-    borderRadius: '8px',
-  }}>
+  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', marginBottom: '20px', padding: '15px', backgroundColor: '#f3f4f6', borderRadius: '8px' }}>
     <div style={{ display: 'flex', gap: '10px' }}>
       <button
         onClick={() => setBrushMode('restore')}
-        style={{
-          ...styles.brushButton,
-          backgroundColor: brushMode === 'restore' ? '#10B981' : '#e5e7eb',
-          color: brushMode === 'restore' ? 'white' : '#374151',
-        }}
+        style={{ ...styles.brushButton, backgroundColor: brushMode === 'restore' ? '#10B981' : '#e5e7eb', color: brushMode === 'restore' ? 'white' : '#374151' }}
       >
         {t('bgRemoval.brushRestore', '복원 브러시')}
       </button>
       <button
         onClick={() => setBrushMode('erase')}
-        style={{
-          ...styles.brushButton,
-          backgroundColor: brushMode === 'erase' ? '#EF4444' : '#e5e7eb',
-          color: brushMode === 'erase' ? 'white' : '#374151',
-        }}
+        style={{ ...styles.brushButton, backgroundColor: brushMode === 'erase' ? '#EF4444' : '#e5e7eb', color: brushMode === 'erase' ? 'white' : '#374151' }}
       >
         {t('bgRemoval.brushErase', '제거 브러시')}
       </button>
     </div>
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <span style={{ fontSize: '14px', color: '#374151' }}>
-        {t('bgRemoval.brushSize', '브러시 크기')}: {brushSize}px
-      </span>
-      <input
-        type="range"
-        min="5"
-        max="100"
-        value={brushSize}
-        onChange={(e) => setBrushSize(Number(e.target.value))}
-        style={{ width: '120px' }}
-      />
+      <span style={{ fontSize: '14px', color: '#374151' }}>{t('bgRemoval.brushSize', '브러시 크기')}: {brushSize}px</span>
+      <input type="range" min="5" max="100" value={brushSize} onChange={(e) => setBrushSize(Number(e.target.value))} style={{ width: '120px' }} />
     </div>
   </div>
 );
@@ -416,28 +278,21 @@ const BrushControls = ({ brushMode, setBrushMode, brushSize, setBrushSize, t }) 
 const BackgroundRemoval = () => {
   const { t } = useTranslation();
 
-  // Image states
+  // States
   const [sourceImage, setSourceImage] = useState(null);
   const [backgroundImage, setBackgroundImage] = useState(null);
   const [resultImage, setResultImage] = useState(null);
   const [removedBgImage, setRemovedBgImage] = useState(null);
-
-  // Processing states
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [progressMessage, setProgressMessage] = useState('');
   const [error, setError] = useState(null);
-
-  // Options
   const [useNewBackground, setUseNewBackground] = useState(false);
-
-  // Mask editing states
   const [isEditMode, setIsEditMode] = useState(false);
   const [brushMode, setBrushMode] = useState('restore');
   const [brushSize, setBrushSize] = useState(30);
   const [isDrawing, setIsDrawing] = useState(false);
   const [originalImageData, setOriginalImageData] = useState(null);
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0, visible: false });
   const [maskHistory, setMaskHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
 
@@ -463,8 +318,7 @@ const BackgroundRemoval = () => {
       return;
     }
 
-    const url = URL.createObjectURL(file);
-    setImage({ file, url, name: file.name });
+    setImage({ file, url: URL.createObjectURL(file), name: file.name });
     setError(null);
 
     if (resetStates) {
@@ -475,13 +329,8 @@ const BackgroundRemoval = () => {
     }
   }, [t]);
 
-  const handleSourceUpload = useCallback((e) => {
-    handleImageUpload(e, setSourceImage, true);
-  }, [handleImageUpload]);
-
-  const handleBackgroundUpload = useCallback((e) => {
-    handleImageUpload(e, setBackgroundImage);
-  }, [handleImageUpload]);
+  const handleSourceUpload = useCallback((e) => handleImageUpload(e, setSourceImage, true), [handleImageUpload]);
+  const handleBackgroundUpload = useCallback((e) => handleImageUpload(e, setBackgroundImage), [handleImageUpload]);
 
   // ============================================================================
   // Background Removal Processing
@@ -490,7 +339,7 @@ const BackgroundRemoval = () => {
   const processRemoval = useCallback(async () => {
     if (!sourceImage) return;
 
-    // iOS does not support ONNX Runtime WASM properly
+    // iOS does not support ONNX Runtime WASM
     if (isIOS()) {
       setError('iOS에서는 AI 배경 제거를 지원하지 않습니다. PC 또는 Android를 이용해주세요.');
       return;
@@ -503,36 +352,27 @@ const BackgroundRemoval = () => {
     setIsEditMode(false);
 
     try {
-      // Load model and processor
       const { model, processor } = await loadModel((stage, percent) => {
         setProgress(percent);
-        if (stage === 'downloading') {
-          setProgressMessage(t('bgRemoval.progress.loadingModel'));
-        }
+        if (stage === 'downloading') setProgressMessage(t('bgRemoval.progress.loadingModel'));
       });
 
       setProgress(70);
       setProgressMessage(t('bgRemoval.progress.processing'));
 
-      // Load image using RawImage
       const image = await RawImage.fromURL(sourceImage.url);
-
-      // Process image
       const { pixel_values } = await processor(image);
 
       setProgress(80);
 
-      // Run model inference
       const { output } = await model({ input: pixel_values });
 
       setProgress(90);
 
-      // Get mask from model output
       const maskTensor = output[0].mul(255).to('uint8');
       const maskImage = await RawImage.fromTensor(maskTensor);
       const resizedMask = await maskImage.resize(image.width, image.height);
 
-      // Load original image
       const origImg = await loadImage(sourceImage.url);
 
       // Store original image data
@@ -541,10 +381,9 @@ const BackgroundRemoval = () => {
       origCanvas.height = origImg.height;
       const origCtx = origCanvas.getContext('2d');
       origCtx.drawImage(origImg, 0, 0);
-      const origData = origCtx.getImageData(0, 0, origImg.width, origImg.height);
-      setOriginalImageData(origData);
+      setOriginalImageData(origCtx.getImageData(0, 0, origImg.width, origImg.height));
 
-      // Create result with alpha channel from mask
+      // Create result with alpha channel
       const resultCanvas = document.createElement('canvas');
       resultCanvas.width = origImg.width;
       resultCanvas.height = origImg.height;
@@ -552,15 +391,12 @@ const BackgroundRemoval = () => {
       resultCtx.drawImage(origImg, 0, 0);
       const resultData = resultCtx.getImageData(0, 0, resultCanvas.width, resultCanvas.height);
 
-      // Apply mask as alpha channel (smooth alpha for better edge quality)
       const maskData = resizedMask.data;
       for (let i = 0; i < maskData.length; i++) {
-        // Use smooth alpha directly from the model for better edge quality
         resultData.data[i * 4 + 3] = maskData[i];
       }
       resultCtx.putImageData(resultData, 0, 0);
 
-      // Create result blob
       const resultBlob = await new Promise(resolve => resultCanvas.toBlob(resolve, 'image/png'));
       const resultUrl = URL.createObjectURL(resultBlob);
       setRemovedBgImage(resultUrl);
@@ -572,10 +408,9 @@ const BackgroundRemoval = () => {
       const maskCtx = maskCanvas.getContext('2d');
       const maskImageData = maskCtx.createImageData(origImg.width, origImg.height);
       for (let i = 0; i < maskData.length; i++) {
-        const alpha = maskData[i];
-        maskImageData.data[i * 4] = alpha;
-        maskImageData.data[i * 4 + 1] = alpha;
-        maskImageData.data[i * 4 + 2] = alpha;
+        maskImageData.data[i * 4] = maskData[i];
+        maskImageData.data[i * 4 + 1] = maskData[i];
+        maskImageData.data[i * 4 + 2] = maskData[i];
         maskImageData.data[i * 4 + 3] = 255;
       }
       maskCtx.putImageData(maskImageData, 0, 0);
@@ -602,11 +437,10 @@ const BackgroundRemoval = () => {
       setProgress(100);
       setProgressMessage(t('bgRemoval.progress.complete'));
     } catch (err) {
-      const errorMsg = err.message || '';
-
-      if (errorMsg.includes('memory') || errorMsg.includes('OOM')) {
+      const msg = err.message || '';
+      if (msg.includes('memory') || msg.includes('OOM')) {
         setError('메모리가 부족합니다. 더 작은 이미지를 사용해주세요.');
-      } else if (errorMsg.includes('fetch') || errorMsg.includes('network')) {
+      } else if (msg.includes('fetch') || msg.includes('network')) {
         setError('모델 다운로드에 실패했습니다. 인터넷 연결을 확인해주세요.');
       } else {
         setError('처리 중 오류가 발생했습니다. 페이지를 새로고침 후 다시 시도해주세요.');
@@ -627,62 +461,41 @@ const BackgroundRemoval = () => {
     if (!editCanvas || !maskCanvas || !origCanvas) return;
 
     const editCtx = editCanvas.getContext('2d');
-    const maskCtx = maskCanvas.getContext('2d');
-
     editCtx.drawImage(origCanvas, 0, 0);
-    const maskData = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+    const maskData = maskCanvas.getContext('2d').getImageData(0, 0, maskCanvas.width, maskCanvas.height);
     const editData = editCtx.getImageData(0, 0, editCanvas.width, editCanvas.height);
     editCtx.putImageData(applyMaskVisualization(editData, maskData), 0, 0);
   }, []);
 
-  // Save current mask state to history
   const saveMaskToHistory = useCallback(() => {
     const maskCanvas = maskCanvasRef.current;
     if (!maskCanvas) return;
 
-    const maskCtx = maskCanvas.getContext('2d');
-    const maskData = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+    const maskData = maskCanvas.getContext('2d').getImageData(0, 0, maskCanvas.width, maskCanvas.height);
     const newHistory = maskHistory.slice(0, historyIndex + 1);
     newHistory.push(maskData);
-
-    // Limit history to 50 states to prevent memory issues
-    if (newHistory.length > 50) {
-      newHistory.shift();
-    }
+    if (newHistory.length > 50) newHistory.shift();
 
     setMaskHistory(newHistory);
     setHistoryIndex(newHistory.length - 1);
   }, [maskHistory, historyIndex]);
 
-  // Undo function
   const handleUndo = useCallback(() => {
     if (historyIndex <= 0) return;
-
     const newIndex = historyIndex - 1;
-    const maskCanvas = maskCanvasRef.current;
-    if (!maskCanvas) return;
-
-    const maskCtx = maskCanvas.getContext('2d');
-    maskCtx.putImageData(maskHistory[newIndex], 0, 0);
+    maskCanvasRef.current?.getContext('2d').putImageData(maskHistory[newIndex], 0, 0);
     setHistoryIndex(newIndex);
     updateEditPreview();
   }, [historyIndex, maskHistory, updateEditPreview]);
 
-  // Redo function
   const handleRedo = useCallback(() => {
     if (historyIndex >= maskHistory.length - 1) return;
-
     const newIndex = historyIndex + 1;
-    const maskCanvas = maskCanvasRef.current;
-    if (!maskCanvas) return;
-
-    const maskCtx = maskCanvas.getContext('2d');
-    maskCtx.putImageData(maskHistory[newIndex], 0, 0);
+    maskCanvasRef.current?.getContext('2d').putImageData(maskHistory[newIndex], 0, 0);
     setHistoryIndex(newIndex);
     updateEditPreview();
   }, [historyIndex, maskHistory, updateEditPreview]);
 
-  // Draw cursor on cursor canvas
   const drawCursor = useCallback((x, y) => {
     const cursorCanvas = cursorCanvasRef.current;
     const editCanvas = editCanvasRef.current;
@@ -691,19 +504,15 @@ const BackgroundRemoval = () => {
     const ctx = cursorCanvas.getContext('2d');
     ctx.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
 
-    // Calculate scaled brush size
     const rect = editCanvas.getBoundingClientRect();
-    const scaleX = rect.width / editCanvas.width;
-    const scaledBrushSize = brushSize * scaleX;
+    const scaledBrushSize = brushSize * (rect.width / editCanvas.width);
 
-    // Draw brush cursor
     ctx.beginPath();
     ctx.arc(x, y, scaledBrushSize, 0, Math.PI * 2);
     ctx.strokeStyle = brushMode === 'restore' ? '#10B981' : '#EF4444';
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // Draw center dot
     ctx.beginPath();
     ctx.arc(x, y, 2, 0, Math.PI * 2);
     ctx.fillStyle = brushMode === 'restore' ? '#10B981' : '#EF4444';
@@ -719,15 +528,12 @@ const BackgroundRemoval = () => {
       editCanvas.height = maskCanvas.height;
       updateEditPreview();
 
-      // Initialize history with current mask state
-      const maskCtx = maskCanvas.getContext('2d');
-      const initialMaskData = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+      const initialMaskData = maskCanvas.getContext('2d').getImageData(0, 0, maskCanvas.width, maskCanvas.height);
       setMaskHistory([initialMaskData]);
       setHistoryIndex(0);
     }
   }, [isEditMode, originalImageData, updateEditPreview]);
 
-  // Update cursor canvas size when edit canvas changes
   useEffect(() => {
     const updateCursorCanvasSize = () => {
       const editCanvas = editCanvasRef.current;
@@ -746,14 +552,11 @@ const BackgroundRemoval = () => {
 
   const getCanvasCoords = useCallback((e, canvas) => {
     const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
     return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY,
+      x: (clientX - rect.left) * (canvas.width / rect.width),
+      y: (clientY - rect.top) * (canvas.height / rect.height),
     };
   }, []);
 
@@ -761,69 +564,51 @@ const BackgroundRemoval = () => {
     const maskCanvas = maskCanvasRef.current;
     if (!maskCanvas) return;
 
-    const maskCtx = maskCanvas.getContext('2d');
-    maskCtx.beginPath();
-    maskCtx.arc(x, y, brushSize, 0, Math.PI * 2);
-    maskCtx.fillStyle = brushMode === 'restore' ? 'white' : 'black';
-    maskCtx.fill();
+    const ctx = maskCanvas.getContext('2d');
+    ctx.beginPath();
+    ctx.arc(x, y, brushSize, 0, Math.PI * 2);
+    ctx.fillStyle = brushMode === 'restore' ? 'white' : 'black';
+    ctx.fill();
     updateEditPreview();
   }, [brushSize, brushMode, updateEditPreview]);
 
   const handleMouseDown = useCallback((e) => {
     if (!isEditMode) return;
     e.preventDefault();
-    // Save current state before drawing
     saveMaskToHistory();
     setIsDrawing(true);
-    const coords = getCanvasCoords(e, editCanvasRef.current);
-    drawOnMask(coords.x, coords.y);
+    drawOnMask(...Object.values(getCanvasCoords(e, editCanvasRef.current)));
   }, [isEditMode, getCanvasCoords, drawOnMask, saveMaskToHistory]);
 
   const handleMouseMove = useCallback((e) => {
     if (!isEditMode) return;
     e.preventDefault();
 
-    // Update cursor position
     const editCanvas = editCanvasRef.current;
     if (editCanvas) {
       const rect = editCanvas.getBoundingClientRect();
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      const x = clientX - rect.left;
-      const y = clientY - rect.top;
-      setCursorPos({ x, y, visible: true });
-      drawCursor(x, y);
+      drawCursor(clientX - rect.left, clientY - rect.top);
     }
 
-    // Draw on mask if drawing
     if (isDrawing) {
-      const coords = getCanvasCoords(e, editCanvasRef.current);
-      drawOnMask(coords.x, coords.y);
+      drawOnMask(...Object.values(getCanvasCoords(e, editCanvasRef.current)));
     }
   }, [isDrawing, isEditMode, getCanvasCoords, drawOnMask, drawCursor]);
 
   const handleMouseUp = useCallback(() => setIsDrawing(false), []);
 
-  const handleMouseEnter = useCallback(() => {
-    setCursorPos(prev => ({ ...prev, visible: true }));
-  }, []);
-
   const handleMouseLeave = useCallback(() => {
     setIsDrawing(false);
-    setCursorPos(prev => ({ ...prev, visible: false }));
-    const cursorCanvas = cursorCanvasRef.current;
-    if (cursorCanvas) {
-      const ctx = cursorCanvas.getContext('2d');
-      ctx.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
-    }
+    cursorCanvasRef.current?.getContext('2d').clearRect(0, 0, cursorCanvasRef.current.width, cursorCanvasRef.current.height);
   }, []);
 
   const applyMaskAndGenerateResult = useCallback(async () => {
     if (!originalImageData || !maskCanvasRef.current) return;
 
     const maskCanvas = maskCanvasRef.current;
-    const maskCtx = maskCanvas.getContext('2d');
-    const maskData = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
+    const maskData = maskCanvas.getContext('2d').getImageData(0, 0, maskCanvas.width, maskCanvas.height);
 
     const resultCanvas = canvasRef.current;
     resultCanvas.width = maskCanvas.width;
@@ -832,11 +617,10 @@ const BackgroundRemoval = () => {
 
     const resultData = resultCtx.createImageData(maskCanvas.width, maskCanvas.height);
     for (let i = 0; i < originalImageData.data.length; i += 4) {
-      const maskAlpha = maskData.data[i];
       resultData.data[i] = originalImageData.data[i];
       resultData.data[i + 1] = originalImageData.data[i + 1];
       resultData.data[i + 2] = originalImageData.data[i + 2];
-      resultData.data[i + 3] = maskAlpha > MASK_THRESHOLD ? 255 : 0;
+      resultData.data[i + 3] = maskData.data[i] > MASK_THRESHOLD ? 255 : 0;
     }
     resultCtx.putImageData(resultData, 0, 0);
 
@@ -861,12 +645,7 @@ const BackgroundRemoval = () => {
   }, [originalImageData, useNewBackground, backgroundImage]);
 
   const enterEditMode = useCallback(() => setIsEditMode(true), []);
-
-  const exitEditMode = useCallback(async () => {
-    await applyMaskAndGenerateResult();
-    setIsEditMode(false);
-  }, [applyMaskAndGenerateResult]);
-
+  const exitEditMode = useCallback(async () => { await applyMaskAndGenerateResult(); setIsEditMode(false); }, [applyMaskAndGenerateResult]);
   const cancelEditMode = useCallback(() => setIsEditMode(false), []);
 
   // ============================================================================
@@ -874,13 +653,11 @@ const BackgroundRemoval = () => {
   // ============================================================================
 
   const handleDownload = useCallback(() => {
-    if (!resultImage) return;
-    downloadFile(resultImage, `${getBaseName(sourceImage?.name)}_bg_removed.png`);
+    if (resultImage) downloadFile(resultImage, `${getBaseName(sourceImage?.name)}_bg_removed.png`);
   }, [resultImage, sourceImage]);
 
   const handleDownloadTransparent = useCallback(() => {
-    if (!removedBgImage) return;
-    downloadFile(removedBgImage, `${getBaseName(sourceImage?.name)}_transparent.png`);
+    if (removedBgImage) downloadFile(removedBgImage, `${getBaseName(sourceImage?.name)}_transparent.png`);
   }, [removedBgImage, sourceImage]);
 
   const reset = useCallback(() => {
@@ -901,6 +678,8 @@ const BackgroundRemoval = () => {
   // Render
   // ============================================================================
 
+  const canProcess = sourceImage && !isProcessing && (!useNewBackground || backgroundImage);
+
   return (
     <>
       <SEOHead
@@ -917,192 +696,97 @@ const BackgroundRemoval = () => {
       <CoupangBanner />
 
       <div className="converter-container" style={{ marginTop: '20px' }}>
-        {/* Source Image Upload */}
         {!isEditMode && (
-          <div className="upload-section">
-            <h3>{t('bgRemoval.sourceImage')}</h3>
-            <UploadArea
-              image={sourceImage}
-              onUpload={handleSourceUpload}
-              inputRef={sourceInputRef}
-              icon="🖼️"
-              uploadText={t('bgRemoval.uploadSource')}
-              subText={t('bgRemoval.supportedFormats')}
-            />
-          </div>
-        )}
-
-        {/* Background Option */}
-        {!isEditMode && (
-          <div className="option-section" style={{ margin: '20px 0' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-              <input
-                type="checkbox"
-                checked={useNewBackground}
-                onChange={(e) => setUseNewBackground(e.target.checked)}
-                style={{ width: '18px', height: '18px' }}
+          <>
+            <div className="upload-section">
+              <h3>{t('bgRemoval.sourceImage')}</h3>
+              <UploadArea
+                image={sourceImage}
+                onUpload={handleSourceUpload}
+                inputRef={sourceInputRef}
+                icon="🖼️"
+                uploadText={t('bgRemoval.uploadSource')}
+                subText={t('bgRemoval.supportedFormats')}
               />
-              <span>{t('bgRemoval.useNewBackground')}</span>
-            </label>
-          </div>
+            </div>
+
+            <div className="option-section" style={{ margin: '20px 0' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                <input type="checkbox" checked={useNewBackground} onChange={(e) => setUseNewBackground(e.target.checked)} style={{ width: '18px', height: '18px' }} />
+                <span>{t('bgRemoval.useNewBackground')}</span>
+              </label>
+            </div>
+
+            {useNewBackground && (
+              <div className="upload-section" style={{ marginBottom: '20px' }}>
+                <h3>{t('bgRemoval.backgroundImage')}</h3>
+                <UploadArea image={backgroundImage} onUpload={handleBackgroundUpload} inputRef={backgroundInputRef} icon="🏞️" uploadText={t('bgRemoval.uploadBackground')} maxHeight="200px" />
+              </div>
+            )}
+          </>
         )}
 
-        {/* Background Image Upload */}
-        {!isEditMode && useNewBackground && (
-          <div className="upload-section" style={{ marginBottom: '20px' }}>
-            <h3>{t('bgRemoval.backgroundImage')}</h3>
-            <UploadArea
-              image={backgroundImage}
-              onUpload={handleBackgroundUpload}
-              inputRef={backgroundInputRef}
-              icon="🏞️"
-              uploadText={t('bgRemoval.uploadBackground')}
-              maxHeight="200px"
-            />
-          </div>
-        )}
+        {error && <div style={{ color: '#ef4444', padding: '10px', marginBottom: '20px' }}>{error}</div>}
 
-        {/* Error Display */}
-        {error && (
-          <div style={{ color: '#ef4444', padding: '10px', marginBottom: '20px' }}>
-            {error}
-          </div>
-        )}
-
-        {/* Process Button */}
         {!isEditMode && (
           <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-            <button
-              onClick={processRemoval}
-              disabled={!sourceImage || isProcessing || (useNewBackground && !backgroundImage)}
-              style={sourceImage && !isProcessing && (!useNewBackground || backgroundImage) ? styles.primaryButton : styles.disabledButton}
-            >
+            <button onClick={processRemoval} disabled={!canProcess} style={canProcess ? buttonStyles.primary : buttonStyles.disabled}>
               {isProcessing ? t('bgRemoval.processing') : t('bgRemoval.removeBackground')}
             </button>
-
-            {(sourceImage || resultImage) && (
-              <button onClick={reset} style={styles.secondaryButton}>
-                {t('bgRemoval.reset')}
-              </button>
-            )}
+            {(sourceImage || resultImage) && <button onClick={reset} style={buttonStyles.secondary}>{t('bgRemoval.reset')}</button>}
           </div>
         )}
 
-        {/* Progress Bar */}
         {isProcessing && <ProgressBar progress={progress} message={progressMessage} />}
 
-        {/* Mask Edit Mode */}
         {isEditMode && (
           <div className="edit-mode-section">
             <h3>{t('bgRemoval.editMask', '마스크 편집')}</h3>
-            <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '15px' }}>
-              {t('bgRemoval.editMaskDesc', '빨간색 영역은 제거됩니다. 브러시로 수정하세요.')}
-            </p>
+            <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '15px' }}>{t('bgRemoval.editMaskDesc', '빨간색 영역은 제거됩니다. 브러시로 수정하세요.')}</p>
 
-            <BrushControls
-              brushMode={brushMode}
-              setBrushMode={setBrushMode}
-              brushSize={brushSize}
-              setBrushSize={setBrushSize}
-              t={t}
-            />
+            <BrushControls brushMode={brushMode} setBrushMode={setBrushMode} brushSize={brushSize} setBrushSize={setBrushSize} t={t} />
 
-            <div style={{
-              ...styles.checkerboard,
-              padding: '20px',
-              borderRadius: '8px',
-              textAlign: 'center',
-              marginBottom: '20px',
-              position: 'relative',
-              display: 'inline-block',
-              width: '100%',
-            }}>
+            <div style={{ ...styles.checkerboard, padding: '20px', borderRadius: '8px', textAlign: 'center', marginBottom: '20px', position: 'relative', display: 'inline-block', width: '100%' }}>
               <div style={{ position: 'relative', display: 'inline-block' }}>
                 <canvas
                   ref={editCanvasRef}
                   onMouseDown={handleMouseDown}
                   onMouseMove={handleMouseMove}
                   onMouseUp={handleMouseUp}
-                  onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
                   onTouchStart={handleMouseDown}
                   onTouchMove={handleMouseMove}
                   onTouchEnd={handleMouseUp}
                   style={{ maxWidth: '100%', maxHeight: '500px', cursor: 'none', touchAction: 'none', display: 'block' }}
                 />
-                <canvas
-                  ref={cursorCanvasRef}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    pointerEvents: 'none',
-                    maxWidth: '100%',
-                    maxHeight: '500px',
-                  }}
-                />
+                <canvas ref={cursorCanvasRef} style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none', maxWidth: '100%', maxHeight: '500px' }} />
               </div>
             </div>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center' }}>
-              <button onClick={exitEditMode} style={styles.successButton}>
-                {t('bgRemoval.applyEdit', '편집 적용')}
-              </button>
-              <button
-                onClick={handleUndo}
-                disabled={historyIndex <= 0}
-                style={historyIndex <= 0 ? styles.disabledButton : styles.secondaryButton}
-              >
-                {t('bgRemoval.undo', '↩ 실행취소')}
-              </button>
-              <button
-                onClick={handleRedo}
-                disabled={historyIndex >= maskHistory.length - 1}
-                style={historyIndex >= maskHistory.length - 1 ? styles.disabledButton : styles.secondaryButton}
-              >
-                {t('bgRemoval.redo', '↪ 다시실행')}
-              </button>
-              <button onClick={cancelEditMode} style={styles.secondaryButton}>
-                {t('bgRemoval.cancelEdit', '취소')}
-              </button>
+              <button onClick={exitEditMode} style={buttonStyles.success}>{t('bgRemoval.applyEdit', '편집 적용')}</button>
+              <button onClick={handleUndo} disabled={historyIndex <= 0} style={historyIndex <= 0 ? buttonStyles.disabled : buttonStyles.secondary}>{t('bgRemoval.undo', '↩ 실행취소')}</button>
+              <button onClick={handleRedo} disabled={historyIndex >= maskHistory.length - 1} style={historyIndex >= maskHistory.length - 1 ? buttonStyles.disabled : buttonStyles.secondary}>{t('bgRemoval.redo', '↪ 다시실행')}</button>
+              <button onClick={cancelEditMode} style={buttonStyles.secondary}>{t('bgRemoval.cancelEdit', '취소')}</button>
             </div>
           </div>
         )}
 
-        {/* Result Display */}
         {resultImage && !isEditMode && (
           <div className="result-section">
             <h3>{t('bgRemoval.result')}</h3>
-            <div style={{
-              ...styles.checkerboard,
-              padding: '20px',
-              borderRadius: '8px',
-              textAlign: 'center',
-            }}>
+            <div style={{ ...styles.checkerboard, padding: '20px', borderRadius: '8px', textAlign: 'center' }}>
               <img src={resultImage} alt="Result" style={{ maxWidth: '100%', maxHeight: '500px' }} />
             </div>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '20px' }}>
-              <button onClick={handleDownload} style={styles.successButton}>
-                {useNewBackground ? t('bgRemoval.downloadComposite') : t('bgRemoval.downloadTransparent')}
-              </button>
-
-              {useNewBackground && removedBgImage && (
-                <button onClick={handleDownloadTransparent} style={styles.indigoButton}>
-                  {t('bgRemoval.downloadTransparentOnly')}
-                </button>
-              )}
-
-              {originalImageData && (
-                <button onClick={enterEditMode} style={styles.warningButton}>
-                  {t('bgRemoval.editMaskBtn', '배경 추가 삭제/복원')}
-                </button>
-              )}
+              <button onClick={handleDownload} style={buttonStyles.success}>{useNewBackground ? t('bgRemoval.downloadComposite') : t('bgRemoval.downloadTransparent')}</button>
+              {useNewBackground && removedBgImage && <button onClick={handleDownloadTransparent} style={buttonStyles.indigo}>{t('bgRemoval.downloadTransparentOnly')}</button>}
+              {originalImageData && <button onClick={enterEditMode} style={buttonStyles.warning}>{t('bgRemoval.editMaskBtn', '배경 추가 삭제/복원')}</button>}
             </div>
           </div>
         )}
 
-        {/* Hidden Canvases */}
         <canvas ref={canvasRef} style={{ display: 'none' }} />
         <canvas ref={maskCanvasRef} style={{ display: 'none' }} />
         <canvas ref={originalCanvasRef} style={{ display: 'none' }} />
