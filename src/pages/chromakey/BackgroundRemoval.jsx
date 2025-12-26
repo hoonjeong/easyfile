@@ -13,14 +13,19 @@ const MODEL_ID = 'briaai/RMBG-1.4';
 
 // Detect mobile device for optimized settings
 const isMobile = () => {
+  if (typeof navigator === 'undefined') return false;
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
     (navigator.maxTouchPoints > 0 && window.innerWidth < 1024);
 };
 
-// Configure WASM proxy for iOS Safari compatibility
-if (typeof window !== 'undefined') {
-  env.backends.onnx.wasm.proxy = true;
-}
+// Detect iOS Safari
+const isIOSSafari = () => {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent;
+  const isIOS = /iPad|iPhone|iPod/.test(ua);
+  const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+  return isIOS && isSafari;
+};
 
 // Model and processor cache (singleton pattern)
 let modelInstance = null;
@@ -61,6 +66,11 @@ const loadModel = async (onProgress) => {
 
     let model;
     const mobile = isMobile();
+
+    // Enable WASM proxy only for iOS Safari (required for compatibility)
+    if (isIOSSafari()) {
+      env.backends.onnx.wasm.proxy = true;
+    }
 
     // Use quantized model for mobile (smaller, ~44MB vs ~176MB)
     // fp32 for desktop (better quality), q8 for mobile (faster, less memory)
