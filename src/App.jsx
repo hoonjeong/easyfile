@@ -15,7 +15,8 @@ import IcoConverter from './pages/image/IcoConverter';
 // Document converters
 import DocumentIndex from './pages/document/DocumentIndex';
 import ExcelConverter from './pages/document/ExcelConverter';
-import MarkdownConverter from './pages/document/MarkdownConverter';
+import MarkdownToHtml from './pages/document/MarkdownToHtml';
+import MarkdownToNaverBlog from './pages/document/MarkdownToNaverBlog';
 import LatexConverter from './pages/document/LatexConverter';
 
 // Media converters
@@ -75,7 +76,8 @@ function App() {
             {/* Document converters */}
             <Route path="/document" element={<DocumentIndex />} />
             <Route path="/document/excel-to-json" element={<ExcelConverter />} />
-            <Route path="/document/markdown-to-html" element={<MarkdownConverter />} />
+            <Route path="/document/markdown-to-html" element={<MarkdownToHtml />} />
+            <Route path="/document/markdown-naver" element={<MarkdownToNaverBlog />} />
             <Route path="/document/latex-to-image" element={<LatexConverter />} />
 
             {/* Media converters */}
