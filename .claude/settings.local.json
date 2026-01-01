@@ -29,7 +29,9 @@
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:www.npmjs.com)"
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:m2n.coderred.com)",
+      "WebFetch(domain:news.hada.io)"
     ]
   }
 }

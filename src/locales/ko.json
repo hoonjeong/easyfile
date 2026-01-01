@@ -302,8 +302,6 @@
       "emptyPreview": "왼쪽에 마크다운을 입력하면 여기에 결과가 표시됩니다.",
       "emptyCode": "마크다운을 입력하면 HTML 코드가 표시됩니다.",
       "loadExample": "예제 불러오기",
-      "tipTitle": "💡 팁:",
-      "tipDesc": "Hugo, Jekyll 등의 Front Matter(---)는 자동으로 제거됩니다.",
       "howToUse": "사용 방법",
       "step1": "왼쪽에 마크다운 텍스트를 입력하거나 붙여넣기 합니다.",
       "step2": "'네이버 블로그에 붙여넣기용 복사' 버튼을 클릭합니다.",

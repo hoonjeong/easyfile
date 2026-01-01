@@ -186,19 +186,6 @@ ${t('document.markdownNaver.exampleFooter')}`;
       <CoupangBanner type="top" />
 
       <div className="converter-card" style={{ padding: '20px', maxWidth: '100%' }}>
-        {/* Info Banner */}
-        <div style={{
-          marginBottom: '16px',
-          padding: '12px 16px',
-          background: 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)',
-          borderRadius: '8px',
-          border: '1px solid #81c784',
-          fontSize: '14px',
-          color: '#2e7d32'
-        }}>
-          <strong>{t('document.markdownNaver.tipTitle')}</strong> {t('document.markdownNaver.tipDesc')}
-        </div>
-
         {/* Example Button */}
         <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'flex-end' }}>
           <button

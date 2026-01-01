@@ -302,8 +302,6 @@
       "emptyPreview": "Enter markdown on the left to see the result here.",
       "emptyCode": "Enter markdown to see HTML code.",
       "loadExample": "Load Example",
-      "tipTitle": "Tip:",
-      "tipDesc": "Front Matter (---) from Hugo, Jekyll, etc. is automatically removed.",
       "howToUse": "How to Use",
       "step1": "Enter or paste markdown text on the left.",
       "step2": "Click 'Copy for Naver Blog' button.",
