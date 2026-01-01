@@ -7,8 +7,8 @@ import CoupangBanner from '../../components/CoupangBanner';
 
 // Naver Blog optimized inline styles
 const naverStyles = {
-  h1: 'font-size: 28px; font-weight: bold; margin: 24px 0 16px 0; padding-bottom: 8px; border-bottom: 2px solid #03c75a; color: #333;',
-  h2: 'font-size: 24px; font-weight: bold; margin: 20px 0 14px 0; padding-bottom: 6px; border-bottom: 1px solid #e0e0e0; color: #333;',
+  h1: 'font-size: 28px; font-weight: bold; margin: 24px 0 16px 0; color: #333;',
+  h2: 'font-size: 24px; font-weight: bold; margin: 20px 0 14px 0; color: #333;',
   h3: 'font-size: 20px; font-weight: bold; margin: 18px 0 12px 0; color: #333;',
   h4: 'font-size: 18px; font-weight: bold; margin: 16px 0 10px 0; color: #333;',
   h5: 'font-size: 16px; font-weight: bold; margin: 14px 0 8px 0; color: #333;',
@@ -41,8 +41,13 @@ const MarkdownToNaverBlog = () => {
   const convertToNaverHtml = useCallback((markdown) => {
     if (!markdown.trim()) return '';
 
-    // Remove Front Matter (Hugo/Jekyll)
-    let cleanMarkdown = markdown.replace(/^---[\s\S]*?---\n*/m, '');
+    // Remove Front Matter (Hugo/Jekyll) - only at the very beginning of the file
+    // Front Matter starts with --- on first line, followed by metadata, then ---
+    // Note: Do NOT use /m flag, so ^ matches only the start of the string
+    let cleanMarkdown = markdown;
+    if (markdown.startsWith('---\n')) {
+      cleanMarkdown = markdown.replace(/^---\n[\s\S]*?\n---\n*/, '');
+    }
 
     // Configure marked
     marked.setOptions({
