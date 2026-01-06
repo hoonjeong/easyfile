@@ -105,13 +105,45 @@ const IcoConverter = () => {
       <div className="seo-content">
         <h2>{t('image.ico.whatIs')}</h2>
         <p>{t('image.ico.whatIsDesc')}</p>
-        <h2>{t('whyUse.title')}</h2>
+
+        <h2>{t('image.ico.whyConvert')}</h2>
+        <p>{t('image.ico.whyConvertDesc')}</p>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('whyUse.fast')}</strong></li>
-          <li><strong>{t('whyUse.quality')}</strong></li>
+          <li><strong>{t('image.ico.whyConvertReason1')}</strong></li>
+          <li><strong>{t('image.ico.whyConvertReason2')}</strong></li>
+          <li><strong>{t('image.ico.whyConvertReason3')}</strong></li>
+          <li><strong>{t('image.ico.whyConvertReason4')}</strong></li>
         </ul>
+
+        <h2>{t('image.ico.howToUse')}</h2>
+        <ol>
+          <li>{t('image.ico.step1')}</li>
+          <li>{t('image.ico.step2')}</li>
+          <li>{t('image.ico.step3')}</li>
+        </ol>
+
+        <h2>{t('image.ico.useCases')}</h2>
+        <ul>
+          <li><strong>{t('image.ico.useCase1')}</strong></li>
+          <li><strong>{t('image.ico.useCase2')}</strong></li>
+          <li><strong>{t('image.ico.useCase3')}</strong></li>
+        </ul>
+
+        <h2>{t('image.ico.features')}</h2>
+        <ul>
+          <li><strong>{t('image.ico.feature1')}</strong></li>
+          <li><strong>{t('image.ico.feature2')}</strong></li>
+          <li><strong>{t('image.ico.feature3')}</strong></li>
+          <li><strong>{t('image.ico.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('image.ico.faq')}</h2>
+        <h3>{t('image.ico.faq1Q')}</h3>
+        <p>{t('image.ico.faq1A')}</p>
+        <h3>{t('image.ico.faq2Q')}</h3>
+        <p>{t('image.ico.faq2A')}</p>
+        <h3>{t('image.ico.faq3Q')}</h3>
+        <p>{t('image.ico.faq3A')}</p>
       </div>
     </>
   );

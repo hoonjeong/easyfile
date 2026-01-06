@@ -278,13 +278,53 @@ const LatexConverter = () => {
       <div className="seo-content">
         <h2>{t('document.latex.whatIs')}</h2>
         <p>{t('document.latex.whatIsDesc')}</p>
-        <h2>{t('whyUse.title')}</h2>
+
+        <h2>{t('document.latex.howToUse')}</h2>
+        <ol>
+          <li>{t('document.latex.step1')}</li>
+          <li>{t('document.latex.step2')}</li>
+          <li>{t('document.latex.step3')}</li>
+          <li>{t('document.latex.step4')}</li>
+        </ol>
+
+        <h2>{t('document.latex.commonSymbols')}</h2>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('whyUse.fast')}</strong></li>
-          <li><strong>{t('whyUse.quality')}</strong></li>
+          <li><strong>{t('document.latex.symbolFrac')}</strong></li>
+          <li><strong>{t('document.latex.symbolSqrt')}</strong></li>
+          <li><strong>{t('document.latex.symbolSum')}</strong></li>
+          <li><strong>{t('document.latex.symbolInt')}</strong></li>
+          <li><strong>{t('document.latex.symbolGreek')}</strong></li>
         </ul>
+
+        <h2>{t('document.latex.formatGuide')}</h2>
+        <ul>
+          <li><strong>{t('document.latex.pngGuide')}</strong></li>
+          <li><strong>{t('document.latex.svgGuide')}</strong></li>
+        </ul>
+
+        <h2>{t('document.latex.useCases')}</h2>
+        <ul>
+          <li><strong>{t('document.latex.useCase1')}</strong></li>
+          <li><strong>{t('document.latex.useCase2')}</strong></li>
+          <li><strong>{t('document.latex.useCase3')}</strong></li>
+          <li><strong>{t('document.latex.useCase4')}</strong></li>
+        </ul>
+
+        <h2>{t('document.latex.features')}</h2>
+        <ul>
+          <li><strong>{t('document.latex.feature1')}</strong></li>
+          <li><strong>{t('document.latex.feature2')}</strong></li>
+          <li><strong>{t('document.latex.feature3')}</strong></li>
+          <li><strong>{t('document.latex.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('document.latex.faq')}</h2>
+        <h3>{t('document.latex.faq1Q')}</h3>
+        <p>{t('document.latex.faq1A')}</p>
+        <h3>{t('document.latex.faq2Q')}</h3>
+        <p>{t('document.latex.faq2A')}</p>
+        <h3>{t('document.latex.faq3Q')}</h3>
+        <p>{t('document.latex.faq3A')}</p>
       </div>
     </>
   );

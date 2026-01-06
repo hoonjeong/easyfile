@@ -118,13 +118,46 @@ const HeicConverter = () => {
       <div className="seo-content">
         <h2>{t('image.heic.whatIs')}</h2>
         <p>{t('image.heic.whatIsDesc')}</p>
-        <h2>{t('whyUse.title')}</h2>
+
+        <h2>{t('image.heic.whyConvert')}</h2>
+        <p>{t('image.heic.whyConvertDesc')}</p>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('whyUse.fast')}</strong></li>
-          <li><strong>{t('whyUse.quality')}</strong></li>
+          <li><strong>{t('image.heic.whyConvertReason1')}</strong></li>
+          <li><strong>{t('image.heic.whyConvertReason2')}</strong></li>
+          <li><strong>{t('image.heic.whyConvertReason3')}</strong></li>
+          <li><strong>{t('image.heic.whyConvertReason4')}</strong></li>
         </ul>
+
+        <h2>{t('image.heic.howToUse')}</h2>
+        <ol>
+          <li>{t('image.heic.step1')}</li>
+          <li>{t('image.heic.step2')}</li>
+          <li>{t('image.heic.step3')}</li>
+          <li>{t('image.heic.step4')}</li>
+        </ol>
+
+        <h2>{t('image.heic.jpgVsPng')}</h2>
+        <p>{t('image.heic.jpgVsPngDesc')}</p>
+        <ul>
+          <li><strong>{t('image.heic.jpgAdvantage')}</strong></li>
+          <li><strong>{t('image.heic.pngAdvantage')}</strong></li>
+        </ul>
+
+        <h2>{t('image.heic.features')}</h2>
+        <ul>
+          <li><strong>{t('image.heic.feature1')}</strong></li>
+          <li><strong>{t('image.heic.feature2')}</strong></li>
+          <li><strong>{t('image.heic.feature3')}</strong></li>
+          <li><strong>{t('image.heic.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('image.heic.faq')}</h2>
+        <h3>{t('image.heic.faq1Q')}</h3>
+        <p>{t('image.heic.faq1A')}</p>
+        <h3>{t('image.heic.faq2Q')}</h3>
+        <p>{t('image.heic.faq2A')}</p>
+        <h3>{t('image.heic.faq3Q')}</h3>
+        <p>{t('image.heic.faq3A')}</p>
       </div>
     </>
   );

@@ -218,13 +218,46 @@ const GifConverter = () => {
       <div className="seo-content">
         <h2>{t('media.gif.whatIs')}</h2>
         <p>{t('media.gif.whatIsDesc')}</p>
-        <h2>{t('whyUse.title')}</h2>
+
+        <h2>{t('media.gif.whyConvert')}</h2>
+        <p>{t('media.gif.whyConvertDesc')}</p>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('whyUse.fast')}</strong></li>
-          <li><strong>{t('whyUse.quality')}</strong></li>
+          <li><strong>{t('media.gif.whyConvertReason1')}</strong></li>
+          <li><strong>{t('media.gif.whyConvertReason2')}</strong></li>
+          <li><strong>{t('media.gif.whyConvertReason3')}</strong></li>
         </ul>
+
+        <h2>{t('media.gif.howToUse')}</h2>
+        <ol>
+          <li>{t('media.gif.step1')}</li>
+          <li>{t('media.gif.step2')}</li>
+          <li>{t('media.gif.step3')}</li>
+          <li>{t('media.gif.step4')}</li>
+        </ol>
+
+        <h2>{t('media.gif.useCases')}</h2>
+        <ul>
+          <li><strong>{t('media.gif.useCase1')}</strong></li>
+          <li><strong>{t('media.gif.useCase2')}</strong></li>
+          <li><strong>{t('media.gif.useCase3')}</strong></li>
+          <li><strong>{t('media.gif.useCase4')}</strong></li>
+        </ul>
+
+        <h2>{t('media.gif.features')}</h2>
+        <ul>
+          <li><strong>{t('media.gif.feature1')}</strong></li>
+          <li><strong>{t('media.gif.feature2')}</strong></li>
+          <li><strong>{t('media.gif.feature3')}</strong></li>
+          <li><strong>{t('media.gif.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('media.gif.faq')}</h2>
+        <h3>{t('media.gif.faq1Q')}</h3>
+        <p>{t('media.gif.faq1A')}</p>
+        <h3>{t('media.gif.faq2Q')}</h3>
+        <p>{t('media.gif.faq2A')}</p>
+        <h3>{t('media.gif.faq3Q')}</h3>
+        <p>{t('media.gif.faq3A')}</p>
       </div>
     </>
   );

@@ -206,13 +206,44 @@ const PdfSplit = () => {
         <h2>{t('pdf.split.what')}</h2>
         <p>{t('pdf.split.whatDesc')}</p>
 
-        <h2>{t('whyUse.title')}</h2>
+        <h2>{t('pdf.split.howToUse')}</h2>
+        <ol>
+          <li>{t('pdf.split.step1')}</li>
+          <li>{t('pdf.split.step2')}</li>
+          <li>{t('pdf.split.step3')}</li>
+          <li>{t('pdf.split.step4')}</li>
+        </ol>
+
+        <h2>{t('pdf.split.splitModes')}</h2>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('whyUse.splitOptions')}</strong></li>
-          <li><strong>{t('whyUse.batch')}</strong></li>
+          <li><strong>{t('pdf.split.modeEach')}</strong></li>
+          <li><strong>{t('pdf.split.modeHalf')}</strong></li>
+          <li><strong>{t('pdf.split.modeCustom')}</strong></li>
         </ul>
+
+        <h2>{t('pdf.split.useCases')}</h2>
+        <ul>
+          <li><strong>{t('pdf.split.useCase1')}</strong></li>
+          <li><strong>{t('pdf.split.useCase2')}</strong></li>
+          <li><strong>{t('pdf.split.useCase3')}</strong></li>
+          <li><strong>{t('pdf.split.useCase4')}</strong></li>
+        </ul>
+
+        <h2>{t('pdf.split.features')}</h2>
+        <ul>
+          <li><strong>{t('pdf.split.feature1')}</strong></li>
+          <li><strong>{t('pdf.split.feature2')}</strong></li>
+          <li><strong>{t('pdf.split.feature3')}</strong></li>
+          <li><strong>{t('pdf.split.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('pdf.split.faq')}</h2>
+        <h3>{t('pdf.split.faq1Q')}</h3>
+        <p>{t('pdf.split.faq1A')}</p>
+        <h3>{t('pdf.split.faq2Q')}</h3>
+        <p>{t('pdf.split.faq2A')}</p>
+        <h3>{t('pdf.split.faq3Q')}</h3>
+        <p>{t('pdf.split.faq3A')}</p>
       </div>
     </>
   );

@@ -153,13 +153,46 @@ const PsdConverter = () => {
       <div className="seo-content">
         <h2>{t('image.psd.whatIs')}</h2>
         <p>{t('image.psd.whatIsDesc')}</p>
-        <h2>{t('whyUse.title')}</h2>
+
+        <h2>{t('image.psd.whyConvert')}</h2>
+        <p>{t('image.psd.whyConvertDesc')}</p>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('whyUse.fast')}</strong></li>
-          <li><strong>{t('whyUse.quality')}</strong></li>
+          <li><strong>{t('image.psd.whyConvertReason1')}</strong></li>
+          <li><strong>{t('image.psd.whyConvertReason2')}</strong></li>
+          <li><strong>{t('image.psd.whyConvertReason3')}</strong></li>
+          <li><strong>{t('image.psd.whyConvertReason4')}</strong></li>
         </ul>
+
+        <h2>{t('image.psd.howToUse')}</h2>
+        <ol>
+          <li>{t('image.psd.step1')}</li>
+          <li>{t('image.psd.step2')}</li>
+          <li>{t('image.psd.step3')}</li>
+          <li>{t('image.psd.step4')}</li>
+        </ol>
+
+        <h2>{t('image.psd.jpgVsPng')}</h2>
+        <p>{t('image.psd.jpgVsPngDesc')}</p>
+        <ul>
+          <li><strong>{t('image.psd.jpgAdvantage')}</strong></li>
+          <li><strong>{t('image.psd.pngAdvantage')}</strong></li>
+        </ul>
+
+        <h2>{t('image.psd.features')}</h2>
+        <ul>
+          <li><strong>{t('image.psd.feature1')}</strong></li>
+          <li><strong>{t('image.psd.feature2')}</strong></li>
+          <li><strong>{t('image.psd.feature3')}</strong></li>
+          <li><strong>{t('image.psd.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('image.psd.faq')}</h2>
+        <h3>{t('image.psd.faq1Q')}</h3>
+        <p>{t('image.psd.faq1A')}</p>
+        <h3>{t('image.psd.faq2Q')}</h3>
+        <p>{t('image.psd.faq2A')}</p>
+        <h3>{t('image.psd.faq3Q')}</h3>
+        <p>{t('image.psd.faq3A')}</p>
       </div>
     </>
   );

@@ -289,12 +289,46 @@ console.log('Hello, World!');
       <div className="seo-content">
         <h2>{t('document.markdownHtml.whatIs')}</h2>
         <p>{t('document.markdownHtml.whatIsDesc')}</p>
-        <h2>{t('whyUse.title')}</h2>
+
+        <h2>{t('document.markdownHtml.howToUse')}</h2>
+        <ol>
+          <li>{t('document.markdownHtml.step1')}</li>
+          <li>{t('document.markdownHtml.step2')}</li>
+          <li>{t('document.markdownHtml.step3')}</li>
+        </ol>
+
+        <h2>{t('document.markdownHtml.syntaxGuide')}</h2>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('whyUse.fast')}</strong></li>
+          <li><strong>{t('document.markdownHtml.syntaxHeading')}</strong></li>
+          <li><strong>{t('document.markdownHtml.syntaxBold')}</strong></li>
+          <li><strong>{t('document.markdownHtml.syntaxList')}</strong></li>
+          <li><strong>{t('document.markdownHtml.syntaxLink')}</strong></li>
+          <li><strong>{t('document.markdownHtml.syntaxCode')}</strong></li>
         </ul>
+
+        <h2>{t('document.markdownHtml.useCases')}</h2>
+        <ul>
+          <li><strong>{t('document.markdownHtml.useCase1')}</strong></li>
+          <li><strong>{t('document.markdownHtml.useCase2')}</strong></li>
+          <li><strong>{t('document.markdownHtml.useCase3')}</strong></li>
+          <li><strong>{t('document.markdownHtml.useCase4')}</strong></li>
+        </ul>
+
+        <h2>{t('document.markdownHtml.features')}</h2>
+        <ul>
+          <li><strong>{t('document.markdownHtml.feature1')}</strong></li>
+          <li><strong>{t('document.markdownHtml.feature2')}</strong></li>
+          <li><strong>{t('document.markdownHtml.feature3')}</strong></li>
+          <li><strong>{t('document.markdownHtml.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('document.markdownHtml.faq')}</h2>
+        <h3>{t('document.markdownHtml.faq1Q')}</h3>
+        <p>{t('document.markdownHtml.faq1A')}</p>
+        <h3>{t('document.markdownHtml.faq2Q')}</h3>
+        <p>{t('document.markdownHtml.faq2A')}</p>
+        <h3>{t('document.markdownHtml.faq3Q')}</h3>
+        <p>{t('document.markdownHtml.faq3A')}</p>
       </div>
 
       <style>{`

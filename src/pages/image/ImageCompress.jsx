@@ -310,13 +310,53 @@ const ImageCompress = () => {
         <h2>{t('image.compress.what')}</h2>
         <p>{t('image.compress.whatDesc')}</p>
 
-        <h2>{t('whyUse.title')}</h2>
+        <h2>{t('image.compress.whyCompress')}</h2>
+        <p>{t('image.compress.whyCompressDesc')}</p>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('image.compress.whyResize')}</strong></li>
-          <li><strong>{t('image.compress.whyFormats')}</strong></li>
+          <li><strong>{t('image.compress.whyCompressReason1')}</strong></li>
+          <li><strong>{t('image.compress.whyCompressReason2')}</strong></li>
+          <li><strong>{t('image.compress.whyCompressReason3')}</strong></li>
+          <li><strong>{t('image.compress.whyCompressReason4')}</strong></li>
         </ul>
+
+        <h2>{t('image.compress.howToUse')}</h2>
+        <ol>
+          <li>{t('image.compress.step1')}</li>
+          <li>{t('image.compress.step2')}</li>
+          <li>{t('image.compress.step3')}</li>
+          <li>{t('image.compress.step4')}</li>
+        </ol>
+
+        <h2>{t('image.compress.formatGuide')}</h2>
+        <p>{t('image.compress.formatGuideDesc')}</p>
+        <ul>
+          <li><strong>{t('image.compress.jpgGuide')}</strong></li>
+          <li><strong>{t('image.compress.pngGuide')}</strong></li>
+          <li><strong>{t('image.compress.webpGuide')}</strong></li>
+        </ul>
+
+        <h2>{t('image.compress.qualityTips')}</h2>
+        <ul>
+          <li><strong>{t('image.compress.qualityTip1')}</strong></li>
+          <li><strong>{t('image.compress.qualityTip2')}</strong></li>
+          <li><strong>{t('image.compress.qualityTip3')}</strong></li>
+        </ul>
+
+        <h2>{t('image.compress.features')}</h2>
+        <ul>
+          <li><strong>{t('image.compress.feature1')}</strong></li>
+          <li><strong>{t('image.compress.feature2')}</strong></li>
+          <li><strong>{t('image.compress.feature3')}</strong></li>
+          <li><strong>{t('image.compress.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('image.compress.faq')}</h2>
+        <h3>{t('image.compress.faq1Q')}</h3>
+        <p>{t('image.compress.faq1A')}</p>
+        <h3>{t('image.compress.faq2Q')}</h3>
+        <p>{t('image.compress.faq2A')}</p>
+        <h3>{t('image.compress.faq3Q')}</h3>
+        <p>{t('image.compress.faq3A')}</p>
       </div>
     </>
   );

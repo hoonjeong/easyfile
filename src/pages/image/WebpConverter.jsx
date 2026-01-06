@@ -127,13 +127,46 @@ const WebpConverter = () => {
       <div className="seo-content">
         <h2>{t('image.webp.whatIs')}</h2>
         <p>{t('image.webp.whatIsDesc')}</p>
-        <h2>{t('whyUse.title')}</h2>
+
+        <h2>{t('image.webp.whyConvert')}</h2>
+        <p>{t('image.webp.whyConvertDesc')}</p>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('whyUse.fast')}</strong></li>
-          <li><strong>{t('whyUse.quality')}</strong></li>
+          <li><strong>{t('image.webp.whyConvertReason1')}</strong></li>
+          <li><strong>{t('image.webp.whyConvertReason2')}</strong></li>
+          <li><strong>{t('image.webp.whyConvertReason3')}</strong></li>
+          <li><strong>{t('image.webp.whyConvertReason4')}</strong></li>
         </ul>
+
+        <h2>{t('image.webp.howToUse')}</h2>
+        <ol>
+          <li>{t('image.webp.step1')}</li>
+          <li>{t('image.webp.step2')}</li>
+          <li>{t('image.webp.step3')}</li>
+          <li>{t('image.webp.step4')}</li>
+        </ol>
+
+        <h2>{t('image.webp.jpgVsPng')}</h2>
+        <p>{t('image.webp.jpgVsPngDesc')}</p>
+        <ul>
+          <li><strong>{t('image.webp.jpgAdvantage')}</strong></li>
+          <li><strong>{t('image.webp.pngAdvantage')}</strong></li>
+        </ul>
+
+        <h2>{t('image.webp.features')}</h2>
+        <ul>
+          <li><strong>{t('image.webp.feature1')}</strong></li>
+          <li><strong>{t('image.webp.feature2')}</strong></li>
+          <li><strong>{t('image.webp.feature3')}</strong></li>
+          <li><strong>{t('image.webp.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('image.webp.faq')}</h2>
+        <h3>{t('image.webp.faq1Q')}</h3>
+        <p>{t('image.webp.faq1A')}</p>
+        <h3>{t('image.webp.faq2Q')}</h3>
+        <p>{t('image.webp.faq2A')}</p>
+        <h3>{t('image.webp.faq3Q')}</h3>
+        <p>{t('image.webp.faq3A')}</p>
       </div>
     </>
   );

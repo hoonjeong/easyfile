@@ -179,13 +179,44 @@ const PdfToText = () => {
         <h2>{t('pdf.toText.what')}</h2>
         <p>{t('pdf.toText.whatDesc')}</p>
 
-        <h2>{t('whyUse.title')}</h2>
+        <h2>{t('pdf.toText.howToUse')}</h2>
+        <ol>
+          <li>{t('pdf.toText.step1')}</li>
+          <li>{t('pdf.toText.step2')}</li>
+          <li>{t('pdf.toText.step3')}</li>
+          <li>{t('pdf.toText.step4')}</li>
+        </ol>
+
+        <h2>{t('pdf.toText.useCases')}</h2>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('whyUse.fast')}</strong></li>
-          <li><strong>{t('whyUse.output')}</strong></li>
+          <li><strong>{t('pdf.toText.useCase1')}</strong></li>
+          <li><strong>{t('pdf.toText.useCase2')}</strong></li>
+          <li><strong>{t('pdf.toText.useCase3')}</strong></li>
+          <li><strong>{t('pdf.toText.useCase4')}</strong></li>
         </ul>
+
+        <h2>{t('pdf.toText.limitations')}</h2>
+        <p>{t('pdf.toText.limitationsDesc')}</p>
+        <ul>
+          <li><strong>{t('pdf.toText.limitation1')}</strong></li>
+          <li><strong>{t('pdf.toText.limitation2')}</strong></li>
+        </ul>
+
+        <h2>{t('pdf.toText.features')}</h2>
+        <ul>
+          <li><strong>{t('pdf.toText.feature1')}</strong></li>
+          <li><strong>{t('pdf.toText.feature2')}</strong></li>
+          <li><strong>{t('pdf.toText.feature3')}</strong></li>
+          <li><strong>{t('pdf.toText.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('pdf.toText.faq')}</h2>
+        <h3>{t('pdf.toText.faq1Q')}</h3>
+        <p>{t('pdf.toText.faq1A')}</p>
+        <h3>{t('pdf.toText.faq2Q')}</h3>
+        <p>{t('pdf.toText.faq2A')}</p>
+        <h3>{t('pdf.toText.faq3Q')}</h3>
+        <p>{t('pdf.toText.faq3A')}</p>
       </div>
     </>
   );

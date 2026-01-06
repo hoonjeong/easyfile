@@ -299,13 +299,45 @@ const ExcelConverter = () => {
       <div className="seo-content">
         <h2>{t('document.excel.whatIs')}</h2>
         <p>{t('document.excel.whatIsDesc')}</p>
-        <h2>{t('whyUse.title')}</h2>
+
+        <h2>{t('document.excel.howToUse')}</h2>
+        <ol>
+          <li>{t('document.excel.step1')}</li>
+          <li>{t('document.excel.step2')}</li>
+          <li>{t('document.excel.step3')}</li>
+          <li>{t('document.excel.step4')}</li>
+        </ol>
+
+        <h2>{t('document.excel.formatGuide')}</h2>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('whyUse.fast')}</strong></li>
-          <li><strong>{t('whyUse.quality')}</strong></li>
+          <li><strong>{t('document.excel.jsonGuide')}</strong></li>
+          <li><strong>{t('document.excel.csvGuide')}</strong></li>
+          <li><strong>{t('document.excel.htmlGuide')}</strong></li>
         </ul>
+
+        <h2>{t('document.excel.useCases')}</h2>
+        <ul>
+          <li><strong>{t('document.excel.useCase1')}</strong></li>
+          <li><strong>{t('document.excel.useCase2')}</strong></li>
+          <li><strong>{t('document.excel.useCase3')}</strong></li>
+          <li><strong>{t('document.excel.useCase4')}</strong></li>
+        </ul>
+
+        <h2>{t('document.excel.features')}</h2>
+        <ul>
+          <li><strong>{t('document.excel.feature1')}</strong></li>
+          <li><strong>{t('document.excel.feature2')}</strong></li>
+          <li><strong>{t('document.excel.feature3')}</strong></li>
+          <li><strong>{t('document.excel.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('document.excel.faq')}</h2>
+        <h3>{t('document.excel.faq1Q')}</h3>
+        <p>{t('document.excel.faq1A')}</p>
+        <h3>{t('document.excel.faq2Q')}</h3>
+        <p>{t('document.excel.faq2A')}</p>
+        <h3>{t('document.excel.faq3Q')}</h3>
+        <p>{t('document.excel.faq3A')}</p>
       </div>
     </>
   );

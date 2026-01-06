@@ -163,13 +163,46 @@ const TiffConverter = () => {
       <div className="seo-content">
         <h2>{t('image.tiff.whatIs')}</h2>
         <p>{t('image.tiff.whatIsDesc')}</p>
-        <h2>{t('whyUse.title')}</h2>
+
+        <h2>{t('image.tiff.whyConvert')}</h2>
+        <p>{t('image.tiff.whyConvertDesc')}</p>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('whyUse.fast')}</strong></li>
-          <li><strong>{t('whyUse.quality')}</strong></li>
+          <li><strong>{t('image.tiff.whyConvertReason1')}</strong></li>
+          <li><strong>{t('image.tiff.whyConvertReason2')}</strong></li>
+          <li><strong>{t('image.tiff.whyConvertReason3')}</strong></li>
+          <li><strong>{t('image.tiff.whyConvertReason4')}</strong></li>
         </ul>
+
+        <h2>{t('image.tiff.howToUse')}</h2>
+        <ol>
+          <li>{t('image.tiff.step1')}</li>
+          <li>{t('image.tiff.step2')}</li>
+          <li>{t('image.tiff.step3')}</li>
+          <li>{t('image.tiff.step4')}</li>
+        </ol>
+
+        <h2>{t('image.tiff.jpgVsPng')}</h2>
+        <p>{t('image.tiff.jpgVsPngDesc')}</p>
+        <ul>
+          <li><strong>{t('image.tiff.jpgAdvantage')}</strong></li>
+          <li><strong>{t('image.tiff.pngAdvantage')}</strong></li>
+        </ul>
+
+        <h2>{t('image.tiff.features')}</h2>
+        <ul>
+          <li><strong>{t('image.tiff.feature1')}</strong></li>
+          <li><strong>{t('image.tiff.feature2')}</strong></li>
+          <li><strong>{t('image.tiff.feature3')}</strong></li>
+          <li><strong>{t('image.tiff.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('image.tiff.faq')}</h2>
+        <h3>{t('image.tiff.faq1Q')}</h3>
+        <p>{t('image.tiff.faq1A')}</p>
+        <h3>{t('image.tiff.faq2Q')}</h3>
+        <p>{t('image.tiff.faq2A')}</p>
+        <h3>{t('image.tiff.faq3Q')}</h3>
+        <p>{t('image.tiff.faq3A')}</p>
       </div>
     </>
   );

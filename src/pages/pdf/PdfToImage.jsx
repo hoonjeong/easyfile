@@ -212,13 +212,51 @@ const PdfToImage = () => {
         <h2>{t('pdf.toImage.why')}</h2>
         <p>{t('pdf.toImage.whyDesc')}</p>
 
-        <h2>{t('whyUse.title')}</h2>
+        <h2>{t('pdf.toImage.howToUse')}</h2>
+        <ol>
+          <li>{t('pdf.toImage.step1')}</li>
+          <li>{t('pdf.toImage.step2')}</li>
+          <li>{t('pdf.toImage.step3')}</li>
+          <li>{t('pdf.toImage.step4')}</li>
+        </ol>
+
+        <h2>{t('pdf.toImage.formatGuide')}</h2>
+        <p>{t('pdf.toImage.formatGuideDesc')}</p>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('whyUse.highRes')}</strong></li>
-          <li><strong>{t('whyUse.batch')}</strong></li>
+          <li><strong>{t('pdf.toImage.jpgGuide')}</strong></li>
+          <li><strong>{t('pdf.toImage.pngGuide')}</strong></li>
         </ul>
+
+        <h2>{t('pdf.toImage.resolutionGuide')}</h2>
+        <ul>
+          <li><strong>{t('pdf.toImage.resolution72')}</strong></li>
+          <li><strong>{t('pdf.toImage.resolution150')}</strong></li>
+          <li><strong>{t('pdf.toImage.resolution300')}</strong></li>
+        </ul>
+
+        <h2>{t('pdf.toImage.useCases')}</h2>
+        <ul>
+          <li><strong>{t('pdf.toImage.useCase1')}</strong></li>
+          <li><strong>{t('pdf.toImage.useCase2')}</strong></li>
+          <li><strong>{t('pdf.toImage.useCase3')}</strong></li>
+          <li><strong>{t('pdf.toImage.useCase4')}</strong></li>
+        </ul>
+
+        <h2>{t('pdf.toImage.features')}</h2>
+        <ul>
+          <li><strong>{t('pdf.toImage.feature1')}</strong></li>
+          <li><strong>{t('pdf.toImage.feature2')}</strong></li>
+          <li><strong>{t('pdf.toImage.feature3')}</strong></li>
+          <li><strong>{t('pdf.toImage.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('pdf.toImage.faq')}</h2>
+        <h3>{t('pdf.toImage.faq1Q')}</h3>
+        <p>{t('pdf.toImage.faq1A')}</p>
+        <h3>{t('pdf.toImage.faq2Q')}</h3>
+        <p>{t('pdf.toImage.faq2A')}</p>
+        <h3>{t('pdf.toImage.faq3Q')}</h3>
+        <p>{t('pdf.toImage.faq3A')}</p>
       </div>
     </>
   );

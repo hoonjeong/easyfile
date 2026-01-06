@@ -220,13 +220,44 @@ const PdfCompress = () => {
         <h2>{t('pdf.compress.what')}</h2>
         <p>{t('pdf.compress.whatDesc')}</p>
 
-        <h2>{t('whyUse.title')}</h2>
+        <h2>{t('pdf.compress.howToUse')}</h2>
+        <ol>
+          <li>{t('pdf.compress.step1')}</li>
+          <li>{t('pdf.compress.step2')}</li>
+          <li>{t('pdf.compress.step3')}</li>
+          <li>{t('pdf.compress.step4')}</li>
+        </ol>
+
+        <h2>{t('pdf.compress.compressionLevels')}</h2>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('pdf.compress.whyPreserve')}</strong></li>
-          <li><strong>{t('pdf.compress.whyAdjustable')}</strong></li>
+          <li><strong>{t('pdf.compress.levelLowDesc')}</strong></li>
+          <li><strong>{t('pdf.compress.levelMediumDesc')}</strong></li>
+          <li><strong>{t('pdf.compress.levelHighDesc')}</strong></li>
         </ul>
+
+        <h2>{t('pdf.compress.useCases')}</h2>
+        <ul>
+          <li><strong>{t('pdf.compress.useCase1')}</strong></li>
+          <li><strong>{t('pdf.compress.useCase2')}</strong></li>
+          <li><strong>{t('pdf.compress.useCase3')}</strong></li>
+          <li><strong>{t('pdf.compress.useCase4')}</strong></li>
+        </ul>
+
+        <h2>{t('pdf.compress.features')}</h2>
+        <ul>
+          <li><strong>{t('pdf.compress.feature1')}</strong></li>
+          <li><strong>{t('pdf.compress.feature2')}</strong></li>
+          <li><strong>{t('pdf.compress.feature3')}</strong></li>
+          <li><strong>{t('pdf.compress.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('pdf.compress.faq')}</h2>
+        <h3>{t('pdf.compress.faq1Q')}</h3>
+        <p>{t('pdf.compress.faq1A')}</p>
+        <h3>{t('pdf.compress.faq2Q')}</h3>
+        <p>{t('pdf.compress.faq2A')}</p>
+        <h3>{t('pdf.compress.faq3Q')}</h3>
+        <p>{t('pdf.compress.faq3A')}</p>
       </div>
     </>
   );

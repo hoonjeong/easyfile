@@ -200,13 +200,45 @@ const VideoConverter = () => {
       <div className="seo-content">
         <h2>{t('media.video.whatIs')}</h2>
         <p>{t('media.video.whatIsDesc')}</p>
-        <h2>{t('whyUse.title')}</h2>
+
+        <h2>{t('media.video.howToUse')}</h2>
+        <ol>
+          <li>{t('media.video.step1')}</li>
+          <li>{t('media.video.step2')}</li>
+          <li>{t('media.video.step3')}</li>
+          <li>{t('media.video.step4')}</li>
+        </ol>
+
+        <h2>{t('media.video.qualityGuide')}</h2>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('whyUse.fast')}</strong></li>
-          <li><strong>{t('whyUse.quality')}</strong></li>
+          <li><strong>{t('media.video.qualityLowDesc')}</strong></li>
+          <li><strong>{t('media.video.qualityMediumDesc')}</strong></li>
+          <li><strong>{t('media.video.qualityHighDesc')}</strong></li>
         </ul>
+
+        <h2>{t('media.video.useCases')}</h2>
+        <ul>
+          <li><strong>{t('media.video.useCase1')}</strong></li>
+          <li><strong>{t('media.video.useCase2')}</strong></li>
+          <li><strong>{t('media.video.useCase3')}</strong></li>
+          <li><strong>{t('media.video.useCase4')}</strong></li>
+        </ul>
+
+        <h2>{t('media.video.features')}</h2>
+        <ul>
+          <li><strong>{t('media.video.feature1')}</strong></li>
+          <li><strong>{t('media.video.feature2')}</strong></li>
+          <li><strong>{t('media.video.feature3')}</strong></li>
+          <li><strong>{t('media.video.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('media.video.faq')}</h2>
+        <h3>{t('media.video.faq1Q')}</h3>
+        <p>{t('media.video.faq1A')}</p>
+        <h3>{t('media.video.faq2Q')}</h3>
+        <p>{t('media.video.faq2A')}</p>
+        <h3>{t('media.video.faq3Q')}</h3>
+        <p>{t('media.video.faq3A')}</p>
       </div>
     </>
   );

@@ -193,13 +193,45 @@ const PdfReorder = () => {
       <div className="seo-content">
         <h2>{t('pdf.reorder.what')}</h2>
         <p>{t('pdf.reorder.whatDesc')}</p>
-        <h2>{t('whyUse.title')}</h2>
+
+        <h2>{t('pdf.reorder.howToUse')}</h2>
+        <ol>
+          <li>{t('pdf.reorder.step1')}</li>
+          <li>{t('pdf.reorder.step2')}</li>
+          <li>{t('pdf.reorder.step3')}</li>
+          <li>{t('pdf.reorder.step4')}</li>
+        </ol>
+
+        <h2>{t('pdf.reorder.useCases')}</h2>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('whyUse.dragDrop')}</strong></li>
-          <li><strong>{t('whyUse.preview')}</strong></li>
+          <li><strong>{t('pdf.reorder.useCase1')}</strong></li>
+          <li><strong>{t('pdf.reorder.useCase2')}</strong></li>
+          <li><strong>{t('pdf.reorder.useCase3')}</strong></li>
+          <li><strong>{t('pdf.reorder.useCase4')}</strong></li>
         </ul>
+
+        <h2>{t('pdf.reorder.tips')}</h2>
+        <ul>
+          <li><strong>{t('pdf.reorder.tip1')}</strong></li>
+          <li><strong>{t('pdf.reorder.tip2')}</strong></li>
+          <li><strong>{t('pdf.reorder.tip3')}</strong></li>
+        </ul>
+
+        <h2>{t('pdf.reorder.features')}</h2>
+        <ul>
+          <li><strong>{t('pdf.reorder.feature1')}</strong></li>
+          <li><strong>{t('pdf.reorder.feature2')}</strong></li>
+          <li><strong>{t('pdf.reorder.feature3')}</strong></li>
+          <li><strong>{t('pdf.reorder.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('pdf.reorder.faq')}</h2>
+        <h3>{t('pdf.reorder.faq1Q')}</h3>
+        <p>{t('pdf.reorder.faq1A')}</p>
+        <h3>{t('pdf.reorder.faq2Q')}</h3>
+        <p>{t('pdf.reorder.faq2A')}</p>
+        <h3>{t('pdf.reorder.faq3Q')}</h3>
+        <p>{t('pdf.reorder.faq3A')}</p>
       </div>
     </>
   );

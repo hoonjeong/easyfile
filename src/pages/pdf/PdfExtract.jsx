@@ -171,13 +171,44 @@ const PdfExtract = () => {
         <h2>{t('pdf.extract.what')}</h2>
         <p>{t('pdf.extract.whatDesc')}</p>
 
-        <h2>{t('whyUse.title')}</h2>
+        <h2>{t('pdf.extract.howToUse')}</h2>
+        <ol>
+          <li>{t('pdf.extract.step1')}</li>
+          <li>{t('pdf.extract.step2')}</li>
+          <li>{t('pdf.extract.step3')}</li>
+          <li>{t('pdf.extract.step4')}</li>
+        </ol>
+
+        <h2>{t('pdf.extract.useCases')}</h2>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('whyUse.visual')}</strong></li>
-          <li><strong>{t('whyUse.multi')}</strong></li>
+          <li><strong>{t('pdf.extract.useCase1')}</strong></li>
+          <li><strong>{t('pdf.extract.useCase2')}</strong></li>
+          <li><strong>{t('pdf.extract.useCase3')}</strong></li>
+          <li><strong>{t('pdf.extract.useCase4')}</strong></li>
         </ul>
+
+        <h2>{t('pdf.extract.tips')}</h2>
+        <ul>
+          <li><strong>{t('pdf.extract.tip1')}</strong></li>
+          <li><strong>{t('pdf.extract.tip2')}</strong></li>
+          <li><strong>{t('pdf.extract.tip3')}</strong></li>
+        </ul>
+
+        <h2>{t('pdf.extract.features')}</h2>
+        <ul>
+          <li><strong>{t('pdf.extract.feature1')}</strong></li>
+          <li><strong>{t('pdf.extract.feature2')}</strong></li>
+          <li><strong>{t('pdf.extract.feature3')}</strong></li>
+          <li><strong>{t('pdf.extract.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('pdf.extract.faq')}</h2>
+        <h3>{t('pdf.extract.faq1Q')}</h3>
+        <p>{t('pdf.extract.faq1A')}</p>
+        <h3>{t('pdf.extract.faq2Q')}</h3>
+        <p>{t('pdf.extract.faq2A')}</p>
+        <h3>{t('pdf.extract.faq3Q')}</h3>
+        <p>{t('pdf.extract.faq3A')}</p>
       </div>
     </>
   );

@@ -221,13 +221,44 @@ const PdfMerge = () => {
         <h2>{t('pdf.merge.what')}</h2>
         <p>{t('pdf.merge.whatDesc')}</p>
 
-        <h2>{t('whyUse.title')}</h2>
+        <h2>{t('pdf.merge.howToUse')}</h2>
+        <ol>
+          <li>{t('pdf.merge.step1')}</li>
+          <li>{t('pdf.merge.step2')}</li>
+          <li>{t('pdf.merge.step3')}</li>
+          <li>{t('pdf.merge.step4')}</li>
+        </ol>
+
+        <h2>{t('pdf.merge.useCases')}</h2>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('whyUse.reorder')}</strong></li>
-          <li><strong>{t('whyUse.unlimited')}</strong></li>
+          <li><strong>{t('pdf.merge.useCase1')}</strong></li>
+          <li><strong>{t('pdf.merge.useCase2')}</strong></li>
+          <li><strong>{t('pdf.merge.useCase3')}</strong></li>
+          <li><strong>{t('pdf.merge.useCase4')}</strong></li>
         </ul>
+
+        <h2>{t('pdf.merge.tips')}</h2>
+        <ul>
+          <li><strong>{t('pdf.merge.tip1')}</strong></li>
+          <li><strong>{t('pdf.merge.tip2')}</strong></li>
+          <li><strong>{t('pdf.merge.tip3')}</strong></li>
+        </ul>
+
+        <h2>{t('pdf.merge.features')}</h2>
+        <ul>
+          <li><strong>{t('pdf.merge.feature1')}</strong></li>
+          <li><strong>{t('pdf.merge.feature2')}</strong></li>
+          <li><strong>{t('pdf.merge.feature3')}</strong></li>
+          <li><strong>{t('pdf.merge.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('pdf.merge.faq')}</h2>
+        <h3>{t('pdf.merge.faq1Q')}</h3>
+        <p>{t('pdf.merge.faq1A')}</p>
+        <h3>{t('pdf.merge.faq2Q')}</h3>
+        <p>{t('pdf.merge.faq2A')}</p>
+        <h3>{t('pdf.merge.faq3Q')}</h3>
+        <p>{t('pdf.merge.faq3A')}</p>
       </div>
     </>
   );

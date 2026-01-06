@@ -363,12 +363,38 @@ ${t('document.markdownNaver.exampleFooter')}`;
       <div className="seo-content">
         <h2>{t('document.markdownNaver.whatIs')}</h2>
         <p>{t('document.markdownNaver.whatIsDesc')}</p>
-        <h2>{t('whyUse.title')}</h2>
+
+        <h2>{t('document.markdownNaver.naverFeatures')}</h2>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('whyUse.fast')}</strong></li>
+          <li><strong>{t('document.markdownNaver.naverFeature1')}</strong></li>
+          <li><strong>{t('document.markdownNaver.naverFeature2')}</strong></li>
+          <li><strong>{t('document.markdownNaver.naverFeature3')}</strong></li>
+          <li><strong>{t('document.markdownNaver.naverFeature4')}</strong></li>
         </ul>
+
+        <h2>{t('document.markdownNaver.useCases')}</h2>
+        <ul>
+          <li><strong>{t('document.markdownNaver.useCase1')}</strong></li>
+          <li><strong>{t('document.markdownNaver.useCase2')}</strong></li>
+          <li><strong>{t('document.markdownNaver.useCase3')}</strong></li>
+          <li><strong>{t('document.markdownNaver.useCase4')}</strong></li>
+        </ul>
+
+        <h2>{t('document.markdownNaver.features')}</h2>
+        <ul>
+          <li><strong>{t('document.markdownNaver.feature1')}</strong></li>
+          <li><strong>{t('document.markdownNaver.feature2')}</strong></li>
+          <li><strong>{t('document.markdownNaver.feature3')}</strong></li>
+          <li><strong>{t('document.markdownNaver.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('document.markdownNaver.faq')}</h2>
+        <h3>{t('document.markdownNaver.faq1Q')}</h3>
+        <p>{t('document.markdownNaver.faq1A')}</p>
+        <h3>{t('document.markdownNaver.faq2Q')}</h3>
+        <p>{t('document.markdownNaver.faq2A')}</p>
+        <h3>{t('document.markdownNaver.faq3Q')}</h3>
+        <p>{t('document.markdownNaver.faq3A')}</p>
       </div>
 
       <style>{`

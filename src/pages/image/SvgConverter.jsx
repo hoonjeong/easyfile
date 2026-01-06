@@ -130,13 +130,47 @@ const SvgConverter = () => {
       <div className="seo-content">
         <h2>{t('image.svg.whatIs')}</h2>
         <p>{t('image.svg.whatIsDesc')}</p>
-        <h2>{t('whyUse.title')}</h2>
+
+        <h2>{t('image.svg.whyConvert')}</h2>
+        <p>{t('image.svg.whyConvertDesc')}</p>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('whyUse.fast')}</strong></li>
-          <li><strong>{t('whyUse.highRes')}</strong></li>
+          <li><strong>{t('image.svg.whyConvertReason1')}</strong></li>
+          <li><strong>{t('image.svg.whyConvertReason2')}</strong></li>
+          <li><strong>{t('image.svg.whyConvertReason3')}</strong></li>
+          <li><strong>{t('image.svg.whyConvertReason4')}</strong></li>
         </ul>
+
+        <h2>{t('image.svg.howToUse')}</h2>
+        <ol>
+          <li>{t('image.svg.step1')}</li>
+          <li>{t('image.svg.step2')}</li>
+          <li>{t('image.svg.step3')}</li>
+          <li>{t('image.svg.step4')}</li>
+        </ol>
+
+        <h2>{t('image.svg.scaleGuide')}</h2>
+        <p>{t('image.svg.scaleGuideDesc')}</p>
+        <ul>
+          <li><strong>{t('image.svg.scale1xDesc')}</strong></li>
+          <li><strong>{t('image.svg.scale2xDesc')}</strong></li>
+          <li><strong>{t('image.svg.scale4xDesc')}</strong></li>
+        </ul>
+
+        <h2>{t('image.svg.features')}</h2>
+        <ul>
+          <li><strong>{t('image.svg.feature1')}</strong></li>
+          <li><strong>{t('image.svg.feature2')}</strong></li>
+          <li><strong>{t('image.svg.feature3')}</strong></li>
+          <li><strong>{t('image.svg.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('image.svg.faq')}</h2>
+        <h3>{t('image.svg.faq1Q')}</h3>
+        <p>{t('image.svg.faq1A')}</p>
+        <h3>{t('image.svg.faq2Q')}</h3>
+        <p>{t('image.svg.faq2A')}</p>
+        <h3>{t('image.svg.faq3Q')}</h3>
+        <p>{t('image.svg.faq3A')}</p>
       </div>
     </>
   );

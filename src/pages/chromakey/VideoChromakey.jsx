@@ -678,13 +678,52 @@ const VideoChromakey = () => {
       <div className="seo-content">
         <h2>{t('chromakey.video.whatIs')}</h2>
         <p>{t('chromakey.video.whatIsDesc')}</p>
-        <h2>{t('whyUse.title')}</h2>
+
+        <h2>{t('chromakey.video.howToUse')}</h2>
+        <ol>
+          <li>{t('chromakey.video.step1')}</li>
+          <li>{t('chromakey.video.step2')}</li>
+          <li>{t('chromakey.video.step3')}</li>
+          <li>{t('chromakey.video.step4')}</li>
+          <li>{t('chromakey.video.step5')}</li>
+        </ol>
+
+        <h2>{t('chromakey.video.colorGuide')}</h2>
         <ul>
-          <li><strong>{t('whyUse.free')}</strong></li>
-          <li><strong>{t('whyUse.privacy')}</strong></li>
-          <li><strong>{t('chromakey.features.realtime')}</strong></li>
-          <li><strong>{t('chromakey.features.adjustable')}</strong></li>
+          <li><strong>{t('chromakey.video.greenScreen')}</strong></li>
+          <li><strong>{t('chromakey.video.blueScreen')}</strong></li>
+          <li><strong>{t('chromakey.video.customColorGuide')}</strong></li>
         </ul>
+
+        <h2>{t('chromakey.video.optionsGuide')}</h2>
+        <ul>
+          <li><strong>{t('chromakey.video.similarityGuide')}</strong></li>
+          <li><strong>{t('chromakey.video.blendGuide')}</strong></li>
+        </ul>
+
+        <h2>{t('chromakey.video.useCases')}</h2>
+        <ul>
+          <li><strong>{t('chromakey.video.useCase1')}</strong></li>
+          <li><strong>{t('chromakey.video.useCase2')}</strong></li>
+          <li><strong>{t('chromakey.video.useCase3')}</strong></li>
+          <li><strong>{t('chromakey.video.useCase4')}</strong></li>
+        </ul>
+
+        <h2>{t('chromakey.video.features')}</h2>
+        <ul>
+          <li><strong>{t('chromakey.video.feature1')}</strong></li>
+          <li><strong>{t('chromakey.video.feature2')}</strong></li>
+          <li><strong>{t('chromakey.video.feature3')}</strong></li>
+          <li><strong>{t('chromakey.video.feature4')}</strong></li>
+        </ul>
+
+        <h2>{t('chromakey.video.faq')}</h2>
+        <h3>{t('chromakey.video.faq1Q')}</h3>
+        <p>{t('chromakey.video.faq1A')}</p>
+        <h3>{t('chromakey.video.faq2Q')}</h3>
+        <p>{t('chromakey.video.faq2A')}</p>
+        <h3>{t('chromakey.video.faq3Q')}</h3>
+        <p>{t('chromakey.video.faq3A')}</p>
       </div>
     </>
   );
