@@ -217,8 +217,17 @@ const PdfCompress = () => {
       </div>
 
       <div className="seo-content">
-        <h2>{t('pdf.compress.what')}</h2>
-        <p>{t('pdf.compress.whatDesc')}</p>
+        <h2>{t('pdf.compress.whatIs')}</h2>
+        <p>{t('pdf.compress.whatIsDesc')}</p>
+
+        <h2>{t('pdf.compress.whyCompress')}</h2>
+        <p>{t('pdf.compress.whyCompressDesc')}</p>
+        <ul>
+          <li><strong>{t('pdf.compress.whyCompressReason1')}</strong></li>
+          <li><strong>{t('pdf.compress.whyCompressReason2')}</strong></li>
+          <li><strong>{t('pdf.compress.whyCompressReason3')}</strong></li>
+          <li><strong>{t('pdf.compress.whyCompressReason4')}</strong></li>
+        </ul>
 
         <h2>{t('pdf.compress.howToUse')}</h2>
         <ol>
@@ -227,21 +236,6 @@ const PdfCompress = () => {
           <li>{t('pdf.compress.step3')}</li>
           <li>{t('pdf.compress.step4')}</li>
         </ol>
-
-        <h2>{t('pdf.compress.compressionLevels')}</h2>
-        <ul>
-          <li><strong>{t('pdf.compress.levelLowDesc')}</strong></li>
-          <li><strong>{t('pdf.compress.levelMediumDesc')}</strong></li>
-          <li><strong>{t('pdf.compress.levelHighDesc')}</strong></li>
-        </ul>
-
-        <h2>{t('pdf.compress.useCases')}</h2>
-        <ul>
-          <li><strong>{t('pdf.compress.useCase1')}</strong></li>
-          <li><strong>{t('pdf.compress.useCase2')}</strong></li>
-          <li><strong>{t('pdf.compress.useCase3')}</strong></li>
-          <li><strong>{t('pdf.compress.useCase4')}</strong></li>
-        </ul>
 
         <h2>{t('pdf.compress.features')}</h2>
         <ul>

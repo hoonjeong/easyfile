@@ -170,8 +170,17 @@ const PdfDelete = () => {
       </div>
 
       <div className="seo-content">
-        <h2>{t('pdf.delete.what')}</h2>
-        <p>{t('pdf.delete.whatDesc')}</p>
+        <h2>{t('pdf.delete.whatIs')}</h2>
+        <p>{t('pdf.delete.whatIsDesc')}</p>
+
+        <h2>{t('pdf.delete.whyDelete')}</h2>
+        <p>{t('pdf.delete.whyDeleteDesc')}</p>
+        <ul>
+          <li><strong>{t('pdf.delete.whyDeleteReason1')}</strong></li>
+          <li><strong>{t('pdf.delete.whyDeleteReason2')}</strong></li>
+          <li><strong>{t('pdf.delete.whyDeleteReason3')}</strong></li>
+          <li><strong>{t('pdf.delete.whyDeleteReason4')}</strong></li>
+        </ul>
 
         <h2>{t('pdf.delete.howToUse')}</h2>
         <ol>
@@ -180,21 +189,6 @@ const PdfDelete = () => {
           <li>{t('pdf.delete.step3')}</li>
           <li>{t('pdf.delete.step4')}</li>
         </ol>
-
-        <h2>{t('pdf.delete.useCases')}</h2>
-        <ul>
-          <li><strong>{t('pdf.delete.useCase1')}</strong></li>
-          <li><strong>{t('pdf.delete.useCase2')}</strong></li>
-          <li><strong>{t('pdf.delete.useCase3')}</strong></li>
-          <li><strong>{t('pdf.delete.useCase4')}</strong></li>
-        </ul>
-
-        <h2>{t('pdf.delete.tips')}</h2>
-        <ul>
-          <li><strong>{t('pdf.delete.tip1')}</strong></li>
-          <li><strong>{t('pdf.delete.tip2')}</strong></li>
-          <li><strong>{t('pdf.delete.tip3')}</strong></li>
-        </ul>
 
         <h2>{t('pdf.delete.features')}</h2>
         <ul>

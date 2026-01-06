@@ -209,8 +209,17 @@ const PdfToImage = () => {
       </div>
 
       <div className="seo-content">
-        <h2>{t('pdf.toImage.why')}</h2>
-        <p>{t('pdf.toImage.whyDesc')}</p>
+        <h2>{t('pdf.toImage.whatIs')}</h2>
+        <p>{t('pdf.toImage.whatIsDesc')}</p>
+
+        <h2>{t('pdf.toImage.whyConvert')}</h2>
+        <p>{t('pdf.toImage.whyConvertDesc')}</p>
+        <ul>
+          <li><strong>{t('pdf.toImage.whyConvertReason1')}</strong></li>
+          <li><strong>{t('pdf.toImage.whyConvertReason2')}</strong></li>
+          <li><strong>{t('pdf.toImage.whyConvertReason3')}</strong></li>
+          <li><strong>{t('pdf.toImage.whyConvertReason4')}</strong></li>
+        </ul>
 
         <h2>{t('pdf.toImage.howToUse')}</h2>
         <ol>
@@ -219,28 +228,6 @@ const PdfToImage = () => {
           <li>{t('pdf.toImage.step3')}</li>
           <li>{t('pdf.toImage.step4')}</li>
         </ol>
-
-        <h2>{t('pdf.toImage.formatGuide')}</h2>
-        <p>{t('pdf.toImage.formatGuideDesc')}</p>
-        <ul>
-          <li><strong>{t('pdf.toImage.jpgGuide')}</strong></li>
-          <li><strong>{t('pdf.toImage.pngGuide')}</strong></li>
-        </ul>
-
-        <h2>{t('pdf.toImage.resolutionGuide')}</h2>
-        <ul>
-          <li><strong>{t('pdf.toImage.resolution72')}</strong></li>
-          <li><strong>{t('pdf.toImage.resolution150')}</strong></li>
-          <li><strong>{t('pdf.toImage.resolution300')}</strong></li>
-        </ul>
-
-        <h2>{t('pdf.toImage.useCases')}</h2>
-        <ul>
-          <li><strong>{t('pdf.toImage.useCase1')}</strong></li>
-          <li><strong>{t('pdf.toImage.useCase2')}</strong></li>
-          <li><strong>{t('pdf.toImage.useCase3')}</strong></li>
-          <li><strong>{t('pdf.toImage.useCase4')}</strong></li>
-        </ul>
 
         <h2>{t('pdf.toImage.features')}</h2>
         <ul>

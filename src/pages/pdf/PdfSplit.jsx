@@ -203,8 +203,17 @@ const PdfSplit = () => {
       </div>
 
       <div className="seo-content">
-        <h2>{t('pdf.split.what')}</h2>
-        <p>{t('pdf.split.whatDesc')}</p>
+        <h2>{t('pdf.split.whatIs')}</h2>
+        <p>{t('pdf.split.whatIsDesc')}</p>
+
+        <h2>{t('pdf.split.whySplit')}</h2>
+        <p>{t('pdf.split.whySplitDesc')}</p>
+        <ul>
+          <li><strong>{t('pdf.split.whySplitReason1')}</strong></li>
+          <li><strong>{t('pdf.split.whySplitReason2')}</strong></li>
+          <li><strong>{t('pdf.split.whySplitReason3')}</strong></li>
+          <li><strong>{t('pdf.split.whySplitReason4')}</strong></li>
+        </ul>
 
         <h2>{t('pdf.split.howToUse')}</h2>
         <ol>
@@ -213,21 +222,6 @@ const PdfSplit = () => {
           <li>{t('pdf.split.step3')}</li>
           <li>{t('pdf.split.step4')}</li>
         </ol>
-
-        <h2>{t('pdf.split.splitModes')}</h2>
-        <ul>
-          <li><strong>{t('pdf.split.modeEach')}</strong></li>
-          <li><strong>{t('pdf.split.modeHalf')}</strong></li>
-          <li><strong>{t('pdf.split.modeCustom')}</strong></li>
-        </ul>
-
-        <h2>{t('pdf.split.useCases')}</h2>
-        <ul>
-          <li><strong>{t('pdf.split.useCase1')}</strong></li>
-          <li><strong>{t('pdf.split.useCase2')}</strong></li>
-          <li><strong>{t('pdf.split.useCase3')}</strong></li>
-          <li><strong>{t('pdf.split.useCase4')}</strong></li>
-        </ul>
 
         <h2>{t('pdf.split.features')}</h2>
         <ul>

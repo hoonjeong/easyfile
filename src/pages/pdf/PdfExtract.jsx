@@ -168,8 +168,17 @@ const PdfExtract = () => {
       </div>
 
       <div className="seo-content">
-        <h2>{t('pdf.extract.what')}</h2>
-        <p>{t('pdf.extract.whatDesc')}</p>
+        <h2>{t('pdf.extract.whatIs')}</h2>
+        <p>{t('pdf.extract.whatIsDesc')}</p>
+
+        <h2>{t('pdf.extract.whyExtract')}</h2>
+        <p>{t('pdf.extract.whyExtractDesc')}</p>
+        <ul>
+          <li><strong>{t('pdf.extract.whyExtractReason1')}</strong></li>
+          <li><strong>{t('pdf.extract.whyExtractReason2')}</strong></li>
+          <li><strong>{t('pdf.extract.whyExtractReason3')}</strong></li>
+          <li><strong>{t('pdf.extract.whyExtractReason4')}</strong></li>
+        </ul>
 
         <h2>{t('pdf.extract.howToUse')}</h2>
         <ol>
@@ -178,21 +187,6 @@ const PdfExtract = () => {
           <li>{t('pdf.extract.step3')}</li>
           <li>{t('pdf.extract.step4')}</li>
         </ol>
-
-        <h2>{t('pdf.extract.useCases')}</h2>
-        <ul>
-          <li><strong>{t('pdf.extract.useCase1')}</strong></li>
-          <li><strong>{t('pdf.extract.useCase2')}</strong></li>
-          <li><strong>{t('pdf.extract.useCase3')}</strong></li>
-          <li><strong>{t('pdf.extract.useCase4')}</strong></li>
-        </ul>
-
-        <h2>{t('pdf.extract.tips')}</h2>
-        <ul>
-          <li><strong>{t('pdf.extract.tip1')}</strong></li>
-          <li><strong>{t('pdf.extract.tip2')}</strong></li>
-          <li><strong>{t('pdf.extract.tip3')}</strong></li>
-        </ul>
 
         <h2>{t('pdf.extract.features')}</h2>
         <ul>

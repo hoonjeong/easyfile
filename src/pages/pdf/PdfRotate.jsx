@@ -171,8 +171,17 @@ const PdfRotate = () => {
       </div>
 
       <div className="seo-content">
-        <h2>{t('pdf.rotate.what')}</h2>
-        <p>{t('pdf.rotate.whatDesc')}</p>
+        <h2>{t('pdf.rotate.whatIs')}</h2>
+        <p>{t('pdf.rotate.whatIsDesc')}</p>
+
+        <h2>{t('pdf.rotate.whyRotate')}</h2>
+        <p>{t('pdf.rotate.whyRotateDesc')}</p>
+        <ul>
+          <li><strong>{t('pdf.rotate.whyRotateReason1')}</strong></li>
+          <li><strong>{t('pdf.rotate.whyRotateReason2')}</strong></li>
+          <li><strong>{t('pdf.rotate.whyRotateReason3')}</strong></li>
+          <li><strong>{t('pdf.rotate.whyRotateReason4')}</strong></li>
+        </ul>
 
         <h2>{t('pdf.rotate.howToUse')}</h2>
         <ol>
@@ -181,21 +190,6 @@ const PdfRotate = () => {
           <li>{t('pdf.rotate.step3')}</li>
           <li>{t('pdf.rotate.step4')}</li>
         </ol>
-
-        <h2>{t('pdf.rotate.rotationOptions')}</h2>
-        <ul>
-          <li><strong>{t('pdf.rotate.option90')}</strong></li>
-          <li><strong>{t('pdf.rotate.option180')}</strong></li>
-          <li><strong>{t('pdf.rotate.option270')}</strong></li>
-        </ul>
-
-        <h2>{t('pdf.rotate.useCases')}</h2>
-        <ul>
-          <li><strong>{t('pdf.rotate.useCase1')}</strong></li>
-          <li><strong>{t('pdf.rotate.useCase2')}</strong></li>
-          <li><strong>{t('pdf.rotate.useCase3')}</strong></li>
-          <li><strong>{t('pdf.rotate.useCase4')}</strong></li>
-        </ul>
 
         <h2>{t('pdf.rotate.features')}</h2>
         <ul>

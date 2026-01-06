@@ -218,8 +218,17 @@ const PdfMerge = () => {
       </div>
 
       <div className="seo-content">
-        <h2>{t('pdf.merge.what')}</h2>
-        <p>{t('pdf.merge.whatDesc')}</p>
+        <h2>{t('pdf.merge.whatIs')}</h2>
+        <p>{t('pdf.merge.whatIsDesc')}</p>
+
+        <h2>{t('pdf.merge.whyMerge')}</h2>
+        <p>{t('pdf.merge.whyMergeDesc')}</p>
+        <ul>
+          <li><strong>{t('pdf.merge.whyMergeReason1')}</strong></li>
+          <li><strong>{t('pdf.merge.whyMergeReason2')}</strong></li>
+          <li><strong>{t('pdf.merge.whyMergeReason3')}</strong></li>
+          <li><strong>{t('pdf.merge.whyMergeReason4')}</strong></li>
+        </ul>
 
         <h2>{t('pdf.merge.howToUse')}</h2>
         <ol>
@@ -228,21 +237,6 @@ const PdfMerge = () => {
           <li>{t('pdf.merge.step3')}</li>
           <li>{t('pdf.merge.step4')}</li>
         </ol>
-
-        <h2>{t('pdf.merge.useCases')}</h2>
-        <ul>
-          <li><strong>{t('pdf.merge.useCase1')}</strong></li>
-          <li><strong>{t('pdf.merge.useCase2')}</strong></li>
-          <li><strong>{t('pdf.merge.useCase3')}</strong></li>
-          <li><strong>{t('pdf.merge.useCase4')}</strong></li>
-        </ul>
-
-        <h2>{t('pdf.merge.tips')}</h2>
-        <ul>
-          <li><strong>{t('pdf.merge.tip1')}</strong></li>
-          <li><strong>{t('pdf.merge.tip2')}</strong></li>
-          <li><strong>{t('pdf.merge.tip3')}</strong></li>
-        </ul>
 
         <h2>{t('pdf.merge.features')}</h2>
         <ul>

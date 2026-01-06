@@ -176,8 +176,17 @@ const PdfToText = () => {
       </div>
 
       <div className="seo-content">
-        <h2>{t('pdf.toText.what')}</h2>
-        <p>{t('pdf.toText.whatDesc')}</p>
+        <h2>{t('pdf.toText.whatIs')}</h2>
+        <p>{t('pdf.toText.whatIsDesc')}</p>
+
+        <h2>{t('pdf.toText.whyExtract')}</h2>
+        <p>{t('pdf.toText.whyExtractDesc')}</p>
+        <ul>
+          <li><strong>{t('pdf.toText.whyExtractReason1')}</strong></li>
+          <li><strong>{t('pdf.toText.whyExtractReason2')}</strong></li>
+          <li><strong>{t('pdf.toText.whyExtractReason3')}</strong></li>
+          <li><strong>{t('pdf.toText.whyExtractReason4')}</strong></li>
+        </ul>
 
         <h2>{t('pdf.toText.howToUse')}</h2>
         <ol>
@@ -186,21 +195,6 @@ const PdfToText = () => {
           <li>{t('pdf.toText.step3')}</li>
           <li>{t('pdf.toText.step4')}</li>
         </ol>
-
-        <h2>{t('pdf.toText.useCases')}</h2>
-        <ul>
-          <li><strong>{t('pdf.toText.useCase1')}</strong></li>
-          <li><strong>{t('pdf.toText.useCase2')}</strong></li>
-          <li><strong>{t('pdf.toText.useCase3')}</strong></li>
-          <li><strong>{t('pdf.toText.useCase4')}</strong></li>
-        </ul>
-
-        <h2>{t('pdf.toText.limitations')}</h2>
-        <p>{t('pdf.toText.limitationsDesc')}</p>
-        <ul>
-          <li><strong>{t('pdf.toText.limitation1')}</strong></li>
-          <li><strong>{t('pdf.toText.limitation2')}</strong></li>
-        </ul>
 
         <h2>{t('pdf.toText.features')}</h2>
         <ul>
