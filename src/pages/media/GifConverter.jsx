@@ -225,6 +225,7 @@ const GifConverter = () => {
           <li><strong>{t('media.gif.whyConvertReason1')}</strong></li>
           <li><strong>{t('media.gif.whyConvertReason2')}</strong></li>
           <li><strong>{t('media.gif.whyConvertReason3')}</strong></li>
+          <li><strong>{t('media.gif.whyConvertReason4')}</strong></li>
         </ul>
 
         <h2>{t('media.gif.howToUse')}</h2>
@@ -234,14 +235,6 @@ const GifConverter = () => {
           <li>{t('media.gif.step3')}</li>
           <li>{t('media.gif.step4')}</li>
         </ol>
-
-        <h2>{t('media.gif.useCases')}</h2>
-        <ul>
-          <li><strong>{t('media.gif.useCase1')}</strong></li>
-          <li><strong>{t('media.gif.useCase2')}</strong></li>
-          <li><strong>{t('media.gif.useCase3')}</strong></li>
-          <li><strong>{t('media.gif.useCase4')}</strong></li>
-        </ul>
 
         <h2>{t('media.gif.features')}</h2>
         <ul>

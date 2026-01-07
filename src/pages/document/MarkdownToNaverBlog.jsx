@@ -364,21 +364,22 @@ ${t('document.markdownNaver.exampleFooter')}`;
         <h2>{t('document.markdownNaver.whatIs')}</h2>
         <p>{t('document.markdownNaver.whatIsDesc')}</p>
 
-        <h2>{t('document.markdownNaver.naverFeatures')}</h2>
+        <h2>{t('document.markdownNaver.whyConvert')}</h2>
+        <p>{t('document.markdownNaver.whyConvertDesc')}</p>
         <ul>
-          <li><strong>{t('document.markdownNaver.naverFeature1')}</strong></li>
-          <li><strong>{t('document.markdownNaver.naverFeature2')}</strong></li>
-          <li><strong>{t('document.markdownNaver.naverFeature3')}</strong></li>
-          <li><strong>{t('document.markdownNaver.naverFeature4')}</strong></li>
+          <li><strong>{t('document.markdownNaver.whyConvertReason1')}</strong></li>
+          <li><strong>{t('document.markdownNaver.whyConvertReason2')}</strong></li>
+          <li><strong>{t('document.markdownNaver.whyConvertReason3')}</strong></li>
+          <li><strong>{t('document.markdownNaver.whyConvertReason4')}</strong></li>
         </ul>
 
-        <h2>{t('document.markdownNaver.useCases')}</h2>
-        <ul>
-          <li><strong>{t('document.markdownNaver.useCase1')}</strong></li>
-          <li><strong>{t('document.markdownNaver.useCase2')}</strong></li>
-          <li><strong>{t('document.markdownNaver.useCase3')}</strong></li>
-          <li><strong>{t('document.markdownNaver.useCase4')}</strong></li>
-        </ul>
+        <h2>{t('document.markdownNaver.howToUse')}</h2>
+        <ol>
+          <li>{t('document.markdownNaver.step1')}</li>
+          <li>{t('document.markdownNaver.step2')}</li>
+          <li>{t('document.markdownNaver.step3')}</li>
+          <li>{t('document.markdownNaver.step4')}</li>
+        </ol>
 
         <h2>{t('document.markdownNaver.features')}</h2>
         <ul>

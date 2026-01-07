@@ -300,6 +300,15 @@ const ExcelConverter = () => {
         <h2>{t('document.excel.whatIs')}</h2>
         <p>{t('document.excel.whatIsDesc')}</p>
 
+        <h2>{t('document.excel.whyConvert')}</h2>
+        <p>{t('document.excel.whyConvertDesc')}</p>
+        <ul>
+          <li><strong>{t('document.excel.whyConvertReason1')}</strong></li>
+          <li><strong>{t('document.excel.whyConvertReason2')}</strong></li>
+          <li><strong>{t('document.excel.whyConvertReason3')}</strong></li>
+          <li><strong>{t('document.excel.whyConvertReason4')}</strong></li>
+        </ul>
+
         <h2>{t('document.excel.howToUse')}</h2>
         <ol>
           <li>{t('document.excel.step1')}</li>
@@ -307,21 +316,6 @@ const ExcelConverter = () => {
           <li>{t('document.excel.step3')}</li>
           <li>{t('document.excel.step4')}</li>
         </ol>
-
-        <h2>{t('document.excel.formatGuide')}</h2>
-        <ul>
-          <li><strong>{t('document.excel.jsonGuide')}</strong></li>
-          <li><strong>{t('document.excel.csvGuide')}</strong></li>
-          <li><strong>{t('document.excel.htmlGuide')}</strong></li>
-        </ul>
-
-        <h2>{t('document.excel.useCases')}</h2>
-        <ul>
-          <li><strong>{t('document.excel.useCase1')}</strong></li>
-          <li><strong>{t('document.excel.useCase2')}</strong></li>
-          <li><strong>{t('document.excel.useCase3')}</strong></li>
-          <li><strong>{t('document.excel.useCase4')}</strong></li>
-        </ul>
 
         <h2>{t('document.excel.features')}</h2>
         <ul>

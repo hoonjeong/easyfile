@@ -679,35 +679,22 @@ const VideoChromakey = () => {
         <h2>{t('chromakey.video.whatIs')}</h2>
         <p>{t('chromakey.video.whatIsDesc')}</p>
 
+        <h2>{t('chromakey.video.whyUse')}</h2>
+        <p>{t('chromakey.video.whyUseDesc')}</p>
+        <ul>
+          <li><strong>{t('chromakey.video.whyUseReason1')}</strong></li>
+          <li><strong>{t('chromakey.video.whyUseReason2')}</strong></li>
+          <li><strong>{t('chromakey.video.whyUseReason3')}</strong></li>
+          <li><strong>{t('chromakey.video.whyUseReason4')}</strong></li>
+        </ul>
+
         <h2>{t('chromakey.video.howToUse')}</h2>
         <ol>
           <li>{t('chromakey.video.step1')}</li>
           <li>{t('chromakey.video.step2')}</li>
           <li>{t('chromakey.video.step3')}</li>
           <li>{t('chromakey.video.step4')}</li>
-          <li>{t('chromakey.video.step5')}</li>
         </ol>
-
-        <h2>{t('chromakey.video.colorGuide')}</h2>
-        <ul>
-          <li><strong>{t('chromakey.video.greenScreen')}</strong></li>
-          <li><strong>{t('chromakey.video.blueScreen')}</strong></li>
-          <li><strong>{t('chromakey.video.customColorGuide')}</strong></li>
-        </ul>
-
-        <h2>{t('chromakey.video.optionsGuide')}</h2>
-        <ul>
-          <li><strong>{t('chromakey.video.similarityGuide')}</strong></li>
-          <li><strong>{t('chromakey.video.blendGuide')}</strong></li>
-        </ul>
-
-        <h2>{t('chromakey.video.useCases')}</h2>
-        <ul>
-          <li><strong>{t('chromakey.video.useCase1')}</strong></li>
-          <li><strong>{t('chromakey.video.useCase2')}</strong></li>
-          <li><strong>{t('chromakey.video.useCase3')}</strong></li>
-          <li><strong>{t('chromakey.video.useCase4')}</strong></li>
-        </ul>
 
         <h2>{t('chromakey.video.features')}</h2>
         <ul>

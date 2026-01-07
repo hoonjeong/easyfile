@@ -201,6 +201,15 @@ const VideoConverter = () => {
         <h2>{t('media.video.whatIs')}</h2>
         <p>{t('media.video.whatIsDesc')}</p>
 
+        <h2>{t('media.video.whyConvert')}</h2>
+        <p>{t('media.video.whyConvertDesc')}</p>
+        <ul>
+          <li><strong>{t('media.video.whyConvertReason1')}</strong></li>
+          <li><strong>{t('media.video.whyConvertReason2')}</strong></li>
+          <li><strong>{t('media.video.whyConvertReason3')}</strong></li>
+          <li><strong>{t('media.video.whyConvertReason4')}</strong></li>
+        </ul>
+
         <h2>{t('media.video.howToUse')}</h2>
         <ol>
           <li>{t('media.video.step1')}</li>
@@ -208,21 +217,6 @@ const VideoConverter = () => {
           <li>{t('media.video.step3')}</li>
           <li>{t('media.video.step4')}</li>
         </ol>
-
-        <h2>{t('media.video.qualityGuide')}</h2>
-        <ul>
-          <li><strong>{t('media.video.qualityLowDesc')}</strong></li>
-          <li><strong>{t('media.video.qualityMediumDesc')}</strong></li>
-          <li><strong>{t('media.video.qualityHighDesc')}</strong></li>
-        </ul>
-
-        <h2>{t('media.video.useCases')}</h2>
-        <ul>
-          <li><strong>{t('media.video.useCase1')}</strong></li>
-          <li><strong>{t('media.video.useCase2')}</strong></li>
-          <li><strong>{t('media.video.useCase3')}</strong></li>
-          <li><strong>{t('media.video.useCase4')}</strong></li>
-        </ul>
 
         <h2>{t('media.video.features')}</h2>
         <ul>

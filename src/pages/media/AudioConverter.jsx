@@ -198,6 +198,15 @@ const AudioConverter = () => {
         <h2>{t('media.audio.whatIs')}</h2>
         <p>{t('media.audio.whatIsDesc')}</p>
 
+        <h2>{t('media.audio.whyConvert')}</h2>
+        <p>{t('media.audio.whyConvertDesc')}</p>
+        <ul>
+          <li><strong>{t('media.audio.whyConvertReason1')}</strong></li>
+          <li><strong>{t('media.audio.whyConvertReason2')}</strong></li>
+          <li><strong>{t('media.audio.whyConvertReason3')}</strong></li>
+          <li><strong>{t('media.audio.whyConvertReason4')}</strong></li>
+        </ul>
+
         <h2>{t('media.audio.howToUse')}</h2>
         <ol>
           <li>{t('media.audio.step1')}</li>
@@ -205,28 +214,6 @@ const AudioConverter = () => {
           <li>{t('media.audio.step3')}</li>
           <li>{t('media.audio.step4')}</li>
         </ol>
-
-        <h2>{t('media.audio.formatGuide')}</h2>
-        <ul>
-          <li><strong>{t('media.audio.mp3Guide')}</strong></li>
-          <li><strong>{t('media.audio.wavGuide')}</strong></li>
-          <li><strong>{t('media.audio.oggGuide')}</strong></li>
-        </ul>
-
-        <h2>{t('media.audio.bitrateGuide')}</h2>
-        <ul>
-          <li><strong>{t('media.audio.bitrate128Desc')}</strong></li>
-          <li><strong>{t('media.audio.bitrate192Desc')}</strong></li>
-          <li><strong>{t('media.audio.bitrate320Desc')}</strong></li>
-        </ul>
-
-        <h2>{t('media.audio.useCases')}</h2>
-        <ul>
-          <li><strong>{t('media.audio.useCase1')}</strong></li>
-          <li><strong>{t('media.audio.useCase2')}</strong></li>
-          <li><strong>{t('media.audio.useCase3')}</strong></li>
-          <li><strong>{t('media.audio.useCase4')}</strong></li>
-        </ul>
 
         <h2>{t('media.audio.features')}</h2>
         <ul>

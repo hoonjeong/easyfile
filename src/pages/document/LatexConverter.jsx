@@ -279,6 +279,15 @@ const LatexConverter = () => {
         <h2>{t('document.latex.whatIs')}</h2>
         <p>{t('document.latex.whatIsDesc')}</p>
 
+        <h2>{t('document.latex.whyConvert')}</h2>
+        <p>{t('document.latex.whyConvertDesc')}</p>
+        <ul>
+          <li><strong>{t('document.latex.whyConvertReason1')}</strong></li>
+          <li><strong>{t('document.latex.whyConvertReason2')}</strong></li>
+          <li><strong>{t('document.latex.whyConvertReason3')}</strong></li>
+          <li><strong>{t('document.latex.whyConvertReason4')}</strong></li>
+        </ul>
+
         <h2>{t('document.latex.howToUse')}</h2>
         <ol>
           <li>{t('document.latex.step1')}</li>
@@ -286,29 +295,6 @@ const LatexConverter = () => {
           <li>{t('document.latex.step3')}</li>
           <li>{t('document.latex.step4')}</li>
         </ol>
-
-        <h2>{t('document.latex.commonSymbols')}</h2>
-        <ul>
-          <li><strong>{t('document.latex.symbolFrac')}</strong></li>
-          <li><strong>{t('document.latex.symbolSqrt')}</strong></li>
-          <li><strong>{t('document.latex.symbolSum')}</strong></li>
-          <li><strong>{t('document.latex.symbolInt')}</strong></li>
-          <li><strong>{t('document.latex.symbolGreek')}</strong></li>
-        </ul>
-
-        <h2>{t('document.latex.formatGuide')}</h2>
-        <ul>
-          <li><strong>{t('document.latex.pngGuide')}</strong></li>
-          <li><strong>{t('document.latex.svgGuide')}</strong></li>
-        </ul>
-
-        <h2>{t('document.latex.useCases')}</h2>
-        <ul>
-          <li><strong>{t('document.latex.useCase1')}</strong></li>
-          <li><strong>{t('document.latex.useCase2')}</strong></li>
-          <li><strong>{t('document.latex.useCase3')}</strong></li>
-          <li><strong>{t('document.latex.useCase4')}</strong></li>
-        </ul>
 
         <h2>{t('document.latex.features')}</h2>
         <ul>

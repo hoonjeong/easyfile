@@ -229,6 +229,15 @@ ${htmlContent}
         <h2>{t('document.markdown.whatIs')}</h2>
         <p>{t('document.markdown.whatIsDesc')}</p>
 
+        <h2>{t('document.markdown.whyConvert')}</h2>
+        <p>{t('document.markdown.whyConvertDesc')}</p>
+        <ul>
+          <li><strong>{t('document.markdown.whyConvertReason1')}</strong></li>
+          <li><strong>{t('document.markdown.whyConvertReason2')}</strong></li>
+          <li><strong>{t('document.markdown.whyConvertReason3')}</strong></li>
+          <li><strong>{t('document.markdown.whyConvertReason4')}</strong></li>
+        </ul>
+
         <h2>{t('document.markdown.howToUse')}</h2>
         <ol>
           <li>{t('document.markdown.step1')}</li>
@@ -236,23 +245,6 @@ ${htmlContent}
           <li>{t('document.markdown.step3')}</li>
           <li>{t('document.markdown.step4')}</li>
         </ol>
-
-        <h2>{t('document.markdown.syntaxGuide')}</h2>
-        <ul>
-          <li><strong>{t('document.markdown.syntaxHeading')}</strong></li>
-          <li><strong>{t('document.markdown.syntaxBold')}</strong></li>
-          <li><strong>{t('document.markdown.syntaxList')}</strong></li>
-          <li><strong>{t('document.markdown.syntaxLink')}</strong></li>
-          <li><strong>{t('document.markdown.syntaxCode')}</strong></li>
-        </ul>
-
-        <h2>{t('document.markdown.useCases')}</h2>
-        <ul>
-          <li><strong>{t('document.markdown.useCase1')}</strong></li>
-          <li><strong>{t('document.markdown.useCase2')}</strong></li>
-          <li><strong>{t('document.markdown.useCase3')}</strong></li>
-          <li><strong>{t('document.markdown.useCase4')}</strong></li>
-        </ul>
 
         <h2>{t('document.markdown.features')}</h2>
         <ul>

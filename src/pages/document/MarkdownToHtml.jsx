@@ -290,29 +290,22 @@ console.log('Hello, World!');
         <h2>{t('document.markdownHtml.whatIs')}</h2>
         <p>{t('document.markdownHtml.whatIsDesc')}</p>
 
+        <h2>{t('document.markdownHtml.whyConvert')}</h2>
+        <p>{t('document.markdownHtml.whyConvertDesc')}</p>
+        <ul>
+          <li><strong>{t('document.markdownHtml.whyConvertReason1')}</strong></li>
+          <li><strong>{t('document.markdownHtml.whyConvertReason2')}</strong></li>
+          <li><strong>{t('document.markdownHtml.whyConvertReason3')}</strong></li>
+          <li><strong>{t('document.markdownHtml.whyConvertReason4')}</strong></li>
+        </ul>
+
         <h2>{t('document.markdownHtml.howToUse')}</h2>
         <ol>
           <li>{t('document.markdownHtml.step1')}</li>
           <li>{t('document.markdownHtml.step2')}</li>
           <li>{t('document.markdownHtml.step3')}</li>
+          <li>{t('document.markdownHtml.step4')}</li>
         </ol>
-
-        <h2>{t('document.markdownHtml.syntaxGuide')}</h2>
-        <ul>
-          <li><strong>{t('document.markdownHtml.syntaxHeading')}</strong></li>
-          <li><strong>{t('document.markdownHtml.syntaxBold')}</strong></li>
-          <li><strong>{t('document.markdownHtml.syntaxList')}</strong></li>
-          <li><strong>{t('document.markdownHtml.syntaxLink')}</strong></li>
-          <li><strong>{t('document.markdownHtml.syntaxCode')}</strong></li>
-        </ul>
-
-        <h2>{t('document.markdownHtml.useCases')}</h2>
-        <ul>
-          <li><strong>{t('document.markdownHtml.useCase1')}</strong></li>
-          <li><strong>{t('document.markdownHtml.useCase2')}</strong></li>
-          <li><strong>{t('document.markdownHtml.useCase3')}</strong></li>
-          <li><strong>{t('document.markdownHtml.useCase4')}</strong></li>
-        </ul>
 
         <h2>{t('document.markdownHtml.features')}</h2>
         <ul>

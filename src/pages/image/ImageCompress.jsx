@@ -307,8 +307,8 @@ const ImageCompress = () => {
       </div>
 
       <div className="seo-content">
-        <h2>{t('image.compress.what')}</h2>
-        <p>{t('image.compress.whatDesc')}</p>
+        <h2>{t('image.compress.whatIs')}</h2>
+        <p>{t('image.compress.whatIsDesc')}</p>
 
         <h2>{t('image.compress.whyCompress')}</h2>
         <p>{t('image.compress.whyCompressDesc')}</p>
@@ -326,21 +326,6 @@ const ImageCompress = () => {
           <li>{t('image.compress.step3')}</li>
           <li>{t('image.compress.step4')}</li>
         </ol>
-
-        <h2>{t('image.compress.formatGuide')}</h2>
-        <p>{t('image.compress.formatGuideDesc')}</p>
-        <ul>
-          <li><strong>{t('image.compress.jpgGuide')}</strong></li>
-          <li><strong>{t('image.compress.pngGuide')}</strong></li>
-          <li><strong>{t('image.compress.webpGuide')}</strong></li>
-        </ul>
-
-        <h2>{t('image.compress.qualityTips')}</h2>
-        <ul>
-          <li><strong>{t('image.compress.qualityTip1')}</strong></li>
-          <li><strong>{t('image.compress.qualityTip2')}</strong></li>
-          <li><strong>{t('image.compress.qualityTip3')}</strong></li>
-        </ul>
 
         <h2>{t('image.compress.features')}</h2>
         <ul>

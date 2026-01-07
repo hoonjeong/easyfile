@@ -780,36 +780,22 @@ const ImageChromakey = () => {
         <h2>{t('chromakey.image.whatIs')}</h2>
         <p>{t('chromakey.image.whatIsDesc')}</p>
 
+        <h2>{t('chromakey.image.whyUse')}</h2>
+        <p>{t('chromakey.image.whyUseDesc')}</p>
+        <ul>
+          <li><strong>{t('chromakey.image.whyUseReason1')}</strong></li>
+          <li><strong>{t('chromakey.image.whyUseReason2')}</strong></li>
+          <li><strong>{t('chromakey.image.whyUseReason3')}</strong></li>
+          <li><strong>{t('chromakey.image.whyUseReason4')}</strong></li>
+        </ul>
+
         <h2>{t('chromakey.image.howToUse')}</h2>
         <ol>
           <li>{t('chromakey.image.step1')}</li>
           <li>{t('chromakey.image.step2')}</li>
           <li>{t('chromakey.image.step3')}</li>
           <li>{t('chromakey.image.step4')}</li>
-          <li>{t('chromakey.image.step5')}</li>
         </ol>
-
-        <h2>{t('chromakey.image.colorGuide')}</h2>
-        <ul>
-          <li><strong>{t('chromakey.image.greenScreen')}</strong></li>
-          <li><strong>{t('chromakey.image.blueScreen')}</strong></li>
-          <li><strong>{t('chromakey.image.customColorGuide')}</strong></li>
-        </ul>
-
-        <h2>{t('chromakey.image.optionsGuide')}</h2>
-        <ul>
-          <li><strong>{t('chromakey.image.toleranceGuide')}</strong></li>
-          <li><strong>{t('chromakey.image.edgeSmoothGuide')}</strong></li>
-          <li><strong>{t('chromakey.image.spillGuide')}</strong></li>
-        </ul>
-
-        <h2>{t('chromakey.image.useCases')}</h2>
-        <ul>
-          <li><strong>{t('chromakey.image.useCase1')}</strong></li>
-          <li><strong>{t('chromakey.image.useCase2')}</strong></li>
-          <li><strong>{t('chromakey.image.useCase3')}</strong></li>
-          <li><strong>{t('chromakey.image.useCase4')}</strong></li>
-        </ul>
 
         <h2>{t('chromakey.image.features')}</h2>
         <ul>

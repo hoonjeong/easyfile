@@ -120,14 +120,8 @@ const IcoConverter = () => {
           <li>{t('image.ico.step1')}</li>
           <li>{t('image.ico.step2')}</li>
           <li>{t('image.ico.step3')}</li>
+          <li>{t('image.ico.step4')}</li>
         </ol>
-
-        <h2>{t('image.ico.useCases')}</h2>
-        <ul>
-          <li><strong>{t('image.ico.useCase1')}</strong></li>
-          <li><strong>{t('image.ico.useCase2')}</strong></li>
-          <li><strong>{t('image.ico.useCase3')}</strong></li>
-        </ul>
 
         <h2>{t('image.ico.features')}</h2>
         <ul>
