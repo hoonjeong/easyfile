@@ -9,6 +9,7 @@ import ResultDisplay from '../../components/ResultDisplay';
 import { convertIcoToPng, createPreviewUrl, revokePreviewUrl } from '../../utils/imageConverter';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 
 const IcoConverter = () => {
   const { t } = useTranslation();
@@ -72,6 +73,8 @@ const IcoConverter = () => {
   return (
     <>
       <SEOHead title={t('image.ico.pageTitle')} description={t('image.ico.pageDescription')} keywords={t('image.ico.seoKeywords')} />
+
+      <Breadcrumb category="image" currentPage={t('image.ico.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('image.ico.pageTitle')}</h1>

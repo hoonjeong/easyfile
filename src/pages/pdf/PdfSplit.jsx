@@ -6,6 +6,7 @@ import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 import { splitPdf, getPdfPageCount } from '../../utils/pdfUtils';
 import { downloadFile, sanitizeFilename } from '../../utils/download';
 import JSZip from 'jszip';
@@ -118,6 +119,8 @@ const PdfSplit = () => {
         description={t('pdf.split.pageDescription')}
         keywords={t('pdf.split.seoKeywords')}
       />
+
+      <Breadcrumb category="pdf" currentPage={t('pdf.split.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('pdf.split.pageTitle')}</h1>

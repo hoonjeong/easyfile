@@ -6,6 +6,7 @@ import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 import { reorderPages, generateThumbnails } from '../../utils/pdfUtils';
 import { downloadFile, sanitizeFilename } from '../../utils/download';
 
@@ -115,6 +116,8 @@ const PdfReorder = () => {
   return (
     <>
       <SEOHead title={t('pdf.reorder.pageTitle')} description={t('pdf.reorder.pageDescription')} keywords={t('pdf.reorder.seoKeywords')} />
+
+      <Breadcrumb category="pdf" currentPage={t('pdf.reorder.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('pdf.reorder.pageTitle')}</h1>

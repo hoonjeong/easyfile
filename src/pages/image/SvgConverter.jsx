@@ -10,6 +10,7 @@ import { convertSvgToPng, revokePreviewUrl, createPreviewUrl } from '../../utils
 import { createSafeSvgPreviewUrl } from '../../utils/svgSanitizer';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 
 const SvgConverter = () => {
   const { t } = useTranslation();
@@ -81,6 +82,8 @@ const SvgConverter = () => {
   return (
     <>
       <SEOHead title={t('image.svg.pageTitle')} description={t('image.svg.pageDescription')} keywords={t('image.svg.seoKeywords')} />
+
+      <Breadcrumb category="image" currentPage={t('image.svg.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('image.svg.pageTitle')}</h1>

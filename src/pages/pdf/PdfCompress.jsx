@@ -6,6 +6,7 @@ import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 import { compressPdf } from '../../utils/pdfUtils';
 import { downloadFile, sanitizeFilename } from '../../utils/download';
 
@@ -90,6 +91,8 @@ const PdfCompress = () => {
         description={t('pdf.compress.pageDescription')}
         keywords={t('pdf.compress.seoKeywords')}
       />
+
+      <Breadcrumb category="pdf" currentPage={t('pdf.compress.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('pdf.compress.pageTitle')}</h1>

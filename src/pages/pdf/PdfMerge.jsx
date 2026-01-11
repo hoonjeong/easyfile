@@ -4,6 +4,7 @@ import SEOHead from '../../components/SEOHead';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 import { mergePdfs } from '../../utils/pdfUtils';
 import { downloadFile } from '../../utils/download';
 import { securityCheck, validateFileType } from '../../utils/fileValidation';
@@ -111,6 +112,8 @@ const PdfMerge = () => {
         description={t('pdf.merge.pageDescription')}
         keywords={t('pdf.merge.seoKeywords')}
       />
+
+      <Breadcrumb category="pdf" currentPage={t('pdf.merge.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('pdf.merge.pageTitle')}</h1>

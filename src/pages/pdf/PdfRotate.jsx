@@ -6,6 +6,7 @@ import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 import { rotatePages, generateThumbnails } from '../../utils/pdfUtils';
 import { downloadFile, sanitizeFilename } from '../../utils/download';
 
@@ -106,6 +107,8 @@ const PdfRotate = () => {
   return (
     <>
       <SEOHead title={t('pdf.rotate.pageTitle')} description={t('pdf.rotate.pageDescription')} keywords={t('pdf.rotate.seoKeywords')} />
+
+      <Breadcrumb category="pdf" currentPage={t('pdf.rotate.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('pdf.rotate.pageTitle')}</h1>

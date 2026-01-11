@@ -3,6 +3,7 @@ import { AutoModel, AutoProcessor, RawImage, env } from '@huggingface/transforme
 import { useTranslation } from 'react-i18next';
 import SEOHead from '../../components/SEOHead';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 
 // ============================================================================
 // Constants & Configuration
@@ -687,6 +688,8 @@ const BackgroundRemoval = () => {
         description={t('bgRemoval.seoDescription')}
         keywords="background removal, remove background, AI background remover, transparent image, image editing"
       />
+
+      <Breadcrumb category="chromakey" currentPage={t('bgRemoval.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('bgRemoval.title')}</h1>

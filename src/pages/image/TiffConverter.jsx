@@ -10,6 +10,7 @@ import { createPreviewUrl, revokePreviewUrl } from '../../utils/imageConverter';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import * as UTIF from 'utif2';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 
 const TiffConverter = () => {
   const { t } = useTranslation();
@@ -112,6 +113,8 @@ const TiffConverter = () => {
   return (
     <>
       <SEOHead title={t('image.tiff.pageTitle')} description={t('image.tiff.pageDescription')} keywords={t('image.tiff.seoKeywords')} />
+
+      <Breadcrumb category="image" currentPage={t('image.tiff.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('image.tiff.pageTitle')}</h1>

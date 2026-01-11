@@ -7,6 +7,7 @@ import ErrorDisplay from '../../components/ErrorDisplay';
 import { downloadFile } from '../../utils/download';
 import useFFmpeg from '../../hooks/useFFmpeg';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 
 const VideoChromakey = () => {
   const { t } = useTranslation();
@@ -355,6 +356,8 @@ const VideoChromakey = () => {
         description={t('chromakey.video.pageDescription')}
         keywords={t('chromakey.video.seoKeywords')}
       />
+
+      <Breadcrumb category="chromakey" currentPage={t('chromakey.video.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('chromakey.video.pageTitle')}</h1>

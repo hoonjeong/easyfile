@@ -11,6 +11,7 @@ import { formatFileSize } from '../../utils/fileValidation';
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile, toBlobURL } from '@ffmpeg/util';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 
 const GifConverter = () => {
   const { t } = useTranslation();
@@ -155,6 +156,8 @@ const GifConverter = () => {
   return (
     <>
       <SEOHead title={t('media.gif.pageTitle')} description={t('media.gif.pageDescription')} keywords={t('media.gif.seoKeywords')} />
+
+      <Breadcrumb category="media" currentPage={t('media.gif.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('media.gif.pageTitle')}</h1>

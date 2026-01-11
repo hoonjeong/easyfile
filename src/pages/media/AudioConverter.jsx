@@ -10,6 +10,7 @@ import { downloadFile, getFilenameWithNewExtension } from '../../utils/download'
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile, toBlobURL } from '@ffmpeg/util';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 
 const AudioConverter = () => {
   const { t } = useTranslation();
@@ -135,6 +136,8 @@ const AudioConverter = () => {
   return (
     <>
       <SEOHead title={t('media.audio.pageTitle')} description={t('media.audio.pageDescription')} keywords={t('media.audio.seoKeywords')} />
+
+      <Breadcrumb category="media" currentPage={t('media.audio.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('media.audio.pageTitle')}</h1>

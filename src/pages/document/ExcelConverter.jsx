@@ -10,6 +10,7 @@ import { downloadFile, getFilenameWithNewExtension } from '../../utils/download'
 import ExcelJS from 'exceljs';
 import DOMPurify from 'dompurify';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 
 const ExcelConverter = () => {
   const { t } = useTranslation();
@@ -243,6 +244,8 @@ const ExcelConverter = () => {
   return (
     <>
       <SEOHead title={t('document.excel.pageTitle')} description={t('document.excel.pageDescription')} keywords={t('document.excel.seoKeywords')} />
+
+      <Breadcrumb category="document" currentPage={t('document.excel.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('document.excel.pageTitle')}</h1>

@@ -10,6 +10,7 @@ import { createPreviewUrl, revokePreviewUrl } from '../../utils/imageConverter';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import { readPsd } from 'ag-psd';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 
 const PsdConverter = () => {
   const { t } = useTranslation();
@@ -102,6 +103,8 @@ const PsdConverter = () => {
   return (
     <>
       <SEOHead title={t('image.psd.pageTitle')} description={t('image.psd.pageDescription')} keywords={t('image.psd.seoKeywords')} />
+
+      <Breadcrumb category="image" currentPage={t('image.psd.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('image.psd.pageTitle')}</h1>

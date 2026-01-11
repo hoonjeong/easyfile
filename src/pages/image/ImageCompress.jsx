@@ -7,6 +7,7 @@ import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
 import { downloadFile, sanitizeFilename } from '../../utils/download';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 
 const formatFileSize = (bytes) => {
   if (bytes === 0) return '0 Bytes';
@@ -132,6 +133,8 @@ const ImageCompress = () => {
         description={t('image.compress.pageDescription')}
         keywords={t('image.compress.seoKeywords')}
       />
+
+      <Breadcrumb category="image" currentPage={t('image.compress.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('image.compress.pageTitle')}</h1>

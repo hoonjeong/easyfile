@@ -6,6 +6,7 @@ import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 import { deletePages, generateThumbnails } from '../../utils/pdfUtils';
 import { downloadFile, sanitizeFilename } from '../../utils/download';
 
@@ -96,6 +97,8 @@ const PdfDelete = () => {
         description={t('pdf.delete.pageDescription')}
         keywords={t('pdf.delete.seoKeywords')}
       />
+
+      <Breadcrumb category="pdf" currentPage={t('pdf.delete.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('pdf.delete.pageTitle')}</h1>

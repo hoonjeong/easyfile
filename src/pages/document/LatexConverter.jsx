@@ -7,6 +7,7 @@ import ErrorDisplay from '../../components/ErrorDisplay';
 import ResultDisplay from '../../components/ResultDisplay';
 import { downloadFile } from '../../utils/download';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 
 /**
  * Sanitize LaTeX input to prevent XSS attacks
@@ -181,6 +182,8 @@ const LatexConverter = () => {
   return (
     <>
       <SEOHead title={t('document.latex.pageTitle')} description={t('document.latex.pageDescription')} keywords={t('document.latex.seoKeywords')} />
+
+      <Breadcrumb category="document" currentPage={t('document.latex.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('document.latex.pageTitle')}</h1>

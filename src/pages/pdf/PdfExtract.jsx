@@ -6,6 +6,7 @@ import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 import { extractPages, generateThumbnails } from '../../utils/pdfUtils';
 import { downloadFile, sanitizeFilename } from '../../utils/download';
 
@@ -95,6 +96,8 @@ const PdfExtract = () => {
         description={t('pdf.extract.pageDescription')}
         keywords={t('pdf.extract.seoKeywords')}
       />
+
+      <Breadcrumb category="pdf" currentPage={t('pdf.extract.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('pdf.extract.pageTitle')}</h1>

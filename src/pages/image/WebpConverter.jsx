@@ -9,6 +9,7 @@ import ResultDisplay from '../../components/ResultDisplay';
 import { convertImageWithCanvas, createPreviewUrl, revokePreviewUrl } from '../../utils/imageConverter';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 
 const WebpConverter = () => {
   const { t } = useTranslation();
@@ -76,6 +77,8 @@ const WebpConverter = () => {
   return (
     <>
       <SEOHead title={t('image.webp.pageTitle')} description={t('image.webp.pageDescription')} keywords={t('image.webp.seoKeywords')} />
+
+      <Breadcrumb category="image" currentPage={t('image.webp.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('image.webp.pageTitle')}</h1>

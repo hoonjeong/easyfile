@@ -4,6 +4,7 @@ import DOMPurify from 'dompurify';
 import SEOHead from '../../components/SEOHead';
 import { marked } from 'marked';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 
 // Naver Blog optimized inline styles
 const naverStyles = {
@@ -177,6 +178,8 @@ ${t('document.markdownNaver.exampleFooter')}`;
         description={t('document.markdownNaver.pageDescription')}
         keywords={t('document.markdownNaver.seoKeywords')}
       />
+
+      <Breadcrumb category="document" currentPage={t('document.markdownNaver.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('document.markdownNaver.pageTitle')}</h1>

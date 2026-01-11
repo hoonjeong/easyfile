@@ -6,6 +6,7 @@ import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 import { extractTextFromPdf } from '../../utils/pdfUtils';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 
@@ -78,6 +79,8 @@ const PdfToText = () => {
         description={t('pdf.toText.pageDescription')}
         keywords={t('pdf.toText.seoKeywords')}
       />
+
+      <Breadcrumb category="pdf" currentPage={t('pdf.toText.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('pdf.toText.pageTitle')}</h1>

@@ -9,6 +9,7 @@ import ResultDisplay from '../../components/ResultDisplay';
 import { convertHeic, createPreviewUrl, revokePreviewUrl } from '../../utils/imageConverter';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 
 const HeicConverter = () => {
   const { t } = useTranslation();
@@ -67,6 +68,8 @@ const HeicConverter = () => {
   return (
     <>
       <SEOHead title={t('image.heic.pageTitle')} description={t('image.heic.pageDescription')} keywords={t('image.heic.seoKeywords')} />
+
+      <Breadcrumb category="image" currentPage={t('image.heic.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('image.heic.pageTitle')}</h1>

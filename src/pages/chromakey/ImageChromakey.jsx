@@ -5,6 +5,7 @@ import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
 import { downloadFile } from '../../utils/download';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 
 // ============================================================================
 // Constants
@@ -459,6 +460,8 @@ const ImageChromakey = () => {
         description={t('chromakey.image.pageDescription')}
         keywords={t('chromakey.image.seoKeywords')}
       />
+
+      <Breadcrumb category="chromakey" currentPage={t('chromakey.image.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('chromakey.image.pageTitle')}</h1>

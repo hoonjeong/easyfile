@@ -4,6 +4,7 @@ import DOMPurify from 'dompurify';
 import SEOHead from '../../components/SEOHead';
 import { marked } from 'marked';
 import CoupangBanner from '../../components/CoupangBanner';
+import Breadcrumb from '../../components/Breadcrumb';
 
 const MarkdownToHtml = () => {
   const { t } = useTranslation();
@@ -100,6 +101,8 @@ console.log('Hello, World!');
         description={t('document.markdownHtml.pageDescription')}
         keywords={t('document.markdownHtml.seoKeywords')}
       />
+
+      <Breadcrumb category="document" currentPage={t('document.markdownHtml.title')} />
 
       <div className="page-header">
         <h1 className="page-title">{t('document.markdownHtml.pageTitle')}</h1>
