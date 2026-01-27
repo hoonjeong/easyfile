@@ -5,7 +5,6 @@ import DropZone from '../../components/DropZone';
 import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
-import CoupangBanner from '../../components/CoupangBanner';
 import Breadcrumb from '../../components/Breadcrumb';
 import { rotatePages, generateThumbnails } from '../../utils/pdfUtils';
 import { downloadFile, sanitizeFilename } from '../../utils/download';
@@ -114,8 +113,6 @@ const PdfRotate = () => {
         <h1 className="page-title">{t('pdf.rotate.pageTitle')}</h1>
         <p className="page-description">{t('pdf.rotate.pageDescription')}</p>
       </div>
-
-      <CoupangBanner type="top" />
 
       <div className="converter-card">
         {!file ? (

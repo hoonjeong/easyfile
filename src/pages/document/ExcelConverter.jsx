@@ -9,7 +9,6 @@ import ResultDisplay from '../../components/ResultDisplay';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import ExcelJS from 'exceljs';
 import DOMPurify from 'dompurify';
-import CoupangBanner from '../../components/CoupangBanner';
 import Breadcrumb from '../../components/Breadcrumb';
 
 const ExcelConverter = () => {
@@ -251,8 +250,6 @@ const ExcelConverter = () => {
         <h1 className="page-title">{t('document.excel.pageTitle')}</h1>
         <p className="page-description">{t('document.excel.pageDescription')}</p>
       </div>
-
-      <CoupangBanner type="top" />
 
       <div className="converter-card">
         {!file ? (

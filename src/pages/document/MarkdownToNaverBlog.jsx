@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import DOMPurify from 'dompurify';
 import SEOHead from '../../components/SEOHead';
 import { marked } from 'marked';
-import CoupangBanner from '../../components/CoupangBanner';
 import Breadcrumb from '../../components/Breadcrumb';
 
 // Naver Blog optimized inline styles
@@ -185,8 +184,6 @@ ${t('document.markdownNaver.exampleFooter')}`;
         <h1 className="page-title">{t('document.markdownNaver.pageTitle')}</h1>
         <p className="page-description">{t('document.markdownNaver.pageDescription')}</p>
       </div>
-
-      <CoupangBanner type="top" />
 
       <div className="converter-card" style={{ padding: '20px', maxWidth: '100%' }}>
         {/* Example Button */}

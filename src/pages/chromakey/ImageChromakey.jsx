@@ -4,7 +4,6 @@ import SEOHead from '../../components/SEOHead';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
 import { downloadFile } from '../../utils/download';
-import CoupangBanner from '../../components/CoupangBanner';
 import Breadcrumb from '../../components/Breadcrumb';
 
 // ============================================================================
@@ -467,8 +466,6 @@ const ImageChromakey = () => {
         <h1 className="page-title">{t('chromakey.image.pageTitle')}</h1>
         <p className="page-description">{t('chromakey.image.pageDescription')}</p>
       </div>
-
-      <CoupangBanner type="top" />
 
       <div className="converter-card">
         <canvas ref={canvasRef} style={{ display: 'none' }} />

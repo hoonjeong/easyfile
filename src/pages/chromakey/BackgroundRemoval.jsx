@@ -2,7 +2,6 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { AutoModel, AutoProcessor, RawImage, env } from '@huggingface/transformers';
 import { useTranslation } from 'react-i18next';
 import SEOHead from '../../components/SEOHead';
-import CoupangBanner from '../../components/CoupangBanner';
 import Breadcrumb from '../../components/Breadcrumb';
 
 // ============================================================================
@@ -695,8 +694,6 @@ const BackgroundRemoval = () => {
         <h1 className="page-title">{t('bgRemoval.title')}</h1>
         <p className="page-description">{t('bgRemoval.description')}</p>
       </div>
-
-      <CoupangBanner />
 
       <div className="converter-container" style={{ marginTop: '20px' }}>
         {!isEditMode && (

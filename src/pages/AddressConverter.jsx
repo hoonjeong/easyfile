@@ -12,7 +12,6 @@ import {
   romanizeKoreanName,
   containsKorean,
 } from '../utils/addressConverter';
-import CoupangBanner from '../components/CoupangBanner';
 
 const AddressConverter = () => {
   const { t } = useTranslation();
@@ -196,8 +195,6 @@ const AddressConverter = () => {
         <h1 className="page-title">{t('address.title')}</h1>
         <p className="page-description">{t('address.description')}</p>
       </div>
-
-      <CoupangBanner type="top" />
 
       {/* Main Converter Card */}
       <div className="converter-card">

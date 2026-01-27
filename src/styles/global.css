@@ -73,6 +73,26 @@ button {
   align-items: center;
 }
 
+.visitor-counter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.visitor-counter strong {
+  color: #e2e8f0;
+}
+
+.visitor-separator {
+  opacity: 0.4;
+}
+
 .logo {
   display: flex;
   align-items: center;
@@ -957,6 +977,10 @@ button {
 
   .hamburger {
     display: flex;
+  }
+
+  .visitor-counter {
+    display: none;
   }
 
   .nav {

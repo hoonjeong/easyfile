@@ -8,7 +8,6 @@ import ErrorDisplay from '../../components/ErrorDisplay';
 import ResultDisplay from '../../components/ResultDisplay';
 import { convertHeic, createPreviewUrl, revokePreviewUrl } from '../../utils/imageConverter';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
-import CoupangBanner from '../../components/CoupangBanner';
 import Breadcrumb from '../../components/Breadcrumb';
 
 const HeicConverter = () => {
@@ -75,8 +74,6 @@ const HeicConverter = () => {
         <h1 className="page-title">{t('image.heic.pageTitle')}</h1>
         <p className="page-description">{t('image.heic.pageDescription')}</p>
       </div>
-
-      <CoupangBanner type="top" />
 
       <div className="converter-card">
         {!file ? (

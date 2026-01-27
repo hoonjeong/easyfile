@@ -5,7 +5,6 @@ import DropZone from '../../components/DropZone';
 import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
-import CoupangBanner from '../../components/CoupangBanner';
 import Breadcrumb from '../../components/Breadcrumb';
 import { pdfToImages } from '../../utils/pdfUtils';
 import { downloadFile, getFilenameWithNewExtension, sanitizeFilename } from '../../utils/download';
@@ -96,8 +95,6 @@ const PdfToImage = () => {
         <h1 className="page-title">{t('pdf.toImage.pageTitle')}</h1>
         <p className="page-description">{t('pdf.toImage.pageDescription')}</p>
       </div>
-
-      <CoupangBanner type="top" />
 
       <div className="converter-card">
         {!file ? (

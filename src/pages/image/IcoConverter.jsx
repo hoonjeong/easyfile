@@ -8,7 +8,6 @@ import ErrorDisplay from '../../components/ErrorDisplay';
 import ResultDisplay from '../../components/ResultDisplay';
 import { convertIcoToPng, createPreviewUrl, revokePreviewUrl } from '../../utils/imageConverter';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
-import CoupangBanner from '../../components/CoupangBanner';
 import Breadcrumb from '../../components/Breadcrumb';
 
 const IcoConverter = () => {
@@ -80,8 +79,6 @@ const IcoConverter = () => {
         <h1 className="page-title">{t('image.ico.pageTitle')}</h1>
         <p className="page-description">{t('image.ico.pageDescription')}</p>
       </div>
-
-      <CoupangBanner type="top" />
 
       <div className="converter-card">
         {!file ? (

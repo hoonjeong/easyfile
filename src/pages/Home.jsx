@@ -1,7 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SEOHead from '../components/SEOHead';
-import CoupangBanner from '../components/CoupangBanner';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -159,8 +158,6 @@ const Home = () => {
           {t('home.heroSubtitle')}
         </p>
       </section>
-
-      <CoupangBanner type="top" />
 
       <section className="categories">
         {categories.map((category) => (

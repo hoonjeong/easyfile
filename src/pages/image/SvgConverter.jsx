@@ -9,7 +9,6 @@ import ResultDisplay from '../../components/ResultDisplay';
 import { convertSvgToPng, revokePreviewUrl, createPreviewUrl } from '../../utils/imageConverter';
 import { createSafeSvgPreviewUrl } from '../../utils/svgSanitizer';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
-import CoupangBanner from '../../components/CoupangBanner';
 import Breadcrumb from '../../components/Breadcrumb';
 
 const SvgConverter = () => {
@@ -89,8 +88,6 @@ const SvgConverter = () => {
         <h1 className="page-title">{t('image.svg.pageTitle')}</h1>
         <p className="page-description">{t('image.svg.pageDescription')}</p>
       </div>
-
-      <CoupangBanner type="top" />
 
       <div className="converter-card">
         {!file ? (

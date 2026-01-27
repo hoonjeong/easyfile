@@ -8,7 +8,6 @@ import ErrorDisplay from '../../components/ErrorDisplay';
 import ResultDisplay from '../../components/ResultDisplay';
 import { convertImageWithCanvas, createPreviewUrl, revokePreviewUrl } from '../../utils/imageConverter';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
-import CoupangBanner from '../../components/CoupangBanner';
 import Breadcrumb from '../../components/Breadcrumb';
 
 const WebpConverter = () => {
@@ -84,8 +83,6 @@ const WebpConverter = () => {
         <h1 className="page-title">{t('image.webp.pageTitle')}</h1>
         <p className="page-description">{t('image.webp.pageDescription')}</p>
       </div>
-
-      <CoupangBanner type="top" />
 
       <div className="converter-card">
         {!file ? (

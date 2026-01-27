@@ -9,7 +9,6 @@ import ResultDisplay from '../../components/ResultDisplay';
 import { createPreviewUrl, revokePreviewUrl } from '../../utils/imageConverter';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import * as UTIF from 'utif2';
-import CoupangBanner from '../../components/CoupangBanner';
 import Breadcrumb from '../../components/Breadcrumb';
 
 const TiffConverter = () => {
@@ -120,8 +119,6 @@ const TiffConverter = () => {
         <h1 className="page-title">{t('image.tiff.pageTitle')}</h1>
         <p className="page-description">{t('image.tiff.pageDescription')}</p>
       </div>
-
-      <CoupangBanner type="top" />
 
       <div className="converter-card">
         {!file ? (

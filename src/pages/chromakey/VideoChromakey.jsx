@@ -6,7 +6,6 @@ import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
 import { downloadFile } from '../../utils/download';
 import useFFmpeg from '../../hooks/useFFmpeg';
-import CoupangBanner from '../../components/CoupangBanner';
 import Breadcrumb from '../../components/Breadcrumb';
 
 const VideoChromakey = () => {
@@ -363,8 +362,6 @@ const VideoChromakey = () => {
         <h1 className="page-title">{t('chromakey.video.pageTitle')}</h1>
         <p className="page-description">{t('chromakey.video.pageDescription')}</p>
       </div>
-
-      <CoupangBanner type="top" />
 
       <div className="converter-card">
         {/* File Selection Area */}

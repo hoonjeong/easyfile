@@ -9,7 +9,6 @@ import ResultDisplay from '../../components/ResultDisplay';
 import { createPreviewUrl, revokePreviewUrl } from '../../utils/imageConverter';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import { readPsd } from 'ag-psd';
-import CoupangBanner from '../../components/CoupangBanner';
 import Breadcrumb from '../../components/Breadcrumb';
 
 const PsdConverter = () => {
@@ -110,8 +109,6 @@ const PsdConverter = () => {
         <h1 className="page-title">{t('image.psd.pageTitle')}</h1>
         <p className="page-description">{t('image.psd.pageDescription')}</p>
       </div>
-
-      <CoupangBanner type="top" />
 
       <div className="converter-card">
         {!file ? (

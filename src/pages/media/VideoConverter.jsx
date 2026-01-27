@@ -9,7 +9,6 @@ import ResultDisplay from '../../components/ResultDisplay';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile, toBlobURL } from '@ffmpeg/util';
-import CoupangBanner from '../../components/CoupangBanner';
 import Breadcrumb from '../../components/Breadcrumb';
 
 const VideoConverter = () => {
@@ -154,8 +153,6 @@ const VideoConverter = () => {
         <h1 className="page-title">{t('media.video.pageTitle')}</h1>
         <p className="page-description">{t('media.video.pageDescription')}</p>
       </div>
-
-      <CoupangBanner type="top" />
 
       <div className="converter-card">
         {!file ? (

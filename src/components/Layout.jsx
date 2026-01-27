@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import useVisitorCounter from '../hooks/useVisitorCounter';
 
 const Layout = ({ children }) => {
   const location = useLocation();
   const { t, i18n } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { todayCount, totalCount } = useVisitorCounter();
 
   const navItems = [
     { path: '/', labelKey: 'nav.home' },
@@ -52,6 +54,14 @@ const Layout = ({ children }) => {
             <span className="hamburger-line"></span>
             <span className="hamburger-line"></span>
           </button>
+
+          {totalCount !== null && (
+            <div className="visitor-counter">
+              <span>Today <strong>{todayCount ?? '-'}</strong></span>
+              <span className="visitor-separator">|</span>
+              <span>Total <strong>{totalCount ?? '-'}</strong></span>
+            </div>
+          )}
 
           <nav className={`nav ${isMenuOpen ? 'open' : ''}`}>
             {navItems.map((item) => (

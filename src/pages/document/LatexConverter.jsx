@@ -6,7 +6,6 @@ import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
 import ResultDisplay from '../../components/ResultDisplay';
 import { downloadFile } from '../../utils/download';
-import CoupangBanner from '../../components/CoupangBanner';
 import Breadcrumb from '../../components/Breadcrumb';
 
 /**
@@ -189,8 +188,6 @@ const LatexConverter = () => {
         <h1 className="page-title">{t('document.latex.pageTitle')}</h1>
         <p className="page-description">{t('document.latex.pageDescription')}</p>
       </div>
-
-      <CoupangBanner type="top" />
 
       <div className="converter-card">
         <div className="option-group">

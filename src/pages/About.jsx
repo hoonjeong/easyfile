@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SEOHead from '../components/SEOHead';
-import CoupangBanner from '../components/CoupangBanner';
 
 const About = () => {
   const { t } = useTranslation();
@@ -151,8 +150,6 @@ const About = () => {
           </h1>
           <p className="about-hero-subtitle">{t('about.heroSubtitle')}</p>
         </section>
-
-        <CoupangBanner type="top" />
 
         {/* Features Section */}
         <section className="about-features">

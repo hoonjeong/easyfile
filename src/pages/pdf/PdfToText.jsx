@@ -5,7 +5,6 @@ import DropZone from '../../components/DropZone';
 import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
-import CoupangBanner from '../../components/CoupangBanner';
 import Breadcrumb from '../../components/Breadcrumb';
 import { extractTextFromPdf } from '../../utils/pdfUtils';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
@@ -86,8 +85,6 @@ const PdfToText = () => {
         <h1 className="page-title">{t('pdf.toText.pageTitle')}</h1>
         <p className="page-description">{t('pdf.toText.pageDescription')}</p>
       </div>
-
-      <CoupangBanner type="top" />
 
       <div className="converter-card">
         {!file ? (

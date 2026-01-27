@@ -10,7 +10,6 @@ import { downloadFile, getFilenameWithNewExtension } from '../../utils/download'
 import { formatFileSize } from '../../utils/fileValidation';
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile, toBlobURL } from '@ffmpeg/util';
-import CoupangBanner from '../../components/CoupangBanner';
 import Breadcrumb from '../../components/Breadcrumb';
 
 const GifConverter = () => {
@@ -163,8 +162,6 @@ const GifConverter = () => {
         <h1 className="page-title">{t('media.gif.pageTitle')}</h1>
         <p className="page-description">{t('media.gif.pageDescription')}</p>
       </div>
-
-      <CoupangBanner type="top" />
 
       <div className="converter-card">
         {!file ? (

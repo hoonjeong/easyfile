@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SEOHead from '../../components/SEOHead';
-import CoupangBanner from '../../components/CoupangBanner';
 
 const ChromakeyIndex = () => {
   const { t } = useTranslation();
@@ -42,8 +41,6 @@ const ChromakeyIndex = () => {
         <h1 className="page-title">{t('chromakey.pageTitle')}</h1>
         <p className="page-description">{t('chromakey.pageDescription')}</p>
       </div>
-
-      <CoupangBanner />
 
       <div className="categories" style={{ marginTop: '20px' }}>
         {tools.map((tool) => (

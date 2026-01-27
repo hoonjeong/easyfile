@@ -9,7 +9,6 @@ import ResultDisplay from '../../components/ResultDisplay';
 import { downloadFile, getFilenameWithNewExtension } from '../../utils/download';
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile, toBlobURL } from '@ffmpeg/util';
-import CoupangBanner from '../../components/CoupangBanner';
 import Breadcrumb from '../../components/Breadcrumb';
 
 const AudioConverter = () => {
@@ -143,8 +142,6 @@ const AudioConverter = () => {
         <h1 className="page-title">{t('media.audio.pageTitle')}</h1>
         <p className="page-description">{t('media.audio.pageDescription')}</p>
       </div>
-
-      <CoupangBanner type="top" />
 
       <div className="converter-card">
         {!file ? (

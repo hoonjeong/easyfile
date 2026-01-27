@@ -13,7 +13,6 @@ When adding a new feature, always complete the following:
 - [ ] Add menu item in the corresponding index file (e.g., `DocumentIndex.jsx`, `ImageIndex.jsx`)
 - [ ] **Add Korean translations** in `src/locales/ko.json`
 - [ ] **Add English translations** in `src/locales/en.json`
-- [ ] **Add CoupangBanner component** in the page (both top position)
 - [ ] Ensure responsive design for mobile
 
 ### 2. Translation Keys Structure
@@ -32,16 +31,7 @@ When adding a new feature, always complete the following:
 }
 ```
 
-### 3. CoupangBanner Usage
-Always include CoupangBanner in new pages:
-```jsx
-import CoupangBanner from '../../components/CoupangBanner';
-
-// In the component return:
-<CoupangBanner type="top" />
-```
-
-### 4. Page Layout Pattern
+### 3. Page Layout Pattern
 Standard page structure:
 ```jsx
 <>
@@ -51,8 +41,6 @@ Standard page structure:
     <h1 className="page-title">{t('...')}</h1>
     <p className="page-description">{t('...')}</p>
   </div>
-
-  <CoupangBanner type="top" />
 
   <div className="converter-card" style={{ padding: '20px', maxWidth: '100%' }}>
     {/* Main content */}
