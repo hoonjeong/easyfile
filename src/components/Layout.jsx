@@ -55,14 +55,6 @@ const Layout = ({ children }) => {
             <span className="hamburger-line"></span>
           </button>
 
-          {totalCount !== null && (
-            <div className="visitor-counter">
-              <span>Today <strong>{todayCount ?? '-'}</strong></span>
-              <span className="visitor-separator">|</span>
-              <span>Total <strong>{totalCount ?? '-'}</strong></span>
-            </div>
-          )}
-
           <nav className={`nav ${isMenuOpen ? 'open' : ''}`}>
             {navItems.map((item) => (
               item.external ? (
@@ -116,6 +108,17 @@ const Layout = ({ children }) => {
 
       <footer className="footer">
         <div className="container">
+          <div className="visitor-counter">
+            <div className="visitor-counter-item">
+              <span className="visitor-counter-label">Today</span>
+              <span className="visitor-counter-value">{todayCount ?? '-'}</span>
+            </div>
+            <div className="visitor-counter-divider"></div>
+            <div className="visitor-counter-item">
+              <span className="visitor-counter-label">Total</span>
+              <span className="visitor-counter-value">{totalCount ?? '-'}</span>
+            </div>
+          </div>
           <p className="footer-text">
             <span className="footer-highlight">{t('common.tagline')}</span> - {t('common.footerText')}
           </p>

@@ -75,22 +75,39 @@ button {
 
 .visitor-counter {
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 6px;
-  font-size: 0.75rem;
-  color: #94a3b8;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding: 10px 20px;
   background: rgba(255, 255, 255, 0.05);
-  padding: 4px 10px;
-  border-radius: 6px;
-  white-space: nowrap;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.visitor-counter strong {
-  color: #e2e8f0;
+.visitor-counter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.visitor-separator {
-  opacity: 0.4;
+.visitor-counter-label {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.visitor-counter-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #60a5fa;
+}
+
+.visitor-counter-divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .logo {
@@ -979,9 +996,6 @@ button {
     display: flex;
   }
 
-  .visitor-counter {
-    display: none;
-  }
 
   .nav {
     display: none;
