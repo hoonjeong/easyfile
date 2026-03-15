@@ -924,7 +924,11 @@
       "faq2A": "Yes, there's no limit on the number of splits. The 'By Page' mode creates one file per page.",
       "faq3Q": "What happens to the original file?",
       "faq3A": "The original file is never modified. New split files are created for download, leaving your original intact.",
-      "error": "Error splitting PDF."
+      "error": "Error splitting PDF.",
+      "downloadFormat": "Download Format",
+      "imageFormat": "Image",
+      "imageType": "Image Format",
+      "convertingToImage": "Converting to image..."
     },
     "extract": {
       "title": "Extract Pages",

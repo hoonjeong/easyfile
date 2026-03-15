@@ -6,9 +6,10 @@ import FilePreview from '../../components/FilePreview';
 import ProgressBar from '../../components/ProgressBar';
 import ErrorDisplay from '../../components/ErrorDisplay';
 import Breadcrumb from '../../components/Breadcrumb';
-import { splitPdf, getPdfPageCount } from '../../utils/pdfUtils';
+import { splitPdf, getPdfPageCount, loadPdfDocument, pdfPageToImage } from '../../utils/pdfUtils';
 import { downloadFile, sanitizeFilename } from '../../utils/download';
 import JSZip from 'jszip';
+import { PDFDocument } from 'pdf-lib';
 
 const PdfSplit = () => {
   const { t } = useTranslation();
@@ -20,6 +21,9 @@ const PdfSplit = () => {
   const [progress, setProgress] = useState(0);
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
+  const [downloadFormat, setDownloadFormat] = useState('pdf');
+  const [imageFormat, setImageFormat] = useState('png');
+  const [converting, setConverting] = useState(false);
 
   const handleFileSelect = useCallback(async (selectedFile) => {
     setFile(selectedFile);
@@ -90,10 +94,45 @@ const PdfSplit = () => {
     }
   };
 
-  const handleDownloadSingle = (result) => {
-    // Sanitize filename to prevent path traversal attacks
+  const convertPdfBlobToImages = async (pdfBlob, range) => {
+    const arrayBuffer = await pdfBlob.arrayBuffer();
+    const pdfDoc = await PDFDocument.load(arrayBuffer);
+    const pageCount = pdfDoc.getPageCount();
+    const mimeType = imageFormat === 'jpg' ? 'image/jpeg' : 'image/png';
+    const ext = imageFormat === 'jpg' ? 'jpg' : 'png';
+
+    // Use pdfjs to render pages
+    const pdfjsDoc = await loadPdfDocument(new File([pdfBlob], 'temp.pdf', { type: 'application/pdf' }));
+    const images = [];
+    for (let i = 1; i <= pageCount; i++) {
+      const blob = await pdfPageToImage(pdfjsDoc, i, 2, mimeType, 0.92);
+      images.push({ blob, ext, pageNum: i });
+    }
+    return images;
+  };
+
+  const handleDownloadSingle = async (result) => {
     const baseName = sanitizeFilename(file.name.replace(/\.pdf$/i, ''));
-    downloadFile(result.blob, `${baseName}_${result.range}.pdf`);
+    if (downloadFormat === 'pdf') {
+      downloadFile(result.blob, `${baseName}_${result.range}.pdf`);
+    } else {
+      setConverting(true);
+      try {
+        const images = await convertPdfBlobToImages(result.blob, result.range);
+        if (images.length === 1) {
+          downloadFile(images[0].blob, `${baseName}_${result.range}.${images[0].ext}`);
+        } else {
+          const zip = new JSZip();
+          images.forEach((img) => {
+            zip.file(`${baseName}_${result.range}_p${img.pageNum}.${img.ext}`, img.blob);
+          });
+          const zipBlob = await zip.generateAsync({ type: 'blob' });
+          downloadFile(zipBlob, `${baseName}_${result.range}_images.zip`);
+        }
+      } finally {
+        setConverting(false);
+      }
+    }
   };
 
   const handleDownloadAll = async () => {
@@ -101,14 +140,31 @@ const PdfSplit = () => {
       handleDownloadSingle(results[0]);
       return;
     }
-    const zip = new JSZip();
-    // Sanitize filename to prevent Zip Slip and path traversal attacks
     const baseName = sanitizeFilename(file.name.replace(/\.pdf$/i, ''));
-    results.forEach((result) => {
-      zip.file(`${baseName}_${result.range}.pdf`, result.blob);
-    });
-    const zipBlob = await zip.generateAsync({ type: 'blob' });
-    downloadFile(zipBlob, `${baseName}_split.zip`);
+
+    if (downloadFormat === 'pdf') {
+      const zip = new JSZip();
+      results.forEach((result) => {
+        zip.file(`${baseName}_${result.range}.pdf`, result.blob);
+      });
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      downloadFile(zipBlob, `${baseName}_split.zip`);
+    } else {
+      setConverting(true);
+      try {
+        const zip = new JSZip();
+        for (const result of results) {
+          const images = await convertPdfBlobToImages(result.blob, result.range);
+          images.forEach((img) => {
+            zip.file(`${baseName}_${result.range}_p${img.pageNum}.${img.ext}`, img.blob);
+          });
+        }
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        downloadFile(zipBlob, `${baseName}_split_images.zip`);
+      } finally {
+        setConverting(false);
+      }
+    }
   };
 
   return (
@@ -180,17 +236,43 @@ const PdfSplit = () => {
                   {t('pdf.split.splitComplete')} ({results.length} {t('pdf.split.files')})
                 </h4>
 
+                <div className="options" style={{ marginBottom: '16px' }}>
+                  <div className="option-group">
+                    <label className="option-label">{t('pdf.split.downloadFormat')}</label>
+                    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                        <input type="radio" name="downloadFormat" value="pdf" checked={downloadFormat === 'pdf'} onChange={(e) => setDownloadFormat(e.target.value)} />
+                        PDF
+                      </label>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                        <input type="radio" name="downloadFormat" value="image" checked={downloadFormat === 'image'} onChange={(e) => setDownloadFormat(e.target.value)} />
+                        {t('pdf.split.imageFormat')}
+                      </label>
+                    </div>
+                  </div>
+
+                  {downloadFormat === 'image' && (
+                    <div className="option-group">
+                      <label className="option-label">{t('pdf.split.imageType')}</label>
+                      <select className="option-select" value={imageFormat} onChange={(e) => setImageFormat(e.target.value)}>
+                        <option value="png">PNG</option>
+                        <option value="jpg">JPG</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
                   {results.map((result, index) => (
                     <div key={index} style={{ display: 'flex', alignItems: 'center', padding: '12px', background: 'var(--bg-tertiary)', borderRadius: '8px', justifyContent: 'space-between' }}>
                       <span>{t('common.page')} {result.range}</span>
-                      <button onClick={() => handleDownloadSingle(result)} style={{ padding: '6px 12px', cursor: 'pointer', background: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '6px', fontSize: '12px' }}>{t('common.download')}</button>
+                      <button onClick={() => handleDownloadSingle(result)} disabled={converting} style={{ padding: '6px 12px', cursor: converting ? 'wait' : 'pointer', background: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '6px', fontSize: '12px', opacity: converting ? 0.7 : 1 }}>{t('common.download')}</button>
                     </div>
                   ))}
                 </div>
 
-                <button className="download-button" onClick={handleDownloadAll}>
-                  {results.length > 1 ? t('common.downloadAll') : t('common.download')}
+                <button className="download-button" onClick={handleDownloadAll} disabled={converting} style={converting ? { opacity: 0.7, cursor: 'wait' } : {}}>
+                  {converting ? t('pdf.split.convertingToImage') : (results.length > 1 ? t('common.downloadAll') : t('common.download'))}
                 </button>
               </div>
             )}
