@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import useVisitorCounter from '../hooks/useVisitorCounter';
 
 const Layout = ({ children }) => {
   const location = useLocation();
   const { t, i18n } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { todayCount, totalCount } = useVisitorCounter();
 
   const navItems = [
     { path: '/', labelKey: 'nav.home' },
@@ -108,17 +106,6 @@ const Layout = ({ children }) => {
 
       <footer className="footer">
         <div className="container">
-          <div className="visitor-counter">
-            <div className="visitor-counter-item">
-              <span className="visitor-counter-label">Today</span>
-              <span className="visitor-counter-value">{todayCount ?? '-'}</span>
-            </div>
-            <div className="visitor-counter-divider"></div>
-            <div className="visitor-counter-item">
-              <span className="visitor-counter-label">Total</span>
-              <span className="visitor-counter-value">{totalCount ?? '-'}</span>
-            </div>
-          </div>
           <p className="footer-text">
             <span className="footer-highlight">{t('common.tagline')}</span> - {t('common.footerText')}
           </p>
