@@ -478,6 +478,8 @@
       "htmlCode": "HTML Code",
       "copyHtmlBody": "Copy HTML Body",
       "copyFullHtml": "Copy Full HTML Document",
+      "downloadPdf": "Download PDF",
+      "generatingPdf": "Generating PDF...",
       "emptyPreview": "Enter markdown on the left to see the result here.",
       "emptyCode": "Enter markdown to see HTML code.",
       "loadExample": "Load Example",

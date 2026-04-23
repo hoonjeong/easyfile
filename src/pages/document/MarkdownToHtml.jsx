@@ -1,6 +1,9 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import DOMPurify from 'dompurify';
+import html2canvas from 'html2canvas';
+import { PDFDocument } from 'pdf-lib';
+import { saveAs } from 'file-saver';
 import SEOHead from '../../components/SEOHead';
 import { marked } from 'marked';
 import Breadcrumb from '../../components/Breadcrumb';
@@ -10,6 +13,8 @@ const MarkdownToHtml = () => {
   const [markdownText, setMarkdownText] = useState('');
   const [copied, setCopied] = useState(false);
   const [viewMode, setViewMode] = useState('preview'); // 'preview' or 'code'
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
+  const pdfRenderRef = useRef(null);
 
   const htmlContent = useMemo(() => {
     if (!markdownText.trim()) return '';
@@ -58,6 +63,107 @@ const MarkdownToHtml = () => {
 ${htmlContent}
 </body>
 </html>`;
+  }, [htmlContent]);
+
+  const handleDownloadPdf = useCallback(async () => {
+    if (!htmlContent || !pdfRenderRef.current) return;
+    setDownloadingPdf(true);
+    try {
+      const el = pdfRenderRef.current;
+
+      // A4 in PDF points (1pt = 1/72 inch): 210mm x 297mm
+      const A4_WIDTH_PT = 595.28;
+      const A4_HEIGHT_PT = 841.89;
+      const MARGIN_PT = 36; // ~12.7mm margin
+      const contentWidthPt = A4_WIDTH_PT - 2 * MARGIN_PT;
+      const contentHeightPt = A4_HEIGHT_PT - 2 * MARGIN_PT;
+
+      const scale = 2;
+      const canvas = await html2canvas(el, {
+        scale,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        logging: false,
+      });
+
+      const cssWidth = el.offsetWidth;
+      const cssHeight = el.offsetHeight;
+      const pageCssHeight = (contentHeightPt * cssWidth) / contentWidthPt;
+
+      // Collect break candidates from block-level children (snap page cuts to element bottoms)
+      const containerTop = el.getBoundingClientRect().top;
+      const breakPoints = new Set([0, cssHeight]);
+      const collect = (parent) => {
+        Array.from(parent.children).forEach((child) => {
+          const rect = child.getBoundingClientRect();
+          breakPoints.add(rect.bottom - containerTop);
+          if (['UL', 'OL', 'TABLE', 'THEAD', 'TBODY', 'BLOCKQUOTE'].includes(child.tagName)) {
+            collect(child);
+          }
+        });
+      };
+      collect(el);
+      const sortedBreaks = [...breakPoints].sort((a, b) => a - b);
+
+      // Determine page cuts in CSS pixels, snapping to nearest block break
+      const cuts = [0];
+      while (cuts[cuts.length - 1] < cssHeight - 0.5) {
+        const top = cuts[cuts.length - 1];
+        const maxBottom = top + pageCssHeight;
+        let bestCut = null;
+        for (const bp of sortedBreaks) {
+          if (bp > top + 1 && bp <= maxBottom + 0.5) {
+            bestCut = bp;
+          }
+        }
+        // No break fits within page -> force cut at page boundary (element taller than page)
+        if (bestCut === null) {
+          bestCut = Math.min(maxBottom, cssHeight);
+        }
+        cuts.push(bestCut);
+      }
+
+      const pdfDoc = await PDFDocument.create();
+
+      for (let i = 0; i < cuts.length - 1; i++) {
+        const yStartCss = cuts[i];
+        const yEndCss = cuts[i + 1];
+        const yStart = Math.round(yStartCss * scale);
+        const yEnd = Math.round(yEndCss * scale);
+        const sliceHeight = yEnd - yStart;
+        if (sliceHeight <= 0) continue;
+
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = sliceHeight;
+        const ctx = pageCanvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, sliceHeight);
+        ctx.drawImage(canvas, 0, yStart, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
+
+        const dataUrl = pageCanvas.toDataURL('image/png');
+        const pngBytes = await fetch(dataUrl).then((r) => r.arrayBuffer());
+        const pngImage = await pdfDoc.embedPng(pngBytes);
+
+        const page = pdfDoc.addPage([A4_WIDTH_PT, A4_HEIGHT_PT]);
+        const imgWidthPt = contentWidthPt;
+        const imgHeightPt = (sliceHeight / scale) * (contentWidthPt / cssWidth);
+        page.drawImage(pngImage, {
+          x: MARGIN_PT,
+          y: A4_HEIGHT_PT - MARGIN_PT - imgHeightPt,
+          width: imgWidthPt,
+          height: imgHeightPt,
+        });
+      }
+
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      saveAs(blob, 'markdown.pdf');
+    } catch (err) {
+      console.error('PDF download failed:', err);
+    } finally {
+      setDownloadingPdf(false);
+    }
   }, [htmlContent]);
 
   const handleCopy = useCallback(async (content) => {
@@ -281,9 +387,54 @@ console.log('Hello, World!');
               >
                 {t('document.markdownHtml.copyFullHtml')}
               </button>
+              <button
+                onClick={handleDownloadPdf}
+                disabled={!htmlContent || downloadingPdf}
+                style={{
+                  flex: 1,
+                  padding: '12px 16px',
+                  background: htmlContent && !downloadingPdf ? '#dc3545' : '#ccc',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: htmlContent && !downloadingPdf ? 'pointer' : 'not-allowed',
+                  fontWeight: '600',
+                  fontSize: '14px'
+                }}
+              >
+                {downloadingPdf ? t('document.markdownHtml.generatingPdf') : t('document.markdownHtml.downloadPdf')}
+              </button>
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Hidden A4-width render target for PDF export */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          left: '-10000px',
+          top: 0,
+          width: '760px',
+          pointerEvents: 'none',
+          opacity: 0,
+        }}
+      >
+        <div
+          ref={pdfRenderRef}
+          style={{
+            width: '760px',
+            padding: '0',
+            background: '#ffffff',
+            color: '#333',
+            fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif",
+            lineHeight: 1.6,
+            fontSize: '14px',
+            wordWrap: 'break-word',
+          }}
+          dangerouslySetInnerHTML={{ __html: htmlContent }}
+        />
       </div>
 
       <div className="seo-content">
