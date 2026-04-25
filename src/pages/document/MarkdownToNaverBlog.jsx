@@ -1,6 +1,9 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import DOMPurify from 'dompurify';
+import html2canvas from 'html2canvas';
+import { PDFDocument } from 'pdf-lib';
+import { saveAs } from 'file-saver';
 import SEOHead from '../../components/SEOHead';
 import { marked } from 'marked';
 import Breadcrumb from '../../components/Breadcrumb';
@@ -37,6 +40,7 @@ const MarkdownToNaverBlog = () => {
   const [markdownText, setMarkdownText] = useState('');
   const [copied, setCopied] = useState(false);
   const [viewMode, setViewMode] = useState('preview');
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
 
   const convertToNaverHtml = useCallback((markdown) => {
     if (!markdown.trim()) return '';
@@ -121,6 +125,137 @@ const MarkdownToNaverBlog = () => {
   const htmlContent = useMemo(() => {
     return convertToNaverHtml(markdownText);
   }, [markdownText, convertToNaverHtml]);
+
+  const handleDownloadPdf = useCallback(async () => {
+    if (!htmlContent) return;
+    setDownloadingPdf(true);
+
+    const wrapper = document.createElement('div');
+    wrapper.style.position = 'absolute';
+    wrapper.style.left = '-10000px';
+    wrapper.style.top = '0';
+    wrapper.style.width = '760px';
+    wrapper.style.padding = '0';
+    wrapper.style.background = '#ffffff';
+    wrapper.style.color = '#333';
+    wrapper.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif";
+    wrapper.style.lineHeight = '1.6';
+    wrapper.style.fontSize = '14px';
+    wrapper.style.boxSizing = 'border-box';
+    wrapper.style.wordWrap = 'break-word';
+    wrapper.innerHTML = htmlContent;
+    document.body.appendChild(wrapper);
+
+    try {
+      // Wait two frames so layout (including images) settles
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      // Wait for any <img> in wrapper to load (or fail) so html2canvas captures them
+      const images = Array.from(wrapper.querySelectorAll('img'));
+      await Promise.all(
+        images.map(
+          (img) =>
+            new Promise((resolve) => {
+              if (img.complete) return resolve();
+              img.onload = () => resolve();
+              img.onerror = () => resolve();
+            })
+        )
+      );
+
+      const A4_WIDTH_PT = 595.28;
+      const A4_HEIGHT_PT = 841.89;
+      const MARGIN_PT = 36;
+      const contentWidthPt = A4_WIDTH_PT - 2 * MARGIN_PT;
+      const contentHeightPt = A4_HEIGHT_PT - 2 * MARGIN_PT;
+
+      const cssWidth = wrapper.offsetWidth;
+      const cssHeight = wrapper.offsetHeight;
+      if (!cssWidth || !cssHeight) {
+        throw new Error('Render target has no dimensions');
+      }
+
+      const pageCssHeight = (contentHeightPt * cssWidth) / contentWidthPt;
+
+      // Snap page cuts to block-level boundaries so paragraphs/list items are not split mid-line
+      const wrapperTop = wrapper.getBoundingClientRect().top;
+      const breakPoints = new Set([0, cssHeight]);
+      const collect = (parent) => {
+        Array.from(parent.children).forEach((child) => {
+          const rect = child.getBoundingClientRect();
+          breakPoints.add(rect.bottom - wrapperTop);
+          if (['UL', 'OL', 'TABLE', 'THEAD', 'TBODY', 'BLOCKQUOTE', 'DIV'].includes(child.tagName)) {
+            collect(child);
+          }
+        });
+      };
+      collect(wrapper);
+      const sortedBreaks = [...breakPoints].sort((a, b) => a - b);
+
+      const cuts = [0];
+      while (cuts[cuts.length - 1] < cssHeight - 0.5) {
+        const top = cuts[cuts.length - 1];
+        const maxBottom = top + pageCssHeight;
+        let bestCut = null;
+        for (const bp of sortedBreaks) {
+          if (bp > top + 1 && bp <= maxBottom + 0.5) bestCut = bp;
+        }
+        if (bestCut === null) bestCut = Math.min(maxBottom, cssHeight);
+        cuts.push(bestCut);
+      }
+
+      const scale = 2;
+      const canvas = await html2canvas(wrapper, {
+        scale,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        logging: false,
+        windowWidth: cssWidth,
+        windowHeight: cssHeight,
+      });
+
+      const pdfDoc = await PDFDocument.create();
+
+      for (let i = 0; i < cuts.length - 1; i++) {
+        const yStart = Math.round(cuts[i] * scale);
+        const yEnd = Math.round(cuts[i + 1] * scale);
+        const sliceHeight = yEnd - yStart;
+        if (sliceHeight <= 0) continue;
+
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = sliceHeight;
+        const ctx = pageCanvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, sliceHeight);
+        ctx.drawImage(canvas, 0, yStart, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
+
+        const dataUrl = pageCanvas.toDataURL('image/png');
+        const pngBytes = await fetch(dataUrl).then((r) => r.arrayBuffer());
+        const pngImage = await pdfDoc.embedPng(pngBytes);
+
+        const page = pdfDoc.addPage([A4_WIDTH_PT, A4_HEIGHT_PT]);
+        const imgWidthPt = contentWidthPt;
+        const imgHeightPt = (sliceHeight / scale) * (contentWidthPt / cssWidth);
+        page.drawImage(pngImage, {
+          x: MARGIN_PT,
+          y: A4_HEIGHT_PT - MARGIN_PT - imgHeightPt,
+          width: imgWidthPt,
+          height: imgHeightPt,
+        });
+      }
+
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      saveAs(blob, 'markdown.pdf');
+    } catch (err) {
+      console.error('PDF download failed:', err);
+      alert(t('document.markdownNaver.pdfError'));
+    } finally {
+      if (wrapper.parentNode) wrapper.parentNode.removeChild(wrapper);
+      setDownloadingPdf(false);
+    }
+  }, [htmlContent, t]);
 
   const handleCopy = useCallback(async () => {
     try {
@@ -317,13 +452,32 @@ ${t('document.markdownNaver.exampleFooter')}`;
               )}
             </div>
 
-            {/* Copy Button */}
-            <div style={{ marginTop: '12px' }}>
+            {/* Action Buttons */}
+            <div style={{ display: 'flex', gap: '8px', marginTop: '12px', flexWrap: 'wrap' }}>
+              <button
+                onClick={handleDownloadPdf}
+                disabled={!htmlContent || downloadingPdf}
+                style={{
+                  flex: 1,
+                  minWidth: '160px',
+                  padding: '12px 16px',
+                  background: htmlContent && !downloadingPdf ? '#dc3545' : '#ccc',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: htmlContent && !downloadingPdf ? 'pointer' : 'not-allowed',
+                  fontWeight: '600',
+                  fontSize: '14px'
+                }}
+              >
+                {downloadingPdf ? t('document.markdownNaver.generatingPdf') : t('document.markdownNaver.downloadPdf')}
+              </button>
               <button
                 onClick={handleCopy}
                 disabled={!htmlContent}
                 style={{
-                  width: '100%',
+                  flex: 1,
+                  minWidth: '160px',
                   padding: '12px 16px',
                   background: htmlContent ? '#03c75a' : '#ccc',
                   color: 'white',

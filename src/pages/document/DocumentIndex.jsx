@@ -6,8 +6,7 @@ const DocumentIndex = () => {
   const { t } = useTranslation();
 
   const converters = [
-    { path: '/document/markdown-naver', titleKey: 'document.markdownNaver.title', descKey: 'document.markdownNaver.description', tags: ['Markdown', 'Naver', 'Blog'], icon: '🟢' },
-    { path: '/document/markdown-to-html', titleKey: 'document.markdownHtml.title', descKey: 'document.markdownHtml.description', tags: ['Markdown', 'MD', 'HTML'], icon: '📝' },
+    { path: '/document/markdown-naver', titleKey: 'document.markdownNaver.title', descKey: 'document.markdownNaver.description', tags: ['Markdown', 'PDF', 'Naver', 'Blog'], icon: '📝' },
     { path: '/document/excel-to-json', titleKey: 'document.excel.title', descKey: 'document.excel.description', tags: ['Excel', 'XLSX', 'JSON', 'CSV', 'HTML'], icon: '📊' },
     { path: '/document/latex-to-image', titleKey: 'document.latex.title', descKey: 'document.latex.description', tags: ['LaTeX', 'Math', 'PNG', 'SVG'], icon: '🔢' }
   ];

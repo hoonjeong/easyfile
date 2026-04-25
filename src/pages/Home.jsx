@@ -61,7 +61,7 @@ const Home = () => {
       converters: [
         { name: 'Excel → JSON', path: '/document/excel-to-json' },
         { name: 'Excel → CSV', path: '/document/excel-to-json' },
-        { name: 'Markdown → HTML', path: '/document/markdown-to-html' },
+        { name: 'Markdown → PDF', path: '/document/markdown-naver' },
         { name: 'LaTeX → PNG', path: '/document/latex-to-image' },
       ]
     },

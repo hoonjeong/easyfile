@@ -102,7 +102,7 @@ const About = () => {
       bgColor: 'rgba(16, 185, 129, 0.1)',
       tools: [
         { path: '/document/excel-to-json', nameKey: 'about.guide.document.excel.name', descKey: 'about.guide.document.excel.desc', steps: 'about.guide.document.excel.steps' },
-        { path: '/document/markdown-to-html', nameKey: 'about.guide.document.markdown.name', descKey: 'about.guide.document.markdown.desc', steps: 'about.guide.document.markdown.steps' },
+        { path: '/document/markdown-naver', nameKey: 'about.guide.document.markdown.name', descKey: 'about.guide.document.markdown.desc', steps: 'about.guide.document.markdown.steps' },
         { path: '/document/latex-to-image', nameKey: 'about.guide.document.latex.name', descKey: 'about.guide.document.latex.desc', steps: 'about.guide.document.latex.steps' }
       ]
     },
