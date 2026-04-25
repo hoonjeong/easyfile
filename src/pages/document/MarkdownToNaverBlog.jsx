@@ -238,8 +238,13 @@ const MarkdownToNaverBlog = () => {
         ctx.fillRect(0, 0, canvas.width, sliceHeight);
         ctx.drawImage(canvas, 0, yStart, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
 
-        const dataUrl = pageCanvas.toDataURL('image/png');
-        const pngBytes = await fetch(dataUrl).then((r) => r.arrayBuffer());
+        const pngBlob = await new Promise((resolve, reject) => {
+          pageCanvas.toBlob(
+            (b) => (b ? resolve(b) : reject(new Error('canvas.toBlob returned null'))),
+            'image/png'
+          );
+        });
+        const pngBytes = await pngBlob.arrayBuffer();
         const pngImage = await pdfDoc.embedPng(pngBytes);
 
         const page = pdfDoc.addPage([A4_WIDTH_PT, A4_HEIGHT_PT]);
