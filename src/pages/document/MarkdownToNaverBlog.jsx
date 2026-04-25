@@ -130,12 +130,17 @@ const MarkdownToNaverBlog = () => {
     if (!htmlContent) return;
     setDownloadingPdf(true);
 
+    // Render in-viewport at top-left, behind the page, fully transparent.
+    // html2canvas v1.4.1 is unreliable with elements positioned far off-screen
+    // (e.g. left:-10000), so we keep the target inside the viewport but invisible.
     const wrapper = document.createElement('div');
-    wrapper.style.position = 'absolute';
-    wrapper.style.left = '-10000px';
+    wrapper.setAttribute('aria-hidden', 'true');
+    wrapper.style.position = 'fixed';
     wrapper.style.top = '0';
+    wrapper.style.left = '0';
     wrapper.style.width = '760px';
     wrapper.style.padding = '0';
+    wrapper.style.margin = '0';
     wrapper.style.background = '#ffffff';
     wrapper.style.color = '#333';
     wrapper.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif";
@@ -143,14 +148,16 @@ const MarkdownToNaverBlog = () => {
     wrapper.style.fontSize = '14px';
     wrapper.style.boxSizing = 'border-box';
     wrapper.style.wordWrap = 'break-word';
+    wrapper.style.opacity = '0';
+    wrapper.style.pointerEvents = 'none';
     wrapper.innerHTML = htmlContent;
     document.body.appendChild(wrapper);
 
     try {
-      // Wait two frames so layout (including images) settles
+      // Wait two frames so layout settles
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-      // Wait for any <img> in wrapper to load (or fail) so html2canvas captures them
+      // Wait for any <img> in wrapper to finish loading
       const images = Array.from(wrapper.querySelectorAll('img'));
       await Promise.all(
         images.map(
@@ -172,24 +179,26 @@ const MarkdownToNaverBlog = () => {
       const cssWidth = wrapper.offsetWidth;
       const cssHeight = wrapper.offsetHeight;
       if (!cssWidth || !cssHeight) {
-        throw new Error('Render target has no dimensions');
+        throw new Error(`Render target has no dimensions (${cssWidth}x${cssHeight})`);
       }
 
       const pageCssHeight = (contentHeightPt * cssWidth) / contentWidthPt;
 
-      // Snap page cuts to block-level boundaries so paragraphs/list items are not split mid-line
-      const wrapperTop = wrapper.getBoundingClientRect().top;
+      // Snap page cuts to block-level boundaries so blocks are not split mid-line.
+      // Use offset-based math (relative to wrapper) instead of viewport rects to avoid
+      // scroll-position quirks.
       const breakPoints = new Set([0, cssHeight]);
-      const collect = (parent) => {
+      const collect = (parent, parentOffsetTop) => {
         Array.from(parent.children).forEach((child) => {
-          const rect = child.getBoundingClientRect();
-          breakPoints.add(rect.bottom - wrapperTop);
+          const childTop = parentOffsetTop + child.offsetTop;
+          const childBottom = childTop + child.offsetHeight;
+          breakPoints.add(childBottom);
           if (['UL', 'OL', 'TABLE', 'THEAD', 'TBODY', 'BLOCKQUOTE', 'DIV'].includes(child.tagName)) {
-            collect(child);
+            collect(child, childTop);
           }
         });
       };
-      collect(wrapper);
+      collect(wrapper, 0);
       const sortedBreaks = [...breakPoints].sort((a, b) => a - b);
 
       const cuts = [0];
@@ -209,9 +218,8 @@ const MarkdownToNaverBlog = () => {
         scale,
         backgroundColor: '#ffffff',
         useCORS: true,
+        allowTaint: false,
         logging: false,
-        windowWidth: cssWidth,
-        windowHeight: cssHeight,
       });
 
       const pdfDoc = await PDFDocument.create();
@@ -250,7 +258,8 @@ const MarkdownToNaverBlog = () => {
       saveAs(blob, 'markdown.pdf');
     } catch (err) {
       console.error('PDF download failed:', err);
-      alert(t('document.markdownNaver.pdfError'));
+      const detail = err && (err.message || err.toString()) ? `\n${err.message || err}` : '';
+      alert(`${t('document.markdownNaver.pdfError')}${detail}`);
     } finally {
       if (wrapper.parentNode) wrapper.parentNode.removeChild(wrapper);
       setDownloadingPdf(false);
