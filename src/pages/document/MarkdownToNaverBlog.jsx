@@ -130,14 +130,22 @@ const MarkdownToNaverBlog = () => {
     if (!htmlContent) return;
     setDownloadingPdf(true);
 
-    // Render in-viewport at top-left, behind the page, fully transparent.
-    // html2canvas v1.4.1 is unreliable with elements positioned far off-screen
-    // (e.g. left:-10000), so we keep the target inside the viewport but invisible.
+    // Render the target inside a 0x0 overflow-hidden container so it stays
+    // invisible to the user but is rendered with full opacity for html2canvas.
+    // Avoid opacity:0 (it cascades and produces a blank capture) and avoid
+    // far-off-viewport positioning (html2canvas v1.4.1 is unreliable there).
+    const clipper = document.createElement('div');
+    clipper.setAttribute('aria-hidden', 'true');
+    clipper.style.position = 'fixed';
+    clipper.style.top = '0';
+    clipper.style.left = '0';
+    clipper.style.width = '0';
+    clipper.style.height = '0';
+    clipper.style.overflow = 'hidden';
+    clipper.style.pointerEvents = 'none';
+    clipper.style.zIndex = '-1';
+
     const wrapper = document.createElement('div');
-    wrapper.setAttribute('aria-hidden', 'true');
-    wrapper.style.position = 'fixed';
-    wrapper.style.top = '0';
-    wrapper.style.left = '0';
     wrapper.style.width = '760px';
     wrapper.style.padding = '0';
     wrapper.style.margin = '0';
@@ -148,10 +156,10 @@ const MarkdownToNaverBlog = () => {
     wrapper.style.fontSize = '14px';
     wrapper.style.boxSizing = 'border-box';
     wrapper.style.wordWrap = 'break-word';
-    wrapper.style.opacity = '0';
-    wrapper.style.pointerEvents = 'none';
     wrapper.innerHTML = htmlContent;
-    document.body.appendChild(wrapper);
+
+    clipper.appendChild(wrapper);
+    document.body.appendChild(clipper);
 
     try {
       // Wait two frames so layout settles
@@ -266,7 +274,7 @@ const MarkdownToNaverBlog = () => {
       const detail = err && (err.message || err.toString()) ? `\n${err.message || err}` : '';
       alert(`${t('document.markdownNaver.pdfError')}${detail}`);
     } finally {
-      if (wrapper.parentNode) wrapper.parentNode.removeChild(wrapper);
+      if (clipper.parentNode) clipper.parentNode.removeChild(clipper);
       setDownloadingPdf(false);
     }
   }, [htmlContent, t]);
